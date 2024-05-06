@@ -33,7 +33,7 @@
 15. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 16. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
-| OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
+| OS | Device | Backend | Model | FPS<br>Camera: 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v9-C<br>q8f32 | 6.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-s<br>q8f32 | 21 |
@@ -43,16 +43,16 @@
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-n<br>q8f32 | 23 |
 
 # Depth - 性能 Performance
-| OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
+| OS | Device | Backend | Model | FPS<br>Camera: 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 22 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 11 |
 
 # YOLO+Depth - 性能 Performance
-| OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 28 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 16 |
+| OS | Device | Backend | Model | YOLO FPS<br>Camera: 1280*720 | Depth FPS<br>Camera: 1280*720 |
+|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 28 | 16.7 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 16 | 7.7 |
 # 演示结果 Demo Results
 (YOLOv8-n & Depth Anything-small)<br>
 <br>
