@@ -11,7 +11,7 @@
 10. This project uses OpenGL ES 3.x to directly capture camera frame textures and pass them to the GPU, minimizing image data copying and transfer. It uses GPU compute shaders to convert YUV to RGB and normalize before feeding to the model, minimizing CPU usage.
 11. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
 12. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
-13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 40% (compared to YOLO-only tasks).
+13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
 14. Estimation accuracy at the focus point is higher due to the influence of the current camera focal length.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. See more about the project: https://dakeqq.github.io/overview/
@@ -28,16 +28,16 @@
 10. 本项目使用OpenGL ES 3.x，直接获取相机帧纹理后传递给GPU，尽可能减少图象数据的复制与传输. 再利用GPU计算着色器将YUV转成RGB并完成归一化后传递给模型, 尽量降低CPU占用。
 11. 采用双重缓冲+异步推理來提升FPS。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
-13. 同时启用YOLO与距离估计，FPS会下降约40%。(与单YOLO任务时相比)
+13. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
 14. 受到当前相机焦距影响，因此对焦位置的估计精度较高。
 15. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 16. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v9-C<br>q8f32 | 6 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-s<br>q8f32 | 24 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-n<br>q8f32 | 42 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v9-C<br>q8f32 | 6.5 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-s<br>q8f32 | 21 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-n<br>q8f32 | 43 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v9-C<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-s<br>q8f32 | 10.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-n<br>q8f32 | 23 |
@@ -45,14 +45,14 @@
 # Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 4 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 2 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 22 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 11 |
 
 # YOLO+Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 24 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 14 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 28 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 16 |
 # 演示结果 Demo Results
 (YOLOv8-n & Depth Anything-small)<br>
 <br>
