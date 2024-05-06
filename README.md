@@ -55,5 +55,6 @@
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 14 |
 # 演示结果 Demo Results
 (YOLOv8-n & Depth Anything-small)
+<br>
 ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth.gif?raw=true?raw=true)
 
