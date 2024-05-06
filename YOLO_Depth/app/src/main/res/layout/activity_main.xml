@@ -38,9 +38,9 @@
 
     <TextView
         android:id="@+id/class_list"
-        android:layout_width="250dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="40dp"
+        android:layout_width="228dp"
+        android:layout_height="154dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="31dp"
         android:rotation="90"
         android:text="Detected"
@@ -51,7 +51,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/glSurfaceView"
-        app:layout_constraintVertical_bias="0.075" />
+        app:layout_constraintVertical_bias="0.072" />
 
     <TextView
         android:id="@+id/depth"
@@ -65,9 +65,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fps"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.418"
         app:layout_constraintStart_toEndOf="@+id/class_list"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.099" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
