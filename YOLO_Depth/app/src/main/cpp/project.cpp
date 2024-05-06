@@ -218,7 +218,8 @@ extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject thiz,
                                                             jobject asset_manager,
-                                                            jboolean use_gpu, jboolean use_fp16,
+                                                            jboolean use_gpu,
+                                                            jboolean use_fp16,
                                                             jboolean use_nnapi,
                                                             jboolean use_xnnpack,
                                                             jboolean use_qnn,
@@ -470,7 +471,7 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     glGenBuffers(1, &pbo_B);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize, nullptr, GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B); // 使用同的binding point
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B);
     glBindImageTexture(0, static_cast<GLuint> (texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 extern "C"
