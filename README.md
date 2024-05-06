@@ -45,8 +45,8 @@
 # Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 3.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 1.7 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 4 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 2 |
 
 # YOLO+Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera 1280*720 |
