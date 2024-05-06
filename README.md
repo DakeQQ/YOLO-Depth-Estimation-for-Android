@@ -1,4 +1,4 @@
-# YOLO-Depth-for-Android
+# YOLO-Depth Estimation-for-Android
 1. Running YOLO series and monocular depth (distance) estimation on Android devices.
 2. Demo models have been uploaded to Google Drive: https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
 3. No space left on Baidu Cloud.
@@ -15,7 +15,7 @@
 14. Estimation accuracy at the focus point is higher due to the influence of the current camera focal length.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. See more about the project: https://dakeqq.github.io/overview/
-# 安卓本地运行YOLOO与深度估计
+# 安卓本地运行YOLO与深度估计
 1. 在Android设备上运行YOLO系列与单目深度(距离)估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
 3. 百度云盘没空间了。
