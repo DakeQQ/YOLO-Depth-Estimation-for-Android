@@ -73,7 +73,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h), 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_central_position = (depth_pixels - depth_width) / 2;
-    public static final float depth_adjust_factor = 0.2f;  // Please adjust it by yourself to get more depth accuracy.
+    public static final float depth_adjust_factor = 0.3f;  // Please adjust it by yourself to get more depth accuracy.
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
     private static final float line_width = 7.f;  // draw boxes
