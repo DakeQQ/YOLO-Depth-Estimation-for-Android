@@ -440,7 +440,7 @@ Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass
         currentPbo = pbo_B;
         readPbo = pbo_A;
     }
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, currentPbo); // 使用正确的绑定点
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, currentPbo);
     glUseProgram(computeProgram);
     glDispatchCompute(workGroupCountX, workGroupCountY, 1);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, readPbo); // Use previous buffer data instead of glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
