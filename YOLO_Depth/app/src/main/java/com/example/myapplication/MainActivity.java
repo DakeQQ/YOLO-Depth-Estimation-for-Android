@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 surfaceTexture.setDefaultBufferSize(camera_width, camera_height);
                 surfaceTexture.setOnFrameAvailableListener(surfaceTexture1 -> {
                     mGLSurfaceView.requestRender();
-                    FPS_view.setText("FPS: " + String.format("%.2f", FPS));
+                    FPS_view.setText("FPS: " + String.format("%.1f", FPS));
                     depth_view.setText("Depth: " + String.format("%.2f", central_depth) + " m");
                     class_view.setText(class_result);
                     class_result.setLength(0);
@@ -204,8 +204,11 @@ public class MainActivity extends AppCompatActivity {
             if (null == mCameraDevice) return;
             mCaptureSession = session;
             try {
-                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE,
-                        CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON);
+                // Turn off for processing speed (lower power consumption). / Turn on for image quality.
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_MOTION_TRACKING);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON);
+                mPreviewRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
                 mPreviewRequest = mPreviewRequestBuilder.build();
                 mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
@@ -228,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
                                        @NonNull TotalCaptureResult result) {
-            currentFocusDistance = depth_adjust_factor / result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+            currentFocusDistance = depth_adjust_factor * result.get(CaptureResult.LENS_FOCUS_DISTANCE) * result.get(CaptureResult.LENS_FOCAL_LENGTH);
         }
     };
     private void closeCamera() {
