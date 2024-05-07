@@ -59,8 +59,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
     private static final float line_width = 6.f;  // draw boxes
-    private static final float depth_w_factor = (float) depth_width / yolo_width;
+    private static final float depth_w_factor = 0.25f * depth_width / yolo_width;
     private static final float depth_h_factor = (float) depth_height / yolo_height;
+    private static final float depth_h_factor_half = 0.5f * depth_h_factor;
     private static final float inv_yolo_width = 2.f / (float) yolo_width;
     private static final float inv_yolo_height = 2.f / (float) yolo_height;
     private static final float NMS_threshold_w = (float) yolo_width * 0.05f;
@@ -244,7 +245,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         for (int i = 0; i < nmsList.size(); i++) {
             Classifier.Recognition draw_result = nmsList.get(i);
             RectF box = draw_result.getLocation();
-            int target_position = (int) (((box.top + box.bottom) * 0.5f - 1.f) * depth_h_factor) * depth_width + (int) ((box.left + box.right) * 0.25f * depth_w_factor);
+            int target_position = (int) ((box.top + box.bottom) * depth_h_factor_half - depth_h_factor) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
             }
