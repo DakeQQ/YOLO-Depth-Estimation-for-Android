@@ -1,6 +1,3 @@
-/**
- * Create By Shawn.xiao at 2023/05/01
- */
 package com.example.myapplication;
 
 import static com.example.myapplication.GLRender.FPS;
@@ -59,8 +56,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CAMERA_PERMISSION = 1;
     public static final String file_name_class = "class.txt";
     public static final List<String> labels = new ArrayList<>();
+    @SuppressLint("StaticFieldLeak")
     public static TextView FPS_view;
+    @SuppressLint("StaticFieldLeak")
     public static TextView class_view;
+    @SuppressLint("StaticFieldLeak")
     public static TextView depth_view;
     public static StringBuilder class_result = new StringBuilder();
     public static float currentFocusDistance;
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("myapplication");
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void requestCameraPermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
             FPS_view.setText("Camera permission failed");
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         mCameraId = CameraUtils.getInstance().getCameraId();
     }
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
-        @SuppressLint("ResourceType")
+        @SuppressLint({"ResourceType", "DefaultLocale", "SetTextI18n"})
         @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
             try {
@@ -261,5 +263,4 @@ public class MainActivity extends AppCompatActivity {
     private native boolean Load_Models_B(AssetManager assetManager, boolean USE_GPU, boolean FP16, boolean USE_NNAPI, boolean USE_XNNPACK, boolean USE_QNN, boolean USE_DSP_NPU);
     public static native float[] Run_YOLO(float[] pixel_values);
     public static native float[] Run_Depth(float[] pixel_values);
-
 }
