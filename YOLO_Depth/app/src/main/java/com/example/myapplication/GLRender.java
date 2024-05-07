@@ -186,9 +186,9 @@ public class GLRender implements GLSurfaceView.Renderer {
             ArrayList<Classifier.Recognition> temp_list = new ArrayList<>(yolo_num_boxes);
             ArrayList<Classifier.Recognition> delete_list = new ArrayList<>(yolo_num_boxes);
             temp_list.add(detections.remove(0));
-            int count = 1;
+            int previous_index = 0;
             for (Classifier.Recognition d : detections) {
-                if (!Objects.equals(d.getTitle(), detections.get(count - 1).getTitle())) {
+                if (!Objects.equals(d.getTitle(), detections.get(previous_index).getTitle())) {
                     while (!temp_list.isEmpty()) {
                         Classifier.Recognition max_score = temp_list.remove(0);
                         for (Classifier.Recognition j : temp_list) {
@@ -205,7 +205,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                     }
                 }
                 temp_list.add(d);
-                count ++;
+                previous_index++;
             }
             while (!temp_list.isEmpty()) {
                 delete_list.clear();
