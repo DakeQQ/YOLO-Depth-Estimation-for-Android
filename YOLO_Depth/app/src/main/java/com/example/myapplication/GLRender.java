@@ -1,23 +1,5 @@
-/**
- * Create By Shawn.xiao at 2023/05/01
- */
 package com.example.myapplication;
 
-import static android.opengl.GLES32.GL_CLAMP_TO_EDGE;
-import static android.opengl.GLES32.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES32.GL_COMPILE_STATUS;
-import static android.opengl.GLES32.GL_FLOAT;
-import static android.opengl.GLES32.GL_FRAGMENT_SHADER;
-import static android.opengl.GLES32.GL_LINEAR;
-import static android.opengl.GLES32.GL_LINK_STATUS;
-import static android.opengl.GLES32.GL_TEXTURE0;
-import static android.opengl.GLES32.GL_TEXTURE_MAG_FILTER;
-import static android.opengl.GLES32.GL_TEXTURE_MIN_FILTER;
-import static android.opengl.GLES32.GL_TEXTURE_WRAP_S;
-import static android.opengl.GLES32.GL_TEXTURE_WRAP_T;
-import static android.opengl.GLES32.GL_TRIANGLE_STRIP;
-import static android.opengl.GLES32.GL_VERTEX_SHADER;
-import static android.opengl.GLES32.glClearColor;
 import static com.example.myapplication.MainActivity.Process_Init;
 import static com.example.myapplication.MainActivity.Process_Texture;
 import static com.example.myapplication.MainActivity.Run_Depth;
@@ -70,7 +52,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_width = 252;
     private static final int depth_height = 140;
     private static final int yolo_num_boxes = 3024;
-    private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h), 80 for COCO class
+    private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_central_position = (depth_pixels - depth_width) / 2;
     public static final float depth_adjust_factor = 0.2f;  // Please adjust it by yourself to get more depth accuracy.
@@ -129,7 +111,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES32.glEnable(GLES32.GL_BLEND);
         GLES32.glBlendFunc(GLES32.GL_SRC_ALPHA, GLES32.GL_ONE_MINUS_SRC_ALPHA);
-        glClearColor(0.f, 0.0f, 0.0f, 1.0f);
+        GLES32.glClearColor(0.f, 0.0f, 0.0f, 1.0f);
         ShaderProgram_Camera = createAndLinkProgram(camera_vertex_shader_name, camera_fragment_shader_name);
         ShaderProgram_YOLO = createAndLinkProgram(yolo_vertex_shader_name, yolo_fragment_shader_name);
         initTexture();
@@ -256,6 +238,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             return false;
         }
     }
+    @SuppressLint("DefaultLocale")
     private void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
         for (int i = 0; i < nmsList.size(); i++) {
@@ -283,14 +266,14 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
     }
     private static void Draw_Camera_Preview() {
-        GLES32.glClear(GL_COLOR_BUFFER_BIT);
+        GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT);
         GLES32.glUseProgram(ShaderProgram_Camera);
-        GLES32.glVertexAttribPointer(mVertexLocation, 2, GL_FLOAT, false, 0, getFloatBuffer(mVertexCoord));
-        GLES32.glVertexAttribPointer(mTextureLocation, 2, GL_FLOAT, false, 0, getFloatBuffer(mTextureCoord));
+        GLES32.glVertexAttribPointer(mVertexLocation, 2, GLES32.GL_FLOAT, false, 0, getFloatBuffer(mVertexCoord));
+        GLES32.glVertexAttribPointer(mTextureLocation, 2, GLES32.GL_FLOAT, false, 0, getFloatBuffer(mTextureCoord));
         GLES32.glEnableVertexAttribArray(mVertexLocation);
         GLES32.glEnableVertexAttribArray(mTextureLocation);
         GLES32.glUniformMatrix4fv(mVMatrixLocation, 1, false, vMatrix, 0);
-        GLES32.glDrawArrays(GL_TRIANGLE_STRIP, 0, mVertexCoord_half_len);
+        GLES32.glDrawArrays(GLES32.GL_TRIANGLE_STRIP, 0, mVertexCoord_half_len);
     }
     private static void initAttribLocation() {
         GLES32.glLineWidth(line_width);
@@ -304,13 +287,13 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static void initTexture() {
         GLES32.glGenTextures(mTextureId.length, mTextureId, 0);
         GLES32.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureId[0]);
-        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES32.GL_TEXTURE_MIN_FILTER, GLES32.GL_LINEAR);
+        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES32.GL_TEXTURE_MAG_FILTER, GLES32.GL_LINEAR);
+        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES32.GL_TEXTURE_WRAP_S, GLES32.GL_CLAMP_TO_EDGE);
+        GLES32.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES32.GL_TEXTURE_WRAP_T, GLES32.GL_CLAMP_TO_EDGE);
         mSurfaceTexture = new SurfaceTexture(mTextureId[0]);
         mSurfaceTexture.setDefaultBufferSize(camera_width, camera_height);
-        GLES32.glActiveTexture(GL_TEXTURE0);
+        GLES32.glActiveTexture(GLES32.GL_TEXTURE0);
         GLES32.glUniform1i(mUTextureLocation, 0);
     }
     private static int createAndLinkProgram(String vertexShaderFN, String fragShaderFN) {
@@ -319,11 +302,11 @@ public class GLRender implements GLSurfaceView.Renderer {
             return 0;
         }
         AssetManager mgr = mContext.getResources().getAssets();
-        int vertexShader = loadShader(GL_VERTEX_SHADER, loadShaderSource(mgr, vertexShaderFN));
+        int vertexShader = loadShader(GLES32.GL_VERTEX_SHADER, loadShaderSource(mgr, vertexShaderFN));
         if (0 == vertexShader) {
             return 0;
         }
-        int fragmentShader = loadShader(GL_FRAGMENT_SHADER, loadShaderSource(mgr, fragShaderFN));
+        int fragmentShader = loadShader(GLES32.GL_FRAGMENT_SHADER, loadShaderSource(mgr, fragShaderFN));
         if (0 == fragmentShader) {
             return 0;
         }
@@ -331,7 +314,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         GLES32.glAttachShader(shaderProgram, fragmentShader);
         GLES32.glLinkProgram(shaderProgram);
         int[] linked = new int[1];
-        GLES32.glGetProgramiv(shaderProgram, GL_LINK_STATUS, linked, 0);
+        GLES32.glGetProgramiv(shaderProgram, GLES32.GL_LINK_STATUS, linked, 0);
         if (linked[0] == 0) {
             GLES32.glDeleteProgram(shaderProgram);
             return 0;
@@ -346,7 +329,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         GLES32.glShaderSource(shader, shaderSource);
         GLES32.glCompileShader(shader);
         int[] compiled = new int[1];
-        GLES32.glGetShaderiv(shader, GL_COMPILE_STATUS, compiled, 0);
+        GLES32.glGetShaderiv(shader, GLES32.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
             GLES32.glDeleteShader(shader);
             return 0;
