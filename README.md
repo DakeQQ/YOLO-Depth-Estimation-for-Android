@@ -12,7 +12,7 @@
 11. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
 12. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
 13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
-14. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length.
+14. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It will show "Infinity" when distant.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO与深度(距离)估计
@@ -29,7 +29,7 @@
 11. 采用双重缓冲+异步推理來提升FPS。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
 13. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
-14. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高。
+14. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高, 太远的会显示"Infinity"。
 15. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 16. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
