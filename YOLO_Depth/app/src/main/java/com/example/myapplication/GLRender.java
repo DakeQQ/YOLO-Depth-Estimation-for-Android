@@ -250,10 +250,10 @@ public class GLRender implements GLSurfaceView.Renderer {
                 target_position = depth_pixels - 1;
             }
             class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.2f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.2f", currentFocusDistance * depth_results[target_position])).append("m").append("\n");
-            box.top = -(box.top * inv_yolo_height - 1.f);
-            box.bottom =  -(box.bottom * inv_yolo_height - 1.f);
-            box.left = -(box.left * inv_yolo_width - 1.f);
-            box.right = -(box.right * inv_yolo_width - 1.f);
+            box.top = 1.f - box.top * inv_yolo_height;
+            box.bottom = 1.f - box.bottom * inv_yolo_height;
+            box.left = 1.f - box.left * inv_yolo_width;
+            box.right = 1.f - box.right * inv_yolo_width;
             float[] rotatedVertices = {
                     box.top, box.left,
                     box.top, box.right,
