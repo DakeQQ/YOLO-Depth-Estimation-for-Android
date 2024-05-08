@@ -46,16 +46,22 @@
 # Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-small<br>q8f32 | 22 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-small<br>q8f32 | 11 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-Small<br>q8f32 | 22 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-Small<br>q8f32 | 11 |
 
 # YOLO+Depth - 性能 Performance
 | OS | Device | Backend | Model | YOLO FPS<br>Camera: 1280*720 | Depth FPS<br>Camera: 1280*720 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 28 | 16.7 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-small<br>q8f32 | 16 | 7.7 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 28 | 16.7 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 16 | 7.7 |
 # 演示结果 Demo Results
-(YOLOv8-n & Depth Anything-small)<br>
+(YOLOv8-n & Depth Anything-Small)<br>
 <br>
 ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth.gif?raw=true?raw=true)
+<br>
+<br>
+(YOLOv8-s & Depth Anything-Small-h294_w518)<br>
+![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth2.gif?raw=true?raw=true)
+
+
 
