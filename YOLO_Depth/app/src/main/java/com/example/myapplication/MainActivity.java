@@ -6,6 +6,7 @@ import static com.example.myapplication.GLRender.camera_width;
 import static com.example.myapplication.GLRender.central_depth;
 import static com.example.myapplication.GLRender.depth_adjust_factor;
 import static com.example.myapplication.GLRender.focal_length_offset;
+import static com.example.myapplication.GLRender.focus_area;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -206,10 +207,11 @@ public class MainActivity extends AppCompatActivity {
             mCaptureSession = session;
             try {
                 // Turn off for processing speed (lower power consumption). / Turn on for image quality.
-                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_MOTION_TRACKING);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_PREVIEW);
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON);
-                mPreviewRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF);
+                mPreviewRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, focus_area);
                 mPreviewRequest = mPreviewRequestBuilder.build();
                 mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
@@ -232,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
                                        @NonNull TotalCaptureResult result) {
-            currentFocusDistance = result.get(CaptureResult.LENS_FOCAL_LENGTH) - result.get(CaptureResult.LENS_FOCUS_DISTANCE) + focal_length_offset;
+            currentFocusDistance = depth_adjust_factor * (result.get(CaptureResult.LENS_FOCAL_LENGTH) - result.get(CaptureResult.LENS_FOCUS_DISTANCE) + focal_length_offset);
         }
     };
     private void closeCamera() {
