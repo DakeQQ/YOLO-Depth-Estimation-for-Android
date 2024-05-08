@@ -1,24 +1,23 @@
 # YOLO-Depth Estimation-for-Android
 1. Running YOLO series and monocular depth (distance) estimation on Android devices.
 2. Demo models have been uploaded to Google Drive: https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
-3. No space left on Baidu Cloud.
-4. After downloading, please place the model files in the assets folder.
-5. Remember to unzip the *.so compressed files stored in the libs/arm64-v8a folder.
-6. Demo models include YOLO: v8, v9 series / Depth Estimation: Depth Anything-small. They are converted from HuggingFace or ModelScope and optimized for peak execution speed.
-7. Hence, the input/output of the demo models slightly differs from the original models.
-8. Demo models are set to accept 1280x720 image input; hence, they work when the phone is held horizontally.
-9. For better compatibility with ONNX Runtime-Android, export does not utilize dynamic-axes. Therefore, the exported ONNX model may not be optimal for x86_64.
-10. This project uses OpenGL ES 3.x to directly capture camera frame textures and pass them to the GPU, minimizing image data copying and transfer. It uses GPU compute shaders to convert YUV to RGB and normalize before feeding to the model, minimizing CPU usage.
-11. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
-12. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
-13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
-14. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant.
-15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
-16. See more about the project: https://dakeqq.github.io/overview/
+3. After downloading, please place the model files in the assets folder.
+4. Remember to unzip the *.so compressed files stored in the libs/arm64-v8a folder.
+5. Demo models include YOLO: v8, v9 series / Depth Estimation: Depth Anything-small. They are converted from HuggingFace or ModelScope and optimized for peak execution speed.
+6. Hence, the input/output of the demo models slightly differs from the original models.
+7. Demo models are set to accept 1280x720 image input; hence, they work when the phone is held horizontally.
+8. For better compatibility with ONNX Runtime-Android, export does not utilize dynamic-axes. Therefore, the exported ONNX model may not be optimal for x86_64.
+9. This project uses OpenGL ES 3.x to directly capture camera frame textures and pass them to the GPU, minimizing image data copying and transfer. It uses GPU compute shaders to convert YUV to RGB and normalize before feeding to the model, minimizing CPU usage.
+10. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
+11. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
+12. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
+13. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant.
+14. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
+15. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO与深度(距离)估计
 1. 在Android设备上运行YOLO系列与单目深度(距离)估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
-3. 百度云盘没空间了。
+3. 百度云盘: https://pan.baidu.com/s/1WzRPiV9EL_ijpkgCJaZRTg?pwd=dake 提取码: dake。
 4. 下载后，请将模型文件放入assets文件夹。
 5. 记得解压存放在libs/arm64-v8a文件夹中的*.so压缩文件。
 6. 演示模型是YOLO: v8, v9 系列 / 深度(距离)估计: Depth Anything-small。 它们是从HuggingFace或ModelScope转换来的，并经过代码优化，以实现极致执行速度。
