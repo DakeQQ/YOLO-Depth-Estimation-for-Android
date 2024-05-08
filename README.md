@@ -61,6 +61,7 @@
 <br>
 <br>
 (YOLOv8-s & Depth Anything-Small-h294_w518)<br>
+<br>
 ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth2.gif?raw=true?raw=true)
 
 
