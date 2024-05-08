@@ -12,7 +12,7 @@
 11. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
 12. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
 13. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant.
-14. Consider the higher-res Model_Depth_h294_w518.ort for increased accuracy, though it runs at 1/5 the speed. Don't forget to adjust width and height in GlRender.java and project.h.
+14. Consider the higher-res Model_Depth_h294_w518.ort for increased accuracy, though it runs at 1/5 the speed. Don't forget to adjust width and height in GLRender.java and project.h.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO与深度(距离)估计
@@ -30,7 +30,7 @@
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
 13. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
 14. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高, 太近或太远的都不准。
-15. 您也可以考虑使用Model_Depth_h294_w518.ort更高分辨率的模型，它会准一些，但推理速度只有1/5. 记得在GlRender.java与project.h中修改对应的width与height数值.
+15. 您也可以考虑使用Model_Depth_h294_w518.ort更高分辨率的模型，它会准一些，但推理速度只有1/5. 记得在GLRender.java与project.h中修改对应的width与height数值.
 16. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 17. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
