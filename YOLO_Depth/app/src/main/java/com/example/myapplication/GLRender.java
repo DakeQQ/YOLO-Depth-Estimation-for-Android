@@ -55,7 +55,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_central_position = (depth_pixels - depth_width) / 2;
-    public static final float depth_adjust_factor = 0.1f;  // Please adjust it by yourself to get more depth accuracy.
+    public static final float depth_adjust_factor = 0.8f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
+    private static final float depth_adjust_bias = -0.5f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
+    public static final float focal_length_offset = 1.65f; // Please adjust it by yourself to get more depth accuracy. To make sure that "currentFocusDistance" >= 0.
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
     private static final float line_width = 6.f;  // draw boxes
@@ -145,7 +147,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             run_depth = false;
             executorService.execute(() -> {
                 depth_results = Run_Depth(image_rgb);
-                central_depth = 1.f / (currentFocusDistance * depth_results[depth_central_position]);
+                central_depth = depth_adjust_factor * currentFocusDistance / depth_results[depth_central_position] + depth_adjust_bias;
                 run_depth = true;
             });
         }
@@ -249,7 +251,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
             }
-            class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.1f", 1.f / (currentFocusDistance * depth_results[target_position]))).append(" m").append("\n");
+            class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.1f", depth_adjust_factor * currentFocusDistance / depth_results[target_position] + depth_adjust_bias)).append(" m").append("\n");
             box.top = 1.f - box.top * inv_yolo_height;
             box.bottom = 1.f - box.bottom * inv_yolo_height;
             box.left = 1.f - box.left * inv_yolo_width;
