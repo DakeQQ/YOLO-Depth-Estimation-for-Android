@@ -5,6 +5,7 @@ import static com.example.myapplication.GLRender.camera_height;
 import static com.example.myapplication.GLRender.camera_width;
 import static com.example.myapplication.GLRender.central_depth;
 import static com.example.myapplication.GLRender.depth_adjust_factor;
+import static com.example.myapplication.GLRender.focal_length_offset;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -231,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
                                        @NonNull TotalCaptureResult result) {
-            currentFocusDistance = depth_adjust_factor * result.get(CaptureResult.LENS_FOCUS_DISTANCE) * result.get(CaptureResult.LENS_FOCAL_LENGTH);
+            currentFocusDistance = result.get(CaptureResult.LENS_FOCAL_LENGTH) - result.get(CaptureResult.LENS_FOCUS_DISTANCE) + focal_length_offset;
         }
     };
     private void closeCamera() {
