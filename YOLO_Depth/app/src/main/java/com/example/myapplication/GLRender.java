@@ -149,7 +149,10 @@ public class GLRender implements GLSurfaceView.Renderer {
             run_depth = false;
             executorService.execute(() -> {
                 depth_results = Run_Depth(image_rgb);
-                central_depth = currentFocusDistance / depth_results[depth_central_position] + depth_adjust_bias;
+                central_depth = currentFocusDistance / depth_results[depth_central_position];
+                if (central_depth > 1.f) {
+                    central_depth += depth_adjust_bias;
+                }
                 run_depth = true;
             });
         }
@@ -253,7 +256,11 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
             }
-            class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.1f", currentFocusDistance / depth_results[target_position] + depth_adjust_bias)).append(" m").append("\n");
+            float depth = currentFocusDistance / depth_results[target_position];
+            if (depth > 1.f) {
+                depth += depth_adjust_bias;
+            }
+            class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.1f", depth)).append(" m").append("\n");
             box.top = 1.f - box.top * inv_yolo_height;
             box.bottom = 1.f - box.bottom * inv_yolo_height;
             box.left = 1.f - box.left * inv_yolo_width;
