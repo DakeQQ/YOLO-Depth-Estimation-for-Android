@@ -95,6 +95,18 @@ public class GLRender implements GLSurfaceView.Renderer {
             0.0f, 1.0f,
             1.0f, 1.0f
     };
+    // Center square points 1~9
+    private static final float[] square_point = {
+            -0.06f, 0.04f,
+            0.f, 0.04f,
+            0.06f, 0.04f,
+            -0.06f, 0.f,
+            0.f, 0.f,
+            0.06f, 0.f,
+            -0.06f, -0.04f,
+            0.f, -0.04f,
+            0.06f, -0.04f
+    };
     private static final float[] lowColor = {1.0f, 1.0f, 0.0f}; // Yellow for low confidence.
     private static final float[] highColor = {1.0f, 0.0f, 0.0f}; // Red for high confidence.
     private static float[] image_rgb = new float[camera_width * camera_height];
@@ -122,6 +134,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
     }
+    private static final FloatBuffer square_float_buffer = getFloatBuffer(square_point);
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -307,20 +320,9 @@ public class GLRender implements GLSurfaceView.Renderer {
             GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
             GLES32.glDrawArrays(GLES32.GL_LINE_LOOP, 0, 4);
         }
-        // Center square points 1~9
-        float[] rotatedVertices = {
-                -0.06f, 0.04f,
-                0.f, 0.04f,
-                0.06f, 0.04f,
-                -0.06f, 0.f,
-                0.f, 0.f,
-                0.06f, 0.f,
-                -0.06f, -0.04f,
-                0.f, -0.04f,
-                0.06f, -0.04f
-        };
+        // Draw center square mark.
         GLES32.glUniform4f(box_color, 1.f, 1.f, 1.f, 1.f);
-        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
+        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, square_float_buffer);
         GLES32.glDrawArrays(GLES32.GL_POINTS, 0, 9);
     }
     private static void Draw_Camera_Preview() {
