@@ -274,6 +274,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
+        float f5 = 5.f * currentFocusDistance;
         for (int i = 0; i < nmsList.size(); i++) {
             Classifier.Recognition draw_result = nmsList.get(i);
             RectF box = draw_result.getLocation();
@@ -297,7 +298,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position_bottom >= depth_pixels) {
                 target_position_bottom = depth_pixels - 1;
             }
-            float depth = 5.f * currentFocusDistance / (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]);
+            float depth = f5 / (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]);
             if (depth > 1.f) {
                 depth += depth_adjust_bias;
             }
