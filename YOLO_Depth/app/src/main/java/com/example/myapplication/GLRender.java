@@ -50,13 +50,22 @@ public class GLRender implements GLSurfaceView.Renderer {
     public static final int camera_height = 720;
     private static final int yolo_width = 512;
     private static final int yolo_height = 288;
-    private static final int depth_width = 252;
-    private static final int depth_height = 140;
+    private static final int depth_width = 518;
+    private static final int depth_height = 294;
     private static final int yolo_num_boxes = 3024;
     private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
-    private static final int depth_central_position = (depth_pixels - depth_width) / 2;
-    public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width / 2, camera_height / 2, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
+    private static final int depth_central_position_5 = (depth_pixels - depth_width) / 2;
+    private static final int depth_central_position_2 = depth_central_position_5 - depth_width;
+    private static final int depth_central_position_8 = depth_central_position_5 + depth_width;
+    private static final int depth_central_position_1 = depth_central_position_2 - 10;
+    private static final int depth_central_position_3 = depth_central_position_2 + 10;
+    private static final int depth_central_position_4 = depth_central_position_5 - 10;
+    private static final int depth_central_position_6 = depth_central_position_5 + 10;
+    private static final int depth_central_position_7 = depth_central_position_8 - 10;
+    private static final int depth_central_position_9 = depth_central_position_8 + 10;
+    private static final int[] depth_central_area = new int[]{depth_central_position_1, depth_central_position_2, depth_central_position_3, depth_central_position_4, depth_central_position_5, depth_central_position_6, depth_central_position_7, depth_central_position_8, depth_central_position_9};
+    public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width / 2, camera_height / 2, 50, 50, MeteringRectangle.METERING_WEIGHT_MAX)};
     public static final float depth_adjust_factor = 0.8f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float depth_adjust_bias = -0.5f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     public static final float focal_length_offset = 1.65f; // Please adjust it by yourself to get more depth accuracy. To make sure that "currentFocusDistance" >= 0.
@@ -149,7 +158,11 @@ public class GLRender implements GLSurfaceView.Renderer {
             run_depth = false;
             executorService.execute(() -> {
                 depth_results = Run_Depth(image_rgb);
-                central_depth = currentFocusDistance / depth_results[depth_central_position];
+                float center_area = 0.f;
+                for (int i = 0; i < 9; i++) {
+                    center_area += depth_results[depth_central_area[i]];
+                }
+                central_depth = 9.f * currentFocusDistance / center_area;
                 if (central_depth > 1.f) {
                     central_depth += depth_adjust_bias;
                 }
@@ -276,6 +289,20 @@ public class GLRender implements GLSurfaceView.Renderer {
             GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
             GLES32.glDrawArrays(GLES32.GL_LINE_LOOP, 0, 4);
         }
+        // Center cross
+        float[] rotatedVertices = {
+                0.f, -0.04f,
+                0.f, 0.04f,
+        };
+        GLES32.glUniform4f(box_color, 1.f, 1.f, 1.f, 1.f);
+        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
+        GLES32.glDrawArrays(GLES32.GL_LINE_STRIP, 0, 2);
+        rotatedVertices = new float[]{
+                0.06f, 0.f,
+                -0.06f, 0.f
+        };
+        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
+        GLES32.glDrawArrays(GLES32.GL_LINE_STRIP, 0, 2);
     }
     private static void Draw_Camera_Preview() {
         GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT);
