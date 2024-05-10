@@ -83,37 +83,12 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float NMS_threshold_h = (float) yolo_height * 0.05f;
     public static float FPS;
     public static float central_depth;
-    private static final float[] mVertexCoord = {
-            -1f, -1f,
-            1f, -1f,
-            -1f, 1f,
-            1f, 1f
-    };
-    private static final float[] mTextureCoord = {
-            0.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f
-    };
-    // Center square points 1~9
-    private static final float[] square_point = {
-            -0.06f, 0.04f,
-            0.f, 0.04f,
-            0.06f, 0.04f,
-            -0.06f, 0.f,
-            0.f, 0.f,
-            0.06f, 0.f,
-            -0.06f, -0.04f,
-            0.f, -0.04f,
-            0.06f, -0.04f
-    };
     private static final float[] lowColor = {1.0f, 1.0f, 0.0f}; // Yellow for low confidence.
     private static final float[] highColor = {1.0f, 0.0f, 0.0f}; // Red for high confidence.
     private static float[] image_rgb = new float[camera_width * camera_height];
     private static float[] depth_results = new float[depth_pixels];
     public static final float[] vMatrix = new float[16];
     private static final int[] mTextureId = new int[1];
-    private static final int mVertexCoord_half_len = mVertexCoord.length / 2;
     private static final String VERTEX_ATTRIB_POSITION = "aPosVertex";
     private static final String VERTEX_ATTRIB_TEXTURE_POSITION = "aTexVertex";
     private static final String UNIFORM_TEXTURE = "camera_texture";
@@ -134,8 +109,30 @@ public class GLRender implements GLSurfaceView.Renderer {
     public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
     }
-    private static final FloatBuffer square_float_buffer = getFloatBuffer(square_point);
-
+    // Center square points 1~9
+    private static final FloatBuffer square_float_buffer = getFloatBuffer(new float[]{
+            -0.06f, 0.04f,
+            0.f, 0.04f,
+            0.06f, 0.04f,
+            -0.06f, 0.f,
+            0.f, 0.f,
+            0.06f, 0.f,
+            -0.06f, -0.04f,
+            0.f, -0.04f,
+            0.06f, -0.04f
+    });
+    private static final FloatBuffer mVertexCoord_buffer = getFloatBuffer(new float[]{
+            -1f, -1f,
+            1f, -1f,
+            -1f, 1f,
+            1f, 1f
+    });
+    private static final FloatBuffer mTextureCoord_buffer = getFloatBuffer(new float[]{
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f
+    });
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES32.glEnable(GLES32.GL_BLEND);
@@ -328,12 +325,12 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static void Draw_Camera_Preview() {
         GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT);
         GLES32.glUseProgram(ShaderProgram_Camera);
-        GLES32.glVertexAttribPointer(mVertexLocation, 2, GLES32.GL_FLOAT, false, 0, getFloatBuffer(mVertexCoord));
-        GLES32.glVertexAttribPointer(mTextureLocation, 2, GLES32.GL_FLOAT, false, 0, getFloatBuffer(mTextureCoord));
+        GLES32.glVertexAttribPointer(mVertexLocation, 2, GLES32.GL_FLOAT, false, 0, mVertexCoord_buffer);
+        GLES32.glVertexAttribPointer(mTextureLocation, 2, GLES32.GL_FLOAT, false, 0, mTextureCoord_buffer);
         GLES32.glEnableVertexAttribArray(mVertexLocation);
         GLES32.glEnableVertexAttribArray(mTextureLocation);
         GLES32.glUniformMatrix4fv(mVMatrixLocation, 1, false, vMatrix, 0);
-        GLES32.glDrawArrays(GLES32.GL_TRIANGLE_STRIP, 0, mVertexCoord_half_len);
+        GLES32.glDrawArrays(GLES32.GL_TRIANGLE_STRIP, 0, 4);  // mVertexCoord.length / 2
     }
     private static void initAttribLocation() {
         GLES32.glLineWidth(line_width);
