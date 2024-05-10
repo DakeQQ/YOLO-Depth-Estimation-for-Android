@@ -60,13 +60,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_5 = (depth_pixels - depth_width) / 2;
     private static final int depth_central_position_8 = depth_central_position_5 - depth_width_offset;
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
-    private static final int depth_central_position_1 = depth_central_position_2 - depth_height_offset;
-    private static final int depth_central_position_3 = depth_central_position_2 + depth_height_offset;
-    private static final int depth_central_position_4 = depth_central_position_5 - depth_height_offset;
-    private static final int depth_central_position_6 = depth_central_position_5 + depth_height_offset;
-    private static final int depth_central_position_7 = depth_central_position_8 - depth_height_offset;
-    private static final int depth_central_position_9 = depth_central_position_8 + depth_height_offset;
-    private static final int[] depth_central_area = new int[]{depth_central_position_1, depth_central_position_2, depth_central_position_3, depth_central_position_4, depth_central_position_5, depth_central_position_6, depth_central_position_7, depth_central_position_8, depth_central_position_9};
+    private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width / 2, camera_height / 2, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
     public static final float depth_adjust_factor = 0.8f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float depth_adjust_bias = -0.5f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
@@ -274,7 +268,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
-        float f5 = 5.f * currentFocusDistance;
+        float f5 = currentFocusDistance * 5.f;
         for (int i = 0; i < nmsList.size(); i++) {
             Classifier.Recognition draw_result = nmsList.get(i);
             RectF box = draw_result.getLocation();
