@@ -218,8 +218,7 @@ extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject thiz,
                                                             jobject asset_manager,
-                                                            jboolean use_gpu,
-                                                            jboolean use_fp16,
+                                                            jboolean use_gpu, jboolean use_fp16,
                                                             jboolean use_nnapi,
                                                             jboolean use_xnnpack,
                                                             jboolean use_qnn,
@@ -432,19 +431,17 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
 extern "C"
 JNIEXPORT jfloatArray JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz) {
-    GLuint currentPbo;
-    GLuint readPbo;
     if (usePboA) {
-        currentPbo = pbo_A;
-        readPbo = pbo_B;
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
+        glUseProgram(computeProgram);
+        glDispatchCompute(workGroupCountX, workGroupCountY, 1);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     } else {
-        currentPbo = pbo_B;
-        readPbo = pbo_A;
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B);
+        glUseProgram(computeProgram);
+        glDispatchCompute(workGroupCountX, workGroupCountY, 1);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
     }
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, currentPbo);
-    glUseProgram(computeProgram);
-    glDispatchCompute(workGroupCountX, workGroupCountY, 1);
-    glBindBuffer(GL_PIXEL_PACK_BUFFER, readPbo); // Use previous buffer data instead of glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     jfloatArray final_results = env->NewFloatArray(pixelCount_rgb);
     env->SetFloatArrayRegion(final_results, 0, pixelCount_rgb, (float*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize, GL_MAP_READ_BIT));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
@@ -471,7 +468,7 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     glGenBuffers(1, &pbo_B);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize, nullptr, GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B); // 使用同的binding point
     glBindImageTexture(0, static_cast<GLuint> (texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 extern "C"
@@ -486,11 +483,12 @@ Java_com_example_myapplication_MainActivity_Run_1YOLO(JNIEnv *env, jclass clazz,
             input_dims_A[0].data(), input_dims_A[0].size(), input_types_A[0], &input_tensors_A[0]);
     ort_runtime_A->ReleaseMemoryInfo(memory_info);
     ort_runtime_A->Run(session_model_A, nullptr, input_names_A.data(), (const OrtValue* const*) input_tensors_A.data(),
-                       input_tensors_A.size(), output_names_A.data(), output_names_A.size(), output_tensors_A.data());
+                       input_tensors_A.size(), output_names_A.data(), output_names_A.size(),
+                       output_tensors_A.data());
     void* output_tensors_buffer_A;
     ort_runtime_A->GetTensorMutableData(output_tensors_A[0], &output_tensors_buffer_A);
     jfloatArray final_results = env->NewFloatArray(output_size_A);
-    env->SetFloatArrayRegion(final_results, 0, output_size_A, reinterpret_cast<float*> (output_tensors_buffer_A));
+    env->SetFloatArrayRegion(final_results, 0, output_size_A,reinterpret_cast<float*> (output_tensors_buffer_A));
     return final_results;
 }
 
@@ -507,10 +505,11 @@ Java_com_example_myapplication_MainActivity_Run_1Depth(JNIEnv *env, jclass clazz
             input_dims_B[0].data(), input_dims_B[0].size(), input_types_B[0], &input_tensors_B[0]);
     ort_runtime_B->ReleaseMemoryInfo(memory_info);
     ort_runtime_B->Run(session_model_B, nullptr, input_names_B.data(), (const OrtValue* const*) input_tensors_B.data(),
-                       input_tensors_B.size(), output_names_B.data(), output_names_B.size(), output_tensors_B.data());
+                       input_tensors_B.size(), output_names_B.data(), output_names_B.size(),
+                       output_tensors_B.data());
     void* output_tensors_buffer_B;
     ort_runtime_B->GetTensorMutableData(output_tensors_B[0], &output_tensors_buffer_B);
     jfloatArray final_results = env->NewFloatArray(output_size_B);
-    env->SetFloatArrayRegion(final_results, 0, output_size_B, reinterpret_cast<float*> (output_tensors_buffer_B));
+    env->SetFloatArrayRegion(final_results, 0, output_size_B,reinterpret_cast<float*> (output_tensors_buffer_B));
     return final_results;
 }
