@@ -261,7 +261,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
     }
     @SuppressLint("DefaultLocale")
-    private void drawBox(ArrayList<Classifier.Recognition> nmsList) {
+    private static void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
         float focus_factor = currentFocusDistance * 5.f;
         for (int i = 0; i < nmsList.size(); i++) {
