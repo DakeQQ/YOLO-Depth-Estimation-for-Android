@@ -102,17 +102,13 @@ public class GLRender implements GLSurfaceView.Renderer {
     public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
     }
-    // Center square points 1~9
+    // Center cross '+'
     private static final FloatBuffer square_float_buffer = getFloatBuffer(new float[]{
-            -0.06f, 0.04f,
+            0.f, -0.04f,
             0.f, 0.04f,
-            0.06f, 0.04f,
-            -0.06f, 0.f,
             0.f, 0.f,
             0.06f, 0.f,
-            -0.06f, -0.04f,
-            0.f, -0.04f,
-            0.06f, -0.04f
+            -0.06f, 0.f
     });
     private static final FloatBuffer mVertexCoord_buffer = getFloatBuffer(new float[]{
             -1f, -1f,
@@ -311,10 +307,10 @@ public class GLRender implements GLSurfaceView.Renderer {
             GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
             GLES32.glDrawArrays(GLES32.GL_LINE_LOOP, 0, 4);
         }
-        // Draw center square mark.
+        // Draw center cross mark.
         GLES32.glUniform4f(box_color, 1.f, 1.f, 1.f, 1.f);
         GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, square_float_buffer);
-        GLES32.glDrawArrays(GLES32.GL_POINTS, 0, 9);
+        GLES32.glDrawArrays(GLES32.GL_LINE_STRIP, 0, 5);
     }
     private static void Draw_Camera_Preview() {
         GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT);
