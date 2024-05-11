@@ -50,8 +50,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     public static final int camera_height = 720;
     private static final int yolo_width = 512;
     private static final int yolo_height = 288;
-    private static final int depth_width = 252;
-    private static final int depth_height = 140;
+    private static final int depth_width = 518;
+    private static final int depth_height = 294;
     private static final int yolo_num_boxes = 3024;
     private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
@@ -68,7 +68,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
     private static final float line_width = 6.f;  // draw boxes
-    private static final float depth_w_factor = 0.25f * depth_width / yolo_width;
+    private static final float depth_w_factor = (float) depth_width / yolo_width;
     private static final float depth_h_factor = (float) depth_height / yolo_height;
     private static final float depth_h_factor_half = 0.5f * depth_h_factor;
     private static final float inv_yolo_width = 2.f / (float) yolo_width;
@@ -268,11 +268,11 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
-        float f5 = currentFocusDistance * 5.f;
+        float focus_factor = currentFocusDistance * 5.f;
         for (int i = 0; i < nmsList.size(); i++) {
             Classifier.Recognition draw_result = nmsList.get(i);
             RectF box = draw_result.getLocation();
-            int target_position = (int) ((box.top + box.bottom) * depth_h_factor_half - depth_h_factor) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
+            int target_position =  ((int) ((box.top + box.bottom) * depth_h_factor_half) - 1) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
             }
@@ -292,7 +292,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position_bottom >= depth_pixels) {
                 target_position_bottom = depth_pixels - 1;
             }
-            float depth = f5 / (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]);
+            float depth = focus_factor / (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]);
             if (depth > 1.f) {
                 depth += depth_adjust_bias;
             }
