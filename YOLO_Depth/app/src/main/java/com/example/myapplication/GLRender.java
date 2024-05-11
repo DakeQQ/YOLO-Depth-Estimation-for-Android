@@ -270,6 +270,8 @@ public class GLRender implements GLSurfaceView.Renderer {
             int target_position =  ((int) ((box.top + box.bottom) * depth_h_factor) - 1) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
+            } else if (target_position < 0) {
+                target_position = 0;
             }
             int target_position_left = target_position - depth_height_offset;
             if (target_position_left < 0) {
