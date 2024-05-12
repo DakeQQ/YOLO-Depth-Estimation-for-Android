@@ -42,7 +42,7 @@
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-s<br>q8f32 | 21 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-n<br>q8f32 | 43 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | NAS-s<br>q8f32 | 19 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | NAS-m<br>q8f32 | 8.5 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | NAS-m<br>q8f32 | 9 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v9-C<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-s<br>q8f32 | 10.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-n<br>q8f32 | 22 |
