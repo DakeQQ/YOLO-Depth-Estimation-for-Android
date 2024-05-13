@@ -62,8 +62,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width / 2, camera_height / 2, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
-    public static final float depth_adjust_factor = 1.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
-    private static final float depth_adjust_bias = -0.7f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
+    public static final float depth_adjust_factor = 0.65.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
+    private static final float depth_adjust_bias = -0.2f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     public static final float focal_length_offset = 1.65f; // Please adjust it by yourself to get more depth accuracy. To make sure that "currentFocusDistance" >= 0.
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
