@@ -229,7 +229,6 @@ public class GLRender implements GLSurfaceView.Renderer {
                 previous_index++;
             }
             while (!temp_list.isEmpty()) {
-                delete_list.clear();
                 Classifier.Recognition max_score = temp_list.remove(0);
                 for (Classifier.Recognition j : temp_list) {
                     if (same_item(max_score.getLocation(), j.getLocation())) {
@@ -241,6 +240,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 }
                 nmsList.add(max_score);
                 temp_list.removeAll(delete_list);
+                delete_list.clear();
             }
         }
         return nmsList;
