@@ -11,7 +11,7 @@
 10. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
 11. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
 12. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
-13. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant.
+13. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant. Indoor scenes are more accurate than outdoor ones.
 14. Consider the higher-res Model_Depth_h294_w518.ort for increased accuracy, though it runs at 1/5 the speed. Don't forget to adjust width and height in GLRender.java and project.h.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. We will make the model exported method public later.
@@ -30,7 +30,7 @@
 11. 采用双重缓冲+异步推理來提升FPS。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
 13. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
-14. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高, 太近或太远的都不准。
+14. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高, 太近或太远的都不准。室内场景比室外准。
 15. 您也可以考虑使用Model_Depth_h294_w518.ort更高分辨率的模型，它会准一些，但推理速度只有1/5. 记得在GLRender.java与project.h中修改对应的width与height数值.
 16. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 17. 我们未来会提供转换导出模型的方法。
