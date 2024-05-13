@@ -103,7 +103,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         return mSurfaceTexture;
     }
     // Center cross '+'
-    private static final FloatBuffer square_float_buffer = getFloatBuffer(new float[]{
+    private static final FloatBuffer cross_float_buffer = getFloatBuffer(new float[]{
             0.f, -0.04f,
             0.f, 0.04f,
             0.f, 0.f,
@@ -310,7 +310,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
         // Draw center cross mark.
         GLES32.glUniform4f(box_color, 1.f, 1.f, 1.f, 1.f);
-        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, square_float_buffer);
+        GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, cross_float_buffer);
         GLES32.glDrawArrays(GLES32.GL_LINE_STRIP, 0, 5);
     }
     private static void Draw_Camera_Preview() {
