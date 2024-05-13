@@ -264,9 +264,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static void drawBox(ArrayList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
         float focus_factor = currentFocusDistance * 5.f;
-        for (int i = 0; i < nmsList.size(); i++) {
-            Classifier.Recognition draw_result = nmsList.get(i);
-            RectF box = draw_result.getLocation();
+        for (Classifier.Recognition draw_target : nmsList) {
+            RectF box = draw_target.getLocation();
             int target_position =  ((int) ((box.top + box.bottom) * depth_h_factor) - 1) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
             if (target_position >= depth_pixels) {
                 target_position = depth_pixels - 1;
@@ -293,7 +292,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (depth > 1.f) {
                 depth += depth_adjust_bias;
             }
-            class_result.append(i).append(". ").append(draw_result.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_result.getConfidence())).append("% / ").append(String.format("%.1f", depth)).append(" m").append("\n");
+            class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence())).append("% / ").append(String.format("%.1f", depth)).append(" m").append("\n");
             box.top = 1.f - box.top * inv_yolo_height;
             box.bottom = 1.f - box.bottom * inv_yolo_height;
             box.left = 1.f - box.left * inv_yolo_width;
@@ -304,7 +303,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                     box.bottom, box.right,
                     box.bottom, box.left
             };
-            float[] color = getColorFromConfidence(draw_result.getConfidence());
+            float[] color = getColorFromConfidence(draw_target.getConfidence());
             GLES32.glUniform4f(box_color, color[0], color[1], color[2], 1.f);
             GLES32.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
             GLES32.glDrawArrays(GLES32.GL_LINE_LOOP, 0, 4);
