@@ -163,7 +163,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 for (int i = 0; i < 9; i++) {
                     center_area += depth_results[depth_central_area[i]];
                 }
-                central_depth = 9.f * currentFocusDistance / center_area;
+                central_depth = 4.5f * currentFocusDistance / center_area + 0.5f * central_depth;  // Get average: (now + previous) / 2 
                 if (central_depth > 1.f) {
                     central_depth += depth_adjust_bias;
                 }
