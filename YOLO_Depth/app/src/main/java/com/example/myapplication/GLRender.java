@@ -163,6 +163,9 @@ public class GLRender implements GLSurfaceView.Renderer {
                 for (int i = 0; i < 9; i++) {
                     center_area += depth_results[depth_central_area[i]];
                 }
+                if (center_area < 0.1f) {
+                    center_area = 0.1f;
+                }
                 central_depth = (9f * currentFocusDistance / center_area + central_depth) * 0.5f;  // Get average: (now + previous) / 2 
                 if (central_depth > 1.f) {
                     central_depth += depth_adjust_bias;
@@ -288,7 +291,11 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position_bottom >= depth_pixels) {
                 target_position_bottom = depth_pixels - 1;
             }
-            float depth = focus_factor / (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]);
+            float sum_depth_results = depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom];
+            if (sum_depth_results < 0.1f) {
+                sum_depth_results = 0.1f;
+            }
+            float depth = focus_factor / sum_depth_results;
             if (depth > 1.f) {
                 depth += depth_adjust_bias;
             }
