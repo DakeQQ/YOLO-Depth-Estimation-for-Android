@@ -146,7 +146,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-        if (!run_yolo && !run_depth) {
+        if (!run_yolo && !run_depth && !run_twinLite) {
             image_rgb = Process_Texture();
         }
         if (run_yolo) {
