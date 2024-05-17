@@ -652,7 +652,7 @@ Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass
         glDispatchCompute(workGroupCountX, workGroupCountY, 1);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     } else {
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, pbo_B);
         glUseProgram(computeProgram);
         glDispatchCompute(workGroupCountX, workGroupCountY, 1);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
@@ -683,7 +683,7 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     glGenBuffers(1, &pbo_B);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize, nullptr, GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_B); // 使用同的binding point
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, pbo_B);
     glBindImageTexture(0, static_cast<GLuint> (texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 extern "C"
@@ -703,7 +703,7 @@ Java_com_example_myapplication_MainActivity_Run_1YOLO(JNIEnv *env, jclass clazz,
     void* output_tensors_buffer_A;
     ort_runtime_A->GetTensorMutableData(output_tensors_A[0], &output_tensors_buffer_A);
     jfloatArray final_results = env->NewFloatArray(output_size_A);
-    env->SetFloatArrayRegion(final_results, 0, output_size_A,reinterpret_cast<float*> (output_tensors_buffer_A));
+    env->SetFloatArrayRegion(final_results, 0, output_size_A, reinterpret_cast<float*> (output_tensors_buffer_A));
     return final_results;
 }
 
@@ -725,7 +725,7 @@ Java_com_example_myapplication_MainActivity_Run_1Depth(JNIEnv *env, jclass clazz
     void* output_tensors_buffer_B;
     ort_runtime_B->GetTensorMutableData(output_tensors_B[0], &output_tensors_buffer_B);
     jfloatArray final_results = env->NewFloatArray(output_size_B);
-    env->SetFloatArrayRegion(final_results, 0, output_size_B,reinterpret_cast<float*> (output_tensors_buffer_B));
+    env->SetFloatArrayRegion(final_results, 0, output_size_B, reinterpret_cast<float*> (output_tensors_buffer_B));
     return final_results;
 }
 
@@ -748,6 +748,6 @@ Java_com_example_myapplication_MainActivity_Run_1TwinLite(JNIEnv *env, jclass cl
     auto* output = reinterpret_cast<float*> (output_tensors_buffer_C);
     int out_length = static_cast<int> (output[0] + output[1] + 2);
     jfloatArray final_results = env->NewFloatArray(out_length);
-    env->SetFloatArrayRegion(final_results, 0, out_length,output);
+    env->SetFloatArrayRegion(final_results, 0, out_length, output);
     return final_results;
 }
