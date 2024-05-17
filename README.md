@@ -17,7 +17,7 @@
 16. TwinLiteNet's lane detection accuracy is low, with the cause currently unclear.
 17. We will make the model exported method public later.
 18. See more about the project: https://dakeqq.github.io/overview/
-# 安卓本地运行YOLO与深度(距离)估计
+# 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
 3. 百度云盘: https://pan.baidu.com/s/1WzRPiV9EL_ijpkgCJaZRTg?pwd=dake 提取码: dake。
