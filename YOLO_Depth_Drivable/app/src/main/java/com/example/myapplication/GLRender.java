@@ -179,9 +179,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         if (run_twinLite) {
             run_twinLite = false;
             executorService.execute(() -> {
-                long t = System.currentTimeMillis();
                 draw_queue_twinLite.add(Run_TwinLite(image_rgb));
-                System.out.println(System.currentTimeMillis() - t);
                 run_twinLite = true;
             });
         }
