@@ -15,8 +15,9 @@
 14. Consider the higher-res Model_Depth_h294_w518.ort for increased accuracy, though it runs at 1/5 the speed. Don't forget to adjust width and height in GLRender.java and project.h.
 15. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 16. TwinLiteNet's lane detection accuracy is low, with the cause currently unclear.
-17. We will make the model exported method public later.
-18. See more about the project: https://dakeqq.github.io/overview/
+17. Detectable drivable areas can be affected by reflections from water or smooth surfaces, as well as at shadow boundaries.
+18. We will make the model exported method public later.
+19. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -35,8 +36,9 @@
 15. 您也可以考虑使用Model_Depth_h294_w518.ort更高分辨率的模型，它会准一些，但推理速度只有1/5. 记得在GLRender.java与project.h中修改对应的width与height数值.
 16. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 17. TwinLiteNet的车道线估计准确率不高，原因暂时不明。
-18. 我们未来会提供转换导出模型的方法。
-19. 看更多項目: https://dakeqq.github.io/overview/
+18. 可行驶区域检测会受到积水或光滑地面的反光影响，阴影交界处也会。
+19. 我们未来会提供转换导出模型的方法。
+20. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
