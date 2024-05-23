@@ -44,11 +44,11 @@
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v9-C<br>q8f32 | 6.5 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-s<br>q8f32 | 21 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | v8-n<br>q8f32 | 43 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | NAS-s<br>q8f32 | 19 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | NAS-m<br>q8f32 | 9 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v9-C<br>q8f32 | 6.5 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-s<br>q8f32 | 21 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-n<br>q8f32 | 43 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-s<br>q8f32 | 19 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-m<br>q8f32 | 9 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v9-C<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-s<br>q8f32 | 10.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-n<br>q8f32 | 22 |
@@ -58,19 +58,19 @@
 # Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | Depth Anything-Small<br>q8f32 | 22 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | Depth Anything-Small<br>q8f32 | 22 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-Small<br>q8f32 | 11 |
 
 # YOLO+Depth - 性能 Performance
 | OS | Device | Backend | Model | YOLO FPS<br>Camera: h720*w1280 | Depth FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 28 | 16.7 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 28 | 16.7 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 16 | 7.7 |
 
 # Drivable Area - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X2+A715) | TwinLiteNet<br>q8f32 | 56 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | TwinLiteNet<br>q8f32 | 56 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | TwinLiteNet<br>q8f32 | 28 |
 
 # 演示结果 Demo Results
