@@ -25,8 +25,7 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,11 +48,11 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int BYTES_FLOAT_2 = 8;
     public static final int camera_width = 1280;  // Please modify the project.h file simultaneously when editing these values.
     public static final int camera_height = 720;
-    private static final int yolo_width = 512;
+    private static final int yolo_width = 512;  // Not 640 * 640 for the demo model *.ort.
     private static final int yolo_height = 288;
     private static final int depth_width = 518;
     private static final int depth_height = 294;
-    private static final int yolo_num_boxes = 3024;
+    private static final int yolo_num_boxes = 3024;  // Not 8400, due to the model input had been resized.
     private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
@@ -95,10 +94,10 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final String yolo_fragment_shader_name = "yolo_fragment_shader.glsl";
     public static SurfaceTexture mSurfaceTexture;
     private static boolean run_yolo = true;  // true for turn on the function.
-    private static boolean run_depth = true;  // true for turn on the function. Enabling both YOLO and depth estimation simultaneously decrease performance by 30+%.
-    private static boolean run_twinLite = true;
-    private static final List<ArrayList<Classifier.Recognition>> draw_queue_yolo = new ArrayList<>();
-    private static final List<float[]> draw_queue_twinLite = new ArrayList<>();
+    private static boolean run_depth = false;  // true for turn on the function. Enabling both YOLO and depth estimation simultaneously decrease performance by 30+%.
+    private static boolean run_twinLite = false;  // true for turn on the function.
+    private static final LinkedList<LinkedList<Classifier.Recognition>> draw_queue_yolo = new LinkedList<>();
+    private static final LinkedList<float[]> draw_queue_twinLite = new LinkedList<>();
     public GLRender(Context context) {
         mContext = context;
     }
@@ -184,14 +183,14 @@ public class GLRender implements GLSurfaceView.Renderer {
             });
         }
         if (!draw_queue_yolo.isEmpty()) {
-            drawBox(draw_queue_yolo.remove(0));
+            drawBox(draw_queue_yolo.removeFirst());
         }
         if (!draw_queue_twinLite.isEmpty()) {
-            draw_area_lane(draw_queue_twinLite.remove(0));
+            draw_area_lane(draw_queue_twinLite.removeFirst());
         }
     }
-    private static ArrayList<Classifier.Recognition> Post_Process_Yolo(float[] outputs) {
-        List<Classifier.Recognition> detections = new ArrayList<>(yolo_num_boxes);
+    private static LinkedList<Classifier.Recognition> Post_Process_Yolo(float[] outputs) {
+        LinkedList<Classifier.Recognition> detections = new LinkedList<>();
         int startIndex = 0;
         for (int i = 0; i < yolo_num_boxes; ++i) {
             int class_id = 4;
@@ -218,16 +217,16 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
 
         // NMS
-        ArrayList<Classifier.Recognition> nmsList = new ArrayList<>(yolo_num_boxes);
+        LinkedList<Classifier.Recognition> nmsList = new LinkedList<>();
         if (!detections.isEmpty()) {
-            ArrayList<Classifier.Recognition> temp_list = new ArrayList<>(yolo_num_boxes);
-            ArrayList<Classifier.Recognition> delete_list = new ArrayList<>(yolo_num_boxes);
-            temp_list.add(detections.remove(0));
+            LinkedList<Classifier.Recognition> temp_list = new LinkedList<>();
+            LinkedList<Classifier.Recognition> delete_list = new LinkedList<>();
+            temp_list.add(detections.removeFirst());
             int previous_index = 0;
             for (Classifier.Recognition d : detections) {
                 if (!Objects.equals(d.getTitle(), detections.get(previous_index).getTitle())) {
                     while (!temp_list.isEmpty()) {
-                        Classifier.Recognition max_score = temp_list.remove(0);
+                        Classifier.Recognition max_score = temp_list.removeFirst();
                         for (Classifier.Recognition j : temp_list) {
                             if (same_item(max_score.getLocation(), j.getLocation())) {
                                 if (j.getConfidence() > max_score.getConfidence()) {
@@ -245,7 +244,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 previous_index++;
             }
             while (!temp_list.isEmpty()) {
-                Classifier.Recognition max_score = temp_list.remove(0);
+                Classifier.Recognition max_score = temp_list.removeFirst();
                 for (Classifier.Recognition j : temp_list) {
                     if (same_item(max_score.getLocation(), j.getLocation())) {
                         if (j.getConfidence() > max_score.getConfidence()) {
@@ -277,7 +276,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
     }
     @SuppressLint("DefaultLocale")
-    private static void drawBox(ArrayList<Classifier.Recognition> nmsList) {
+    private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
         float focus_factor = currentFocusDistance * 5.f;
         for (Classifier.Recognition draw_target : nmsList) {
@@ -448,4 +447,5 @@ public class GLRender implements GLSurfaceView.Renderer {
         }
         return color;
     }
+
 }
