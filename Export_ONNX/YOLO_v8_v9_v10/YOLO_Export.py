@@ -17,7 +17,7 @@ shutil.copyfile(modified_tasks_path, ultralytics_nn_path + modified_tasks_path.s
 
 from ultralytics import YOLO
 # Load a model
-model = YOLO("yolov8n.pt")  # load an official model, or specify your own model path.
+model = YOLO("yolov10n.pt")  # load an official model, or specify your own model path.
 
 # Export the model
 model.export(format='onnx')  # The exported model will save at the current folder.
