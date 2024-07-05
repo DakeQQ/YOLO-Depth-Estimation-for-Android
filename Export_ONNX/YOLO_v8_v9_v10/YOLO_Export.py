@@ -7,13 +7,12 @@ ultralytics_engine_path = 'C:/Users/dake/.conda/envs/python_311/Lib/site-package
 ultralytics_nn_path = 'C:/Users/dake/.conda/envs/python_311/Lib/site-packages/ultralytics/nn/'  # The original ultralytics/nn path which was stored in the python packages.
 
 # Import the yolo_config
-temp_file_name = config_path.split("/")[1]
-shutil.copyfile(config_path, ultralytics_engine_path + temp_file_name)
-shutil.copyfile(config_path, ultralytics_nn_path + temp_file_name)
+shutil.copyfile(config_path, ultralytics_engine_path + "yolo_config.py")
+shutil.copyfile(config_path, ultralytics_nn_path + "yolo_config.py")
 
 # Replace the original source code file.
-shutil.copyfile(modified_exporter_path, ultralytics_engine_path + modified_exporter_path.split("/")[2])
-shutil.copyfile(modified_tasks_path, ultralytics_nn_path + modified_tasks_path.split("/")[2])
+shutil.copyfile(modified_exporter_path, ultralytics_engine_path + "exporter.py")
+shutil.copyfile(modified_tasks_path, ultralytics_nn_path + "tasks.py")
 
 from ultralytics import YOLO
 # Load a model
