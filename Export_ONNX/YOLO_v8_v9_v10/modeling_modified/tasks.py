@@ -152,7 +152,7 @@ class BaseModel(nn.Module):
             x_12 = self.model[12](self.model[11]([self.model[10](x_9), x_6]))
             x_15 = self.model[15](self.model[14]([self.model[13](x_12), x_4]))
             x_18 = self.model[18](self.model[17]([self.model[16](x_15), x_12]))
-            return self.model[22]([x_15, x_18, self.model[21](self.model[20]([self.model[19](x_18), x_9]))]).squeeze(0).T
+            return self.model[22]([x_15, x_18, self.model[21](self.model[20]([self.model[19](x_18), x_9]))]).squeeze(0).transpose(1, 2)
 
 
     def _predict_augment(self, x):
