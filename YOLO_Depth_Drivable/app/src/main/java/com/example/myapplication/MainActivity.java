@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     public static TextView depth_view;
     public static StringBuilder class_result = new StringBuilder();
-    public static float currentFocusDistance;
 
     static {
         System.loadLibrary("myapplication");
