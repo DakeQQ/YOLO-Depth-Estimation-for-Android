@@ -6,7 +6,6 @@ import static com.example.myapplication.MainActivity.Run_Depth;
 import static com.example.myapplication.MainActivity.Run_TwinLite;
 import static com.example.myapplication.MainActivity.Run_YOLO;
 import static com.example.myapplication.MainActivity.class_result;
-import static com.example.myapplication.MainActivity.currentFocusDistance;
 import static com.example.myapplication.MainActivity.labels;
 
 import android.annotation.SuppressLint;
@@ -271,7 +270,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
-        float focus_factor = currentFocusDistance * 5.f;
         for (Classifier.Recognition draw_target : nmsList) {
             RectF box = draw_target.getLocation();
             int target_position =  ((int) ((box.top + box.bottom) * depth_h_factor) - 1) * depth_width + (int) ((box.left + box.right) * depth_w_factor);
