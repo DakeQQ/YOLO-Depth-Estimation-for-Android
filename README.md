@@ -22,7 +22,9 @@
 23. Before exporting, make sure to complete the configuration file *_config.py, ensuring it matches the model weight file.
 24. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
 25. Since image processing models typically involve convolutional operators, remember to use UInt8 for quantization; otherwise, ONNX Runtime will generate errors.
-26. See more about the project: https://dakeqq.github.io/overview/
+26. Currently, only the Yolo v9 series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
+27. Configuration code for the Qualcomm NPU (HTP) will be updated at a later time.
+28. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -48,7 +50,9 @@
 24. 导出前记得填写配置*_config.py，务必跟模型权重档吻合
 25. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值.
 26. 由于图像处理模型普遍包含卷积算子，因此量化记得使用UInt8, 否则ONNX Runtime会报错
-27. 看更多項目: https://dakeqq.github.io/overview/
+27. 目前只有Yolo v9系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新.
+28. 高通NPU（HTP）的配置代码，以后再更新.
+29. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
@@ -56,6 +60,11 @@
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-s<br>q8f32 | 17.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-n<br>q8f32 | 35 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v9-C<br>q8f32 | 6.5 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-E<br>f16 | Testing |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-C<br>f16 | 21 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-M<br>f16 | Testing |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-S<br>f16 | Testing |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-T<br>f16 | Testing |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-s<br>q8f32 | 21 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-n<br>q8f32 | 43 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-m<br>q8f32 | 9 |
