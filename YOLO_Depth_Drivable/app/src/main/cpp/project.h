@@ -74,7 +74,7 @@ std::vector<ONNXTensorElementDataType> output_types_C;
 std::vector<OrtValue*> input_tensors_C;
 std::vector<OrtValue*> output_tensors_C;
 const std::string file_name_A = "Model_Yolo_NAS_s.ort";
-const std::string file_name_B = "Model_Depth_h294_w518.ort";
+const std::string file_name_B = "Depth_Anything_Metric_V2.ort";
 const std::string file_name_C = "Model_TwinLite.ort";
 const std::string storage_path = "/storage/emulated/0/Android/data/com.example.myapplication/files/";
 const char* qnn_htp_so = "/data/user/0/com.example.myapplication/cache/libQnnHtp.so";  //  If use (std::string + "libQnnHtp.so").c_str() instead, it will open failed.
