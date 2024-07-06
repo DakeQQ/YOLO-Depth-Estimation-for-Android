@@ -62,9 +62,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width >> 1, camera_height >> 1, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
-    public static final float depth_adjust_factor = 0.65f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
-    private static final float depth_adjust_bias = -0.2f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
-    public static final float focal_length_offset = 1.65f; // Please adjust it by yourself to get more depth accuracy. To make sure that "currentFocusDistance" >= 0.
+    public static final float depth_adjust_factor = 1.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
+    private static final float depth_adjust_bias = 0.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float yolo_detect_threshold = 0.4f;
     private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
     private static final float line_width = 6.f;  // draw boxes
@@ -165,13 +164,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 for (int i = 0; i < 9; i++) {
                     center_area += depth_results[depth_central_area[i]];
                 }
-                if (center_area < 1.8f) {
-                    center_area = 1.8f;
-                }
-                central_depth = (9f * currentFocusDistance / center_area + central_depth) * 0.5f;
-                if (central_depth > 1.f) {
-                    central_depth += depth_adjust_bias;
-                }
+                central_depth = depth_adjust_factor * (center_area * 0.111111111f + central_depth) * 0.5f + depth_adjust_bias;
                 run_depth = true;
             });
         }
@@ -303,14 +296,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             if (target_position_bottom >= depth_pixels) {
                 target_position_bottom = depth_pixels - 1;
             }
-            float sum_depth_results = depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom];
-            if (sum_depth_results < 1f) {
-                sum_depth_results = 1f;
-            }
-            float depth = focus_factor / sum_depth_results;
-            if (depth > 1.f) {
-                depth += depth_adjust_bias;
-            }
+            float depth = depth_adjust_factor * (depth_results[target_position] + depth_results[target_position_left] + depth_results[target_position_right] + depth_results[target_position_up] + depth_results[target_position_bottom]) * 0.2f + depth_adjust_bias;
             class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence())).append("% / ").append(String.format("%.1f", depth)).append(" m").append("\n");
             box.top = 1.f - box.top * inv_yolo_height;
             box.bottom = 1.f - box.bottom * inv_yolo_height;
