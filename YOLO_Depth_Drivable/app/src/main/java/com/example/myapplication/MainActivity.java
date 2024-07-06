@@ -238,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                        @NonNull CaptureRequest request,
                                        @NonNull TotalCaptureResult result) {
-            currentFocusDistance = depth_adjust_factor * (result.get(CaptureResult.LENS_FOCAL_LENGTH) - result.get(CaptureResult.LENS_FOCUS_DISTANCE) + focal_length_offset);
         }
     };
     private void closeCamera() {
