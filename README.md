@@ -13,14 +13,14 @@
 12. If using YOLO-v10 series, replace the original GLRender.java with the one in the "YOLO_Depth_Drivable/v10" folder.
 13. The FPS of YOLO-v10 series is lower than the v8 series, with the specific reason yet to be determined.
 14. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
-15. Estimation accuracy at the focus point (central area) is higher due to the influence of the current camera focal length. It is advised against estimating distances that are either too close or too distant. Indoor scenes are more accurate than outdoor ones.
-16. Consider the higher-res Model_Depth_h294_w518.ort for increased accuracy, though it runs at 1/5 the speed. Don't forget to adjust width and height in GLRender.java and project.h.
 17. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
 18. TwinLiteNet's lane detection accuracy is low, with the cause currently unclear.
 19. Drivable area detection is less accurate due to water, reflections, shadows, and low light.
-20. For high-resolution screens, use GL_LINE_STRIP to draw the drivable area (the settings at GLRender.java - lines 345 & 350), or you won't see anything.
-21. We will make the model exported method public later.
-22. See more about the project: https://dakeqq.github.io/overview/
+20. For high-resolution screens, use GL_LINE_STRIP to draw the drivable area, or you won't see anything.
+21. Updated model export method on July 6, 2024, in the folder Export_ONNX. The Depth model has been updated to DepthAnythingV2-Metric; for more details, please search for Github DepthAnythingV2.
+22. Implemented the Depth-Metric model that directly outputs distance, which is more accurate than the previous approximation method. It is normal to observe fluctuations or inaccuracies in detected values.
+23. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
+24. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -37,14 +37,14 @@
 13. 若使用YOLO-v10系列, 请将"YOLO_Depth_Drivable/v10"文件夹里的GLRender.java替换原文件。
 14. YOLO-v10系列的FPS比v8系列还低，具体原因不明。
 15. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
-16. 受到当前相机焦距影响，因此对焦位置 (中心区域) 的估计精度较高, 太近或太远的都不准。室内场景比室外准。
-17. 您也可以考虑使用Model_Depth_h294_w518.ort更高分辨率的模型，它会准一些，但推理速度只有1/5. 记得在GLRender.java与project.h中修改对应的width与height数值.
 18. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
 19. TwinLiteNet的车道线估计准确率不高，原因暂时不明。
 20. 可行驶区域检测会受到积水或光滑地面的反光影响，阴影交界处, 昏暗地区等等的精确度也较低。
-21. 对于高屏幕分辨率的手机，请改使用GL_LINE_STRIP来绘制可行驶区域（GLRender.java-第345 & 350行）, 否則你啥也看不見。
-22. 我们未来会提供转换导出模型的方法。
-23. 看更多項目: https://dakeqq.github.io/overview/
+21. 对于高屏幕分辨率的手机，请改使用GL_LINE_STRIP来绘制可行驶区域, 否則你啥也看不見。
+22. 2024/07/06更新模型导出方法, 文件夾Export_ONNX。更新Depth模型為DepthAnythingV2-Metric, 详情请搜索Github DepthAnythingV2。
+23. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准是正常现象.
+24. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值.
+25. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
@@ -68,14 +68,14 @@
 # Depth - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | Depth Anything-Small<br>q8f32 | 22 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-Small<br>q8f32 | 11 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | Depth Anything-Small<br>q8f32<br>(previous version) | 22 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-Small<br>q8f32<br>(previous version) | 11 |
 
 # YOLO+Depth - 性能 Performance
 | OS | Device | Backend | Model | YOLO FPS<br>Camera: h720*w1280 | Depth FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 28 | 16.7 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32 | 16 | 7.7 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 28 | 16.7 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 16 | 7.7 |
 
 # Drivable Area - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
@@ -84,12 +84,12 @@
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | TwinLiteNet<br>q8f32 | 28 |
 
 # 演示结果 Demo Results
-(YOLOv8-n & Depth Anything-Small)<br>
+YOLOv8-n & Depth Anything-Small-previous_version)<br>
 <br>
 ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth.gif?raw=true?raw=true)
 <br>
 <br>
-(YOLOv8-s & Depth Anything-Small-h294_w518)<br>
+(YOLOv8-s & Depth Anything-Small-h294_w518-previous_version)<br>
 <br>
 ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth2.gif?raw=true?raw=true)
 <br>
