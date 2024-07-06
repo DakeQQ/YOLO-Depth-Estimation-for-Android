@@ -3,7 +3,7 @@
 2. Demo models have been uploaded to Google Drive: https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
 3. After downloading, please place the model files in the assets folder.
 4. Remember to unzip the *.so compressed files stored in the libs/arm64-v8a folder.
-5. Demo models include YOLO: v8, v9, v10, NAS series / Depth Estimation: Depth Anything-Small / Drivable Area: TwinLiteNet. They are converted from HuggingFace or ModelScope or Github and optimized for peak execution speed.
+5. Demo models include YOLO: v8, v9, v10, NAS series / Depth Estimation: Depth Anything V2-Metric-Small / Drivable Area: TwinLiteNet. They are converted from HuggingFace or ModelScope or Github and optimized for peak execution speed.
 6. Hence, the input/output of the demo models slightly differs from the original models.
 7. Demo models are set to accept h720*w1280 image input; hence, they work when the phone is held horizontally.
 8. For better compatibility with ONNX Runtime-Android, export does not utilize dynamic-axes. Therefore, the exported ONNX model may not be optimal for x86_64.
@@ -29,7 +29,7 @@
 3. 百度云盘: https://pan.baidu.com/s/1WzRPiV9EL_ijpkgCJaZRTg?pwd=dake 提取码: dake。
 4. 下载后，请将模型文件放入assets文件夹。
 5. 记得解压存放在libs/arm64-v8a文件夹中的*.so压缩文件。
-6. 演示模型是YOLO: v8, v9, v10, NAS 系列 / 深度(距离)估计: Depth Anything-Small / 可行驶区域: TwinLiteNet。 它们是从HuggingFace或ModelScope或Github转换来的，并经过代码优化，以实现极致执行速度。
+6. 演示模型是YOLO: v8, v9, v10, NAS 系列 / 深度(距离)估计: Depth Anything V2-Metric-Small / 可行驶区域: TwinLiteNet。 它们是从HuggingFace或ModelScope或Github转换来的，并经过代码优化，以实现极致执行速度。
 7. 因此，演示模型的输入输出与原始模型略有不同。
 8. 演示模型导出设定为接收h720*w1280的图象输入，因此"横置手机"才能使用。
 9. 为了更好的适配ONNXRuntime-Android，导出时未使用dynamic-axes. 因此导出的ONNX模型对x86_64而言不一定是最优解。
