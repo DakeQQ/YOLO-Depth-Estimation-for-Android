@@ -42,7 +42,7 @@
 20. 可行驶区域检测会受到积水或光滑地面的反光影响，阴影交界处, 昏暗地区等等的精确度也较低。
 21. 对于高屏幕分辨率的手机，请改使用GL_LINE_STRIP来绘制可行驶区域, 否則你啥也看不見。
 22. 2024/07/06更新模型导出方法, 文件夾Export_ONNX。更新Depth模型為DepthAnythingV2-Metric, 详情请搜索Github DepthAnythingV2。
-23. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准是正常现象.
+23. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准仍是正常现象.
 24. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值.
 25. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
