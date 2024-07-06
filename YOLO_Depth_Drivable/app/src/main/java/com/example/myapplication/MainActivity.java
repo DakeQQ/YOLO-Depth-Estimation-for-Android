@@ -4,9 +4,6 @@ import static com.example.myapplication.GLRender.FPS;
 import static com.example.myapplication.GLRender.camera_height;
 import static com.example.myapplication.GLRender.camera_width;
 import static com.example.myapplication.GLRender.central_depth;
-import static com.example.myapplication.GLRender.depth_adjust_factor;
-import static com.example.myapplication.GLRender.focal_length_offset;
-import static com.example.myapplication.GLRender.focus_area;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
