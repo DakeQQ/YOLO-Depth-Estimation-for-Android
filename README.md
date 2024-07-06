@@ -20,7 +20,8 @@
 21. Updated model export method on July 6, 2024, in the folder Export_ONNX. The Depth model has been updated to DepthAnythingV2-Metric; for more details, please search for Github DepthAnythingV2.
 22. Implemented the Depth-Metric model that directly outputs distance, which is more accurate than the previous approximation method. It is normal to observe fluctuations or inaccuracies in detected values.
 23. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
-24. See more about the project: https://dakeqq.github.io/overview/
+24. Since image processing models typically involve convolutional operators, remember to use UInt8 for quantization; otherwise, ONNX Runtime will generate errors.
+25. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -44,7 +45,8 @@
 22. 2024/07/06更新模型导出方法, 文件夾Export_ONNX。更新Depth模型為DepthAnythingV2-Metric, 详情请搜索Github DepthAnythingV2。
 23. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准仍是正常现象.
 24. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值.
-25. 看更多項目: https://dakeqq.github.io/overview/
+25. 由于图像处理模型普遍包含卷积算子，因此量化记得使用UInt8, 否则ONNX Runtime会报错
+26. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
