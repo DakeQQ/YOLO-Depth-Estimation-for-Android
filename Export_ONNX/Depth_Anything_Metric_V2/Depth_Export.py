@@ -1,6 +1,6 @@
 import torch
 import shutil
-from depth_config import EXPORT_MODEL_ENCODER_TYPE, EXPORT_DEPTH_INPUT_SIZE
+from depth_config import EXPORT_MODEL_ENCODER_TYPE, EXPORT_DEPTH_INPUT_SIZE, MAX_DEPTH
 import sys
 import os
 
@@ -28,7 +28,7 @@ model_configs = {
 }
 
 from depth_anything_v2.dpt import DepthAnythingV2
-model = DepthAnythingV2(**{**model_configs[EXPORT_MODEL_ENCODER_TYPE], 'max_depth': 20})
+model = DepthAnythingV2(**{**model_configs[EXPORT_MODEL_ENCODER_TYPE], 'max_depth': MAX_DEPTH})
 model.load_state_dict(torch.load(model_path, map_location='cpu'))
 model.to('cpu').eval()
 images = torch.ones(EXPORT_DEPTH_INPUT_SIZE, dtype=torch.float32)
