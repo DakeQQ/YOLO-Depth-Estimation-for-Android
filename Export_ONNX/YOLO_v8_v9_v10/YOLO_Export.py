@@ -3,7 +3,7 @@ import shutil
 config_path = './yolo_config.py'  # The path where the yolo_config.py stored.
 modified_exporter_path = './modeling_modified/exporter.py'  # The path where the modified exporter.py stored.
 modified_tasks_path = './modeling_modified/tasks.py'  # The path where the modified tasks.py stored.
-ultralytics_engine_path = 'C:/Users/dake/.conda/envs/python_311/Lib/site-packages/ultralytics/engine/'  # The original ultralyticss/engine path which was stored in the python packages.
+ultralytics_engine_path = 'C:/Users/dake/.conda/envs/python_311/Lib/site-packages/ultralytics/engine/'  # The original ultralytics/engine path which was stored in the python packages.
 ultralytics_nn_path = 'C:/Users/dake/.conda/envs/python_311/Lib/site-packages/ultralytics/nn/'  # The original ultralytics/nn path which was stored in the python packages.
 
 # Import the yolo_config
