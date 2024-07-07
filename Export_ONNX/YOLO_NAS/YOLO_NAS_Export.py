@@ -6,7 +6,7 @@ from yolo_config import EXPORT_YOLO_INPUT_SIZE
 config_path = './yolo_config.py'  # The path where the yolo_config.py stored.
 modified_path = './modeling_modified/'
 output_path = "./yolo_nas.onnx"
-super_gradients_path = "C:/Users/大可/.conda/envs/python_39/Lib/site-packages/super_gradients/"
+super_gradients_path = "C:/Users/dake/.conda/envs/python_39/Lib/site-packages/super_gradients/"
 
 # Replace the original source code file.
 
