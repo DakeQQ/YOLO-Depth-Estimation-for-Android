@@ -22,9 +22,9 @@
 23. Before exporting, make sure to complete the configuration file *_config.py, ensuring it matches the model weight file.
 24. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
 25. Since image processing models typically involve convolutional operators, remember to use UInt8 for quantization; otherwise, ONNX Runtime will generate errors.
-26. Currently, only the Yolo v9 series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
+26. Currently, only the Yolo v9 & NAS series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
 27. The export of v9-E fails and is currently unusable.
-28. The demo code states, "When performing YOLO inference, prevent the GPU from processing the current frame data." To utilize NPU with v9-S and v9-T effectively (since S and T have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
+28. The demo code states, "When performing YOLO inference, prevent the GPU from processing the current frame data." To utilize NPU with v9-S,T and NAS effectively (since have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
 29. Configuration code for the Qualcomm NPU (HTP) will be updated at a later time.
 30. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
@@ -52,9 +52,9 @@
 24. 导出前记得填写配置*_config.py，务必跟模型权重档吻合。
 25. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值。
 26. 由于图像处理模型普遍包含卷积算子，因此量化记得使用UInt8, 否则ONNX Runtime会报错。
-27. 目前只有Yolo v9系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新。
+27. 目前只有Yolo v9 & NAS系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新。
 28. v9-E会导出失败，暂时不能用。
-29. Demo代码中写道：“当YOLO推理时，不让GPU处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU+v9-S和v9-T。（由于S和T的FPS太高，会一直跳过图像处理）
+29. Demo代码中写道：“当YOLO推理时，不让GPU处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU + (v9-S,T / NAS)。（因為FPS太高，会一直跳过图像处理）
 30. 高通NPU（HTP）的配置代码，以后再更新。
 31. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
@@ -72,6 +72,8 @@
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-n<br>q8f32 | 43 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-m<br>q8f32 | 9 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-s<br>q8f32 | 19 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 70 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 85 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-m<br>q8f32 | 5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-s<br>q8f32 | 9.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-n<br>q8f32 | 18.5 |
