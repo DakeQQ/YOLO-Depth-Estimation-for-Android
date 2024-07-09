@@ -74,7 +74,7 @@ std::vector<ONNXTensorElementDataType> input_types_C;
 std::vector<ONNXTensorElementDataType> output_types_C;
 std::vector<OrtValue*> input_tensors_C;
 std::vector<OrtValue*> output_tensors_C;
-const std::string file_name_A = "Model_Yolo_v9_c_f16.onnx";
+const std::string file_name_A = "Model_Yolo_v9c_f16.onnx";
 const std::string file_name_B = "Depth_Anything_Metric_V2.ort";
 const std::string file_name_C = "Model_TwinLite.ort";
 const std::string storage_path = "/storage/emulated/0/Android/data/com.example.myapplication/";
