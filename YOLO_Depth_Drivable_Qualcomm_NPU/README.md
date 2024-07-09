@@ -187,5 +187,4 @@ adb pull /system/lib64/ld-android.so ./app/src/main/assets
 ---
 
 按照这些步骤操作，将确保在 Snapdragon 8Gen2 设备上运行 Qualcomm NPU-HTP 的必要设置。
-```
 
