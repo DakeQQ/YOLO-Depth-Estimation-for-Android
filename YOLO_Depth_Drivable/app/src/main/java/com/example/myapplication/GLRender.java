@@ -52,7 +52,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_width = 518;
     private static final int depth_height = 294;
     private static final int yolo_num_boxes = 3024;  // Not 8400, due to the model input had been resized.
-    private static final int yolo_num_class = 84;  // 4 for axes(x, y, w, h); 80 for COCO class
+    private static final int yolo_num_class = 6;  // [x, y, w, h, max_score, max_indices]
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
@@ -185,15 +185,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         LinkedList<Classifier.Recognition> detections = new LinkedList<>();
         int startIndex = 0;
         for (int i = 0; i < yolo_num_boxes; ++i) {
-            int class_id = 4;
             float maxScore = outputs[startIndex + 4];
-            for (int j = startIndex + 5; j < startIndex + yolo_num_class; ++j) {
-                float score = outputs[j];
-                if (score > maxScore) {
-                    maxScore = score;
-                    class_id = j - startIndex;
-                }
-            }
             if (maxScore >= yolo_detect_threshold) {
                 float delta_x = outputs[startIndex + 2] * 0.5f;
                 float delta_y = outputs[startIndex + 3] * 0.5f;
@@ -203,7 +195,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                         Math.min(yolo_width, outputs[startIndex] + delta_x),
                         Math.min(yolo_height, outputs[startIndex + 1] + delta_y)
                 );
-                detections.add(new Classifier.Recognition("", labels.get(class_id - 4), maxScore, rect));
+                detections.add(new Classifier.Recognition("", labels.get(outputs[startIndex + 5]), maxScore, rect));
             }
             startIndex += yolo_num_class;
         }
