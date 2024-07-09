@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
         Copy_from_Asset_to_Cache("libdl_android.so", mgr);
         Copy_from_Asset_to_Cache("ld-android.so", mgr);
         if (Load_Models_A(mgr,true, true, true)) {  // The NPU-HTP currently supports only the YOLO v9 & NAS model. Other models are not compatible.
-            if (Load_Models_B(mgr,false, false, false)) {
-                if (Load_Models_C(mgr, false, false, false)) {
+            if (Load_Models_B(mgr, false, false, false)) {  // Load the depth model. Disable it if you're not interested.
+                if (Load_Models_C(mgr, false, false, false)) {  // Load the drivable model. Disable it if you're not interested.
                     setWindowFlag();
                     initView();
                 } else {
