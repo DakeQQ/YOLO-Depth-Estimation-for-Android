@@ -25,8 +25,9 @@
 26. Currently, only the Yolo v9 & NAS series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
 27. The export of v9-E fails and is currently unusable.
 28. The demo code states, "When YOLO inference is to be executed, the GPU bypasses processing the current frame's data." To utilize NPU with v9-S,T and NAS effectively (since have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
-29. Configuration code for the Qualcomm NPU (HTP) will be updated at a later time.
-30. See more about the project: https://dakeqq.github.io/overview/
+29. Configuration code for the Qualcomm NPU (HTP) is in the folder YOLO_Depth_Drivable_Qualcomm_NPU.
+30. Due to Qualcomm's regulations, you must obtain the NPU libraries on your own.
+31. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -55,8 +56,9 @@
 27. 目前只有Yolo v9 & NAS系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新。
 28. v9-E会导出失败，暂时不能用。
 29. Demo代码中写道：“当要执行YOLO推理，GPU略过处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU + (v9-S,T / NAS)。（因為FPS太高，会一直跳过图像处理）
-30. 高通NPU（HTP）的配置代码，以后再更新。
-31. 看更多項目: https://dakeqq.github.io/overview/
+30. 高通NPU（HTP）的配置代码，在文件夾YOLO_Depth_Drivable_Qualcomm_NPU。
+31. 根据高通的规定，您需要自行申請获取NPU库。
+32. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
