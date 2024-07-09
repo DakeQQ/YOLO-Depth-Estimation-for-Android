@@ -210,8 +210,10 @@ class NDFLHeads(BaseDetectionModule, SupportsReplaceNumClasses):
             reg_dist_reduced_list.append(torch.nn.functional.conv2d(torch.nn.functional.softmax(torch.permute(reg_distri.reshape([-1, 4, self.reg_max + 1, height_mul_width]), [0, 2, 3, 1]), dim=1), weight=self.proj_conv).squeeze(1))
 
         anchor_points_inference, stride_tensor = self._generate_anchors(feats)
-
-        return torch.cat((batch_distance2bbox(anchor_points_inference, torch.cat(reg_dist_reduced_list, dim=1)) * stride_tensor, torch.permute(torch.cat(cls_score_list, dim=-1), [0, 2, 1]).sigmoid()), dim=-1)
+        part_A = batch_distance2bbox(anchor_points_inference, torch.cat(reg_dist_reduced_list, dim=1)) * stride_tensor
+        part_B = torch.permute(torch.cat(cls_score_list, dim=2), [0, 2, 1]).sigmoid()
+        max_scores, max_indices = torch.max(part_B, dim=2, keepdim=True)
+        return torch.cat((part_A, max_scores, max_indices), dim=2)
 
     @property
     def out_channels(self):
