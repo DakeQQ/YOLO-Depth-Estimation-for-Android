@@ -154,8 +154,6 @@ adb pull /system/lib64/ld-android.so ./app/src/main/assets
 4. `libQnnHtpV73Skel.so`
 5. `libQnnHtpV73Stub.so`
 6. `libQnnSystem.so`
-
-(8Gen3是V75)
 ---
 
 ## 步骤 3：组织库文件
