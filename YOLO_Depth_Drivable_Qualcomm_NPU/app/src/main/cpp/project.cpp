@@ -107,7 +107,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                                              "1");  // Use it to lower memory usage.
         std::vector<const char*> option_keys = {};
         std::vector<const char*> option_values = {};
-        if (use_qnn) {  // It needs the permission of HTP hardware, and then follow the onnx document to generate the specific format to run on HTP.
+        if (use_qnn) {
             setenv("LD_LIBRARY_PATH", cache_path, 1);
             setenv("ADSP_LIBRARY_PATH", cache_path, 1);
             if (use_dsp_npu) {
