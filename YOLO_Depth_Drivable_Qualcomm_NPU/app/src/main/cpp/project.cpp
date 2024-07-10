@@ -36,12 +36,12 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
         ort_runtime_A = OrtGetApiBase()->GetApi(ORT_API_VERSION);
         ort_runtime_A->CreateEnv(ORT_LOGGING_LEVEL_ERROR, "myapplication", &ort_env_A);
         ort_runtime_A->CreateSessionOptions(&session_options_A);
+        ort_runtime_A->CreateRunOptions(&run_options_A);
+        ort_runtime_A->AddRunConfigEntry(run_options_A, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
+        ort_runtime_A->AddRunConfigEntry(run_options_A, "disable_synchronize_execution_providers", "1");  // 1 for aggressive performance.
         ort_runtime_A->DisableProfiling(session_options_A);
         ort_runtime_A->EnableCpuMemArena(session_options_A);
         ort_runtime_A->EnableMemPattern(session_options_A);
-        ort_runtime_A->CreateRunOptions(&run_options_A);
-        ort_runtime_A->AddRunConfigEntry(run_options_A, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
-        ort_runtime_A->AddRunConfigEntry(run_options_A, "disable_synchronize_execution_providers", "1");  // 1 for parallel run all sessions with different backend.
         ort_runtime_A->SetSessionExecutionMode(session_options_A, ORT_SEQUENTIAL);
         ort_runtime_A->SetInterOpNumThreads(session_options_A, 2);
         ort_runtime_A->AddSessionConfigEntry(session_options_A,
@@ -239,12 +239,12 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
         ort_runtime_B = OrtGetApiBase()->GetApi(ORT_API_VERSION);
         ort_runtime_B->CreateEnv(ORT_LOGGING_LEVEL_ERROR, "myapplication", &ort_env_B);
         ort_runtime_B->CreateSessionOptions(&session_options_B);
+        ort_runtime_B->CreateRunOptions(&run_options_B);
+        ort_runtime_B->AddRunConfigEntry(run_options_B, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
+        ort_runtime_B->AddRunConfigEntry(run_options_B, "disable_synchronize_execution_providers", "1");  // 1 for aggressive performance.
         ort_runtime_B->DisableProfiling(session_options_B);
         ort_runtime_B->EnableCpuMemArena(session_options_B);
         ort_runtime_B->EnableMemPattern(session_options_B);
-        ort_runtime_B->CreateRunOptions(&run_options_B);
-        ort_runtime_B->AddRunConfigEntry(run_options_B, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
-        ort_runtime_B->AddRunConfigEntry(run_options_B, "disable_synchronize_execution_providers", "1");  // 1 for parallel run all sessions with different backend.
         ort_runtime_B->SetSessionExecutionMode(session_options_B, ORT_SEQUENTIAL);
         ort_runtime_B->SetInterOpNumThreads(session_options_B, 4);
         ort_runtime_B->AddSessionConfigEntry(session_options_B,
@@ -443,12 +443,12 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
         ort_runtime_C = OrtGetApiBase()->GetApi(ORT_API_VERSION);
         ort_runtime_C->CreateEnv(ORT_LOGGING_LEVEL_ERROR, "myapplication", &ort_env_C);
         ort_runtime_C->CreateSessionOptions(&session_options_C);
+        ort_runtime_C->CreateRunOptions(&run_options_C);
+        ort_runtime_C->AddRunConfigEntry(run_options_C, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
+        ort_runtime_C->AddRunConfigEntry(run_options_C, "disable_synchronize_execution_providers", "1");  // 1 for aggressive performance.
         ort_runtime_C->DisableProfiling(session_options_C);
         ort_runtime_C->EnableCpuMemArena(session_options_C);
         ort_runtime_C->EnableMemPattern(session_options_C);
-        ort_runtime_C->CreateRunOptions(&run_options_C);
-        ort_runtime_C->AddRunConfigEntry(run_options_C, "memory.enable_memory_arena_shrinkage", "");  // Keep empty for performance; "cpu:0" for low memory usage.
-        ort_runtime_C->AddRunConfigEntry(run_options_C, "disable_synchronize_execution_providers", "1");  // 1 for parallel run all sessions with different backend.
         ort_runtime_C->SetSessionExecutionMode(session_options_C, ORT_SEQUENTIAL);
         ort_runtime_C->SetInterOpNumThreads(session_options_C, 2);
         ort_runtime_C->AddSessionConfigEntry(session_options_C,
