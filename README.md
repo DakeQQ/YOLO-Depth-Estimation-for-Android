@@ -27,7 +27,9 @@
 28. The demo code states, "When YOLO inference is to be executed, the GPU bypasses processing the current frame's data." To utilize NPU with v9-S,T and NAS effectively (since have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
 29. Configuration code for the Qualcomm NPU (HTP) is in the folder YOLO_Depth_Drivable_Qualcomm_NPU.
 30. Due to Qualcomm's regulations, you must obtain the NPU libraries on your own.
-31. See more about the project: https://dakeqq.github.io/overview/
+31. The quantization method for the model can be seen in the folder "Do_Quantize".
+32. The q4(uint4) quantization method is not currently recommended because the "MatMulNBits" operator in ONNX Runtime is performing poorly.
+33. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -58,7 +60,9 @@
 29. Demo代码中写道：“当要执行YOLO推理，GPU略过处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU + (v9-S,T / NAS)。（因為FPS太高，会一直跳过图像处理）
 30. 高通NPU（HTP）的配置代码，在文件夾YOLO_Depth_Drivable_Qualcomm_NPU。
 31. 根据高通的规定，您需要自行申請获取NPU库。
-32. 看更多項目: https://dakeqq.github.io/overview/
+32. 模型的量化方法可以在文件夹 "Do_Quantize" 中查看。
+33. 现在不建议使用q4(uint4)量化方法, 因为ONNX Runtime的运算符"MatMulNBits"表现不佳。
+34. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
