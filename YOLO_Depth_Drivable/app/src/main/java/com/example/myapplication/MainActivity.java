@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // Close the load code if you don't need it.
         if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
-             depth_view.setText("Depth failed.");
+            depth_view.setText("Depth failed.");
         }
         if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
             FPS_view.setText("TwinLite failed.");
