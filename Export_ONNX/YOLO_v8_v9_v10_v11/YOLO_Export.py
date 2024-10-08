@@ -15,7 +15,7 @@ shutil.copyfile(config_path, ultralytics_nn_path + "yolo_config.py")
 # Replace the original source code file.
 shutil.copyfile(modified_exporter_path, ultralytics_engine_path + "exporter.py")
 shutil.copyfile(modified_tasks_path, ultralytics_nn_path + "tasks.py")
-shutil.copyfile(modified_tasks_path, ultralytics_nn_path + "head.py")
+shutil.copyfile(modified_head_path, ultralytics_nn_path + "modules/head.py")
 
 from ultralytics import YOLO
 # Load a model, The version number must match EXPORT_YOLO_VERSION.
