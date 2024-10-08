@@ -3,7 +3,7 @@
 2. Demo models have been uploaded to Google Drive: https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
 3. After downloading, please place the model files in the assets folder.
 4. Remember to unzip the *.so compressed files stored in the libs/arm64-v8a folder.
-5. Demo models include YOLO: v8, v9, v10, v11 NAS series / Depth Estimation: Depth Anything V2-Metric-Small / Drivable Area: TwinLiteNet. They are converted from HuggingFace or ModelScope or Github and optimized for peak execution speed.
+5. Demo models include YOLO: v8, v9, v10, v11, NAS series / Depth Estimation: Depth Anything V2-Metric-Small / Drivable Area: TwinLiteNet. They are converted from HuggingFace or ModelScope or Github and optimized for peak execution speed.
 6. Hence, the input/output of the demo models slightly differs from the original models.
 7. Demo models are set to accept h720*w1280 image input; hence, they work when the phone is held horizontally.
 8. For better compatibility with ONNX Runtime-Android, export does not utilize dynamic-axes. Therefore, the exported ONNX model may not be optimal for x86_64.
