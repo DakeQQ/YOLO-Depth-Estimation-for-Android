@@ -196,7 +196,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                         Math.min(yolo_width, outputs[startIndex] + delta_x),
                         Math.min(yolo_height, outputs[startIndex + 1] + delta_y)
                 );
-                detections.add(new Classifier.Recognition("", labels.get(outputs[startIndex + 5]), maxScore, rect));
+                detections.add(new Classifier.Recognition("", labels.get((int) outputs[startIndex + 5]), maxScore, rect));
             }
             startIndex += yolo_num_class;
         }
