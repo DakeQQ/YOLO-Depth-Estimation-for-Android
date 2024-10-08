@@ -80,20 +80,18 @@ public class MainActivity extends AppCompatActivity {
         FPS_view = findViewById(R.id.fps);
         class_view = findViewById(R.id.class_list);
         depth_view = findViewById(R.id.depth);
-        if (Load_Models_A(mgr,false,false,false,false,false,false)) {
-            if (Load_Models_B(mgr,false,false,false,false,false,false)) {
-                if (Load_Models_C(mgr,false,false,false,false,false,false)) {
-                    setWindowFlag();
-                    initView();
-                } else {
-                    FPS_view.setText("TwinLite model load failed.");
-                }
-            } else {
-                depth_view.setText("Depth model load failed.");
-            }
-        } else {
-            FPS_view.setText("YOLO model load failed.");
+        if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
+            FPS_view.setText("YOLO failed.");
         }
+        // Close the load code if you don't need it.
+        if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
+             depth_view.setText("Depth failed.");
+        }
+        if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
+            FPS_view.setText("TwinLite failed.");
+        }
+        setWindowFlag();
+        initView();
     }
     private void setWindowFlag() {
         Window window = getWindow();
