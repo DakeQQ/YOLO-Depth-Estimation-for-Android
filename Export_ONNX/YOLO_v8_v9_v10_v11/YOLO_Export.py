@@ -11,6 +11,7 @@ ultralytics_nn_path = '/Users/PycharmProjects/.venv/lib/python3.11/site-packages
 # Import the yolo_config
 shutil.copyfile(config_path, ultralytics_engine_path + "yolo_config.py")
 shutil.copyfile(config_path, ultralytics_nn_path + "yolo_config.py")
+shutil.copyfile(config_path, ultralytics_nn_path + "modules/yolo_config.py")
 
 # Replace the original source code file.
 shutil.copyfile(modified_exporter_path, ultralytics_engine_path + "exporter.py")
@@ -20,7 +21,7 @@ shutil.copyfile(modified_head_path, ultralytics_nn_path + "modules/head.py")
 from ultralytics import YOLO
 # Load a model, The version number must match EXPORT_YOLO_VERSION.
 model = YOLO("yolo11n.pt")   # Load an official model,
-# model = YOLO("/Users/Downloads/yolo11n.pt") # or specify your own model path.
+# model = YOLO("/Users/Downloads/yolo11n.pt") # Or specify your own model path.
 
 # Export the model
 model.export(format='onnx')  # The exported model will save at the current folder.
