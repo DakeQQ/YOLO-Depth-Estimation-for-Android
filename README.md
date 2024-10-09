@@ -11,25 +11,24 @@
 10. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
 11. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
 12. If using YOLO-v10 series, replace the original GLRender.java and project.h with the one in the "YOLO_Depth_Drivable/v10" folder.
-13. The FPS of YOLO-v10 series is lower than the v8 series, with the specific reason yet to be determined.
-14. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
-17. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
-18. TwinLiteNet's lane detection accuracy is low, with the cause currently unclear.
-19. Drivable area detection is less accurate due to water, reflections, shadows, and low light.
-20. For high-resolution screens, use GL_LINE_STRIP to draw the drivable area, or you won't see anything.
-21. Updated model export method on July 6, 2024, in the folder Export_ONNX. The Depth model has been updated to DepthAnythingV2-Metric; for more details, please search for Github DepthAnythingV2.
-22. Implemented the Depth-Metric model that directly outputs distance, which is more accurate than the previous approximation method. It is normal to observe fluctuations or inaccuracies in detected values.
-23. Before exporting, make sure to complete the configuration file *_config.py, ensuring it matches the model weight file.
-24. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
-25. Since image processing models typically involve convolutional operators, remember to use UInt8 for quantization; otherwise, ONNX Runtime will generate errors.
-26. Currently, only the Yolo v9 & NAS series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
-27. The export of v9-E fails and is currently unusable.
-28. The demo code states, "When YOLO inference is to be executed, the GPU bypasses processing the current frame's data." To utilize NPU with v9-S,T and NAS effectively (since have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
-29. Configuration code for the Qualcomm NPU (HTP) is in the folder YOLO_Depth_Drivable_Qualcomm_NPU.
-30. Due to Qualcomm's regulations, you must obtain the NPU libraries on your own.
-31. The quantization method for the model can be seen in the folder "Do_Quantize".
-32. The q4(uint4) quantization method is not currently recommended because the "MatMulNBits" operator in ONNX Runtime is performing poorly.
-33. See more about the project: https://dakeqq.github.io/overview/
+13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
+14. Based on depth model principles, precision is lower for smooth, luminescent objects, scenes without light and shadow changes, and image edges. For more details, refer to papers on monocular depth estimation.
+15. TwinLiteNet's lane detection accuracy is low, with the cause currently unclear.
+16. Drivable area detection is less accurate due to water, reflections, shadows, and low light.
+17. For high-resolution screens, use GL_LINE_STRIP to draw the drivable area, or you won't see anything.
+18. Updated model export method on July 6, 2024, in the folder Export_ONNX. The Depth model has been updated to DepthAnythingV2-Metric; for more details, please search for Github DepthAnythingV2.
+19. Implemented the Depth-Metric model that directly outputs distance, which is more accurate than the previous approximation method. It is normal to observe fluctuations or inaccuracies in detected values.
+20. Before exporting, make sure to complete the configuration file *_config.py, ensuring it matches the model weight file.
+21. If using self-exported models, remember to modify the corresponding height/width values in GLRenderer.java and project.h files.
+22. Since image processing models typically involve convolutional operators, remember to use UInt8 for quantization; otherwise, ONNX Runtime will generate errors.
+23. Currently, only the Yolo v9 & NAS series can utilize the Qualcomm NPU (HTP). Other series and Depth models are unsupported, either failing to compile or crashing upon execution. Waiting for updates from Qualcomm and ONNX.
+24. The export of v9-E fails and is currently unusable.
+25. The demo code states, "When YOLO inference is to be executed, the GPU bypasses processing the current frame's data." To utilize NPU with v9-S,T and NAS effectively (since have high FPS, leading to continuous image processing skips), slight modifications to this logic are necessary.
+26. Configuration code for the Qualcomm NPU (HTP) is in the folder YOLO_Depth_Drivable_Qualcomm_NPU.
+27. Due to Qualcomm's regulations, you must obtain the NPU libraries on your own.
+28. The quantization method for the model can be seen in the folder "Do_Quantize".
+29. The q4(uint4) quantization method is not currently recommended because the "MatMulNBits" operator in ONNX Runtime is performing poorly.
+30. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -44,25 +43,24 @@
 11. 采用双重缓冲+异步推理來提升FPS。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
 13. 若使用YOLO-v10系列, 请将"YOLO_Depth_Drivable/v10"文件夹里的GLRender.java & project.h替换原文件。
-14. YOLO-v10系列的FPS比v8系列还低，具体原因不明。
-15. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
-18. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
-19. TwinLiteNet的车道线估计准确率不高，原因暂时不明。
-20. 可行驶区域检测会受到积水或光滑地面的反光影响，阴影交界处, 昏暗地区等等的精确度也较低。
-21. 对于高屏幕分辨率的手机，请改使用GL_LINE_STRIP来绘制可行驶区域, 否則你啥也看不見。
-22. 2024/07/06更新模型导出方法, 文件夾Export_ONNX。更新Depth模型為DepthAnythingV2-Metric, 详情请搜索Github DepthAnythingV2。
-23. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准仍是正常现象。
-24. 导出前记得填写配置*_config.py，务必跟模型权重档吻合。
-25. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值。
-26. 由于图像处理模型普遍包含卷积算子，因此量化记得使用UInt8, 否则ONNX Runtime会报错。
-27. 目前只有Yolo v9 & NAS系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新。
-28. v9-E会导出失败，暂时不能用。
-29. Demo代码中写道：“当要执行YOLO推理，GPU略过处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU + (v9-S,T / NAS)。（因為FPS太高，会一直跳过图像处理）
-30. 高通NPU（HTP）的配置代码，在文件夾YOLO_Depth_Drivable_Qualcomm_NPU。
-31. 根据高通的规定，您需要自行申請获取NPU库。
-32. 模型的量化方法可以在文件夹 "Do_Quantize" 中查看。
-33. 现在不建议使用q4(uint4)量化方法, 因为ONNX Runtime的运算符"MatMulNBits"表现不佳。
-34. 看更多項目: https://dakeqq.github.io/overview/
+14. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
+15. 根据深度模型原理，光滑物体，发光物体，无光线阴影变化场景，画面边缘等等的精度不高，详细请参阅单目深度估计的相关论文.
+16. TwinLiteNet的车道线估计准确率不高，原因暂时不明。
+17. 可行驶区域检测会受到积水或光滑地面的反光影响，阴影交界处, 昏暗地区等等的精确度也较低。
+18. 对于高屏幕分辨率的手机，请改使用GL_LINE_STRIP来绘制可行驶区域, 否則你啥也看不見。
+19. 2024/07/06更新模型导出方法, 文件夾Export_ONNX。更新Depth模型為DepthAnythingV2-Metric, 详情请搜索Github DepthAnythingV2。
+20. 使用了直出距离的Depth-Metric模型，比之前的近似法准一些. 检测数值跳动或不准仍是正常现象。
+21. 导出前记得填写配置*_config.py，务必跟模型权重档吻合。
+22. 使用自己导出的模型记得修改对应的GLRenfer.java和project.h代码中相关height/width数值。
+23. 由于图像处理模型普遍包含卷积算子，因此量化记得使用UInt8, 否则ONNX Runtime会报错。
+24. 目前只有Yolo v9 & NAS系列能使用高通NPU（HTP），其他的系列和Depth模型暂时皆不能用，要嘛编译不通过，要嘛编译通过后一跑就崩，坐等高通和ONNX更新。
+25. v9-E会导出失败，暂时不能用。
+26. Demo代码中写道：“当要执行YOLO推理，GPU略过处理当前帧数据”，因此需要稍微修改此逻辑，才能正常使用NPU + (v9-S,T / NAS)。（因為FPS太高，会一直跳过图像处理）
+27. 高通NPU（HTP）的配置代码，在文件夾YOLO_Depth_Drivable_Qualcomm_NPU。
+28. 根据高通的规定，您需要自行申請获取NPU库。
+29. 模型的量化方法可以在文件夹 "Do_Quantize" 中查看。
+30. 现在不建议使用q4(uint4)量化方法, 因为ONNX Runtime的运算符"MatMulNBits"表现不佳。
+31. 看更多項目: https://dakeqq.github.io/overview/
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
