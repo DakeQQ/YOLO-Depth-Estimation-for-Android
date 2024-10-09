@@ -60,7 +60,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
         ort_runtime_A->AddSessionConfigEntry(session_options_A,
                                              "session.force_spinning_stop",
                                              "0");  // 1 for low power
-        ort_runtime_A->SetSessionGraphOptimizationLevel(session_options_A, ORT_ENABLE_ALL);
+        ort_runtime_A->SetSessionGraphOptimizationLevel(session_options_A, ORT_ENABLE_EXTENDED);  // CPU backend would faild on some FP16 operators with latest opset. Hence, use ORT_ENABLE_EXTENDED instead of ORT_ENABLE_ALL.
         ort_runtime_A->AddSessionConfigEntry(session_options_A,
                                              "optimization.minimal_build_optimizations",
                                              "");   // Keep empty for full optimization
