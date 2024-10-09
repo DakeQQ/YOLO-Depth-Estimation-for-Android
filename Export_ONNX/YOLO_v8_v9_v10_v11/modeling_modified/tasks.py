@@ -157,21 +157,19 @@ class BaseModel(nn.Module):
             x_13 = self.model[13](self.model[12]([self.model[11](x_10), x_6]))
             x_16 = self.model[16](self.model[15]([self.model[14](x_13), x_4]))
             x_19 = self.model[19](self.model[18]([self.model[17](x_16), x_13]))
-            if EXPORT_YOLO_VERSION == 10:
-                return self.model[23]([x_16, x_19, self.model[22](self.model[21]([self.model[20](x_19), x_10]))])
-            else:
-                part_AB = self.model[23]([x_16, x_19, self.model[22](self.model[21]([self.model[20](x_19), x_10]))])
-                max_scores, max_indices = torch.max(part_AB[1], dim=1, keepdim=True)
-                return torch.cat((part_AB[0], max_scores, max_indices), dim=1).transpose(1, 2)
+            result = self.model[23]([x_16, x_19, self.model[22](self.model[21]([self.model[20](x_19), x_10]))])
         elif (EXPORT_YOLO_VERSION == 8) | (EXPORT_YOLO_VERSION == 9):
             x_6 = self.model[6](self.model[5](x_4))
             x_9 = self.model[9](self.model[8](self.model[7](x_6)))
             x_12 = self.model[12](self.model[11]([self.model[10](x_9), x_6]))
             x_15 = self.model[15](self.model[14]([self.model[13](x_12), x_4]))
             x_18 = self.model[18](self.model[17]([self.model[16](x_15), x_12]))
-            part_AB = self.model[22]([x_15, x_18, self.model[21](self.model[20]([self.model[19](x_18), x_9]))])
-            max_scores, max_indices = torch.max(part_AB[1], dim=1, keepdim=True)
-            return torch.cat((part_AB[0], max_scores, max_indices), dim=1).transpose(1, 2)
+            result = self.model[22]([x_15, x_18, self.model[21](self.model[20]([self.model[19](x_18), x_9]))])
+        if EXPORT_YOLO_VERSION == 10:
+            return result
+        else:
+            max_scores, max_indices = torch.max(result[1], dim=1, keepdim=True)
+            return torch.cat((result[0], max_scores, max_indices), dim=1).transpose(1, 2)
 
 
     def _predict_augment(self, x):
