@@ -14,6 +14,8 @@ from .block import DFL, BNContrastiveHead, ContrastiveHead, Proto
 from .conv import Conv, DWConv
 from .transformer import MLP, DeformableTransformerDecoder, DeformableTransformerDecoderLayer
 from .utils import bias_init_with_prob, linear_init
+from .yolo_config import EXPORT_YOLO_VERSION
+
 
 __all__ = "Detect", "Segment", "Pose", "Classify", "OBB", "RTDETRDecoder", "v10Detect"
 
@@ -117,6 +119,8 @@ class Detect(nn.Module):
         else:
             dbox = self.decode_bboxes(self.dfl(box), self.anchors.unsqueeze(0)) * self.strides
 
+        if EXPORT_YOLO_VERSION == 10:
+            return torch.cat((dbox, cls.sigmoid()), dim=1)
         return dbox, cls.sigmoid()
 
     def bias_init(self):
