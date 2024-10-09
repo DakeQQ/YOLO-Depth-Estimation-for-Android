@@ -68,7 +68,7 @@
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 4 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 7 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 10 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 9 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-s<br>q8f32 | 19 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-n<br>q8f32 | 38 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-m<br>q8f32 | 9.5 |
