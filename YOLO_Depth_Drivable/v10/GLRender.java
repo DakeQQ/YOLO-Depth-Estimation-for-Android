@@ -203,7 +203,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 float depth_avg = Get_Depth_Central_5_Points(box);  // Disable it, if no depth model.
                 class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence())).append("% / ").append(String.format("%.1f", depth_avg)).append(" m\n");
             } else {
-                class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence()));
+                class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence())).append("%\n");
             }
             box.top = 1.f - box.top * inv_yolo_height;
             box.bottom = 1.f - box.bottom * inv_yolo_height;
