@@ -73,16 +73,16 @@
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-s<br>q8f32 | 17.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-n<br>q8f32 | 35 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v9-C<br>q8f32 | 7 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-C<br>f16 | 48 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-M<br>f16 | 58 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-S<br>f16 | 85 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-T<br>f16 | 105 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-C<br>f16 | 50+ |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-M<br>f16 | 60+ |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-S<br>f16 | 90+ |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-T<br>f16 | 110+ |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-s<br>q8f32 | 21 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-n<br>q8f32 | 43 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-m<br>q8f32 | 9 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-s<br>q8f32 | 19 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 73 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 95 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 75+ |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 95+ |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-x<br>q8f32 | 2.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-l<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-m<br>q8f32 | 5 |
