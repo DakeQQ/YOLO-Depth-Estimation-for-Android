@@ -14,24 +14,19 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "layout(std430, binding = 1) buffer Output {\n"
                                   "    float result[2764800];\n"  // pixelCount_rgb
                                   "} outputData;\n"
-                                  "\n"
-                                  "const vec3 YUVtoRGBCoefficients = vec3(0.416319734, 0.485908649, 0.360750361);\n"  // normalize factor to [0, 1]
-                                  "const vec3 YUVOffset = vec3(0.0, 1.058, 0.0);\n"
-                                  "const vec3 YUVMultipliers = vec3(1.402, -0.344, 1.772);\n"
-                                  "\n"
+                                  // Normalize to [0, 1]
+                                  "const float scaleFactor = 1.0 / 3.6;\n"
+                                  "const mat3 YUVtoRGBMatrix = mat3(scaleFactor, 0.0, 1.402 * scaleFactor, "
+                                  "                                 scaleFactor, -0.344 * scaleFactor, -0.714 * scaleFactor, "
+                                  "                                 scaleFactor, 1.772 * scaleFactor, 0.0);\n"
+                                  "const vec3 bias = vec3(0.5 * scaleFactor);\n"
                                   "void main() {\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
                                   "    vec3 yuv = texelFetch(yuvTex, texelPos, 0).rgb;\n"
                                   "    int index = texelPos.y * 1280 + texelPos.x;\n"  //  camera_width = 1280
-                                  "\n"
-                                   // Compute RGB and normalize to [0, 1]
-                                  "    vec3 rgb = (yuv + YUVOffset) * YUVtoRGBCoefficients;\n"
-                                  "    rgb.r += yuv.b * YUVMultipliers.r;\n"
-                                  "    rgb.g -= yuv.g * YUVMultipliers.g + yuv.b * YUVMultipliers.b;\n"
-                                  "    rgb.b += yuv.g * YUVMultipliers.b;\n"
-                                  "\n"
+                                  "    vec3 rgb = YUVtoRGBMatrix * yuv + bias;\n"
                                   "    outputData.result[index] = rgb.r;\n"
-                                  "    outputData.result[index + 921600] = rgb.g;\n"  // 921600=pixelCount
+                                  "    outputData.result[index + 921600] = rgb.g;\n"   // 921600=pixelCount
                                   "    outputData.result[index + 1843200] = rgb.b;\n"  // 1843200=2*pixelCount
                                   "}";
 
