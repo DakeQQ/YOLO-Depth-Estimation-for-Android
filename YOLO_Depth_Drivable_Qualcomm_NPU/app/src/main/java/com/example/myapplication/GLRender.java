@@ -33,7 +33,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class GLRender implements GLSurfaceView.Renderer {
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(3);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(4);
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static int mVertexLocation;
@@ -53,6 +53,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_height = 294;
     private static final int yolo_num_boxes = 3024;
     private static final int yolo_num_class = 6;  // [x, y, w, h, max_score, max_indices]
+    private static final int camera_pixels = camera_height * camera_width;
+    private static final int camera_pixels_2 = camera_pixels * 2;
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
@@ -60,6 +62,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_8 = depth_central_position_5 - depth_width_offset;
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
+    private static int[] imageRGBA = new int[camera_pixels];
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width >> 1, camera_height >> 1, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
     public static final float depth_adjust_factor = 1.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float depth_adjust_bias = 0.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
@@ -72,13 +75,14 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float inv_yolo_height = 2.f / (float) yolo_height;
     private static final float NMS_threshold_w = (float) yolo_width * 0.05f;
     private static final float NMS_threshold_h = (float) yolo_height * 0.05f;
+    private static final float inv_255 = 1.f / 255.f;
     public static float FPS;
     public static float central_depth;
     private static final float[] lowColor = {1.0f, 1.0f, 0.0f}; // Yellow for low confidence.
     private static final float[] highColor = {1.0f, 0.0f, 0.0f}; // Red for high confidence.
-    private static float[] image_rgb = new float[camera_width * camera_height];
+    private static final float[] image_rgb = new float[camera_pixels * 3];
     private static float[] depth_results = new float[depth_pixels];
-    public static final float[] vMatrix = new float[16];
+    private static final float[] vMatrix = new float[16];
     private static final int[] mTextureId = new int[1];
     private static final String VERTEX_ATTRIB_POSITION = "aPosVertex";
     private static final String VERTEX_ATTRIB_TEXTURE_POSITION = "aTexVertex";
@@ -143,9 +147,26 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-//        image_rgb = Process_Texture();  Enable it and disable the line 147~149 for using the NPU + (Yolo v9-s/t) or (NAS)
+//      Enable lines 151~159 and disable the lines 160~170 for using the NPU + (Yolo v9-s/t) or (NAS)
+        // imageRGBA = Process_Texture();
+        // executorService.execute(() -> {
+        //     for (int i = 0; i < imageRGBA.length; i++) {
+        //         int rgba = imageRGBA[i];
+        //         image_rgb[i] = (float) ((rgba >> 24) & 0xFF) * inv_255;
+        //         image_rgb[i + camera_pixels] = (float) ((rgba >> 16) & 0xFF) * inv_255;
+        //         image_rgb[i + camera_pixels_2] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+        //     }
+        // });
         if (!run_yolo && !run_depth && !run_twinLite) {
-            image_rgb = Process_Texture();
+            imageRGBA = Process_Texture();
+            executorService.execute(() -> {
+                for (int i = 0; i < imageRGBA.length; i++) {
+                    int rgba = imageRGBA[i];
+                    image_rgb[i] = (float) ((rgba >> 24) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels] = (float) ((rgba >> 16) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels_2] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+                }
+            });
         }
         if (run_yolo) {
             run_yolo = false;
