@@ -162,9 +162,9 @@ public class GLRender implements GLSurfaceView.Renderer {
             executorService.execute(() -> {
                 for (int i = 0; i < camera_pixels; i++) {
                     int rgba = imageRGBA[i];
-                    image_rgb[i] = (float) ((rgba >> 24) & 0xFF) * inv_255;
-                    image_rgb[i + camera_pixels] = (float) ((rgba >> 16) & 0xFF) * inv_255;
-                    image_rgb[i + camera_pixels_2] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+                    image_rgb[i] = (float) ((rgba >> 16) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels_2] = (float) (rgba & 0xFF) * inv_255;
                 }
             });
         }
