@@ -26,7 +26,7 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
                                   "    vec3 yuv = texelFetch(yuvTex, texelPos, 0).rgb;\n"
                                   "    vec3 rgb = YUVtoRGBMatrix * yuv + bias;\n"
-                                  "    outputData.result[texelPos.y * camera_width + texelPos.x] = (uint(rgb.r) << 24) | (uint(rgb.g) << 16) | (uint(rgb.b) << 8);\n"
+                                  "    outputData.result[texelPos.y * camera_width + texelPos.x] = (uint(rgb.r) << 16) | (uint(rgb.g) << 8) | uint(rgb.b);\n"
                                   "}";
 
 GLuint pbo_A = 0;
