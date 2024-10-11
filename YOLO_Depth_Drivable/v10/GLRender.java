@@ -76,9 +76,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     public static float central_depth;
     private static final float[] lowColor = {1.0f, 1.0f, 0.0f}; // Yellow for low confidence.
     private static final float[] highColor = {1.0f, 0.0f, 0.0f}; // Red for high confidence.
-    private static float[] image_rgb = new float[camera_width * camera_height];
+    private static final float[] image_rgb = new float[camera_pixels * 3];
     private static float[] depth_results = new float[depth_pixels];
-    public static final float[] vMatrix = new float[16];
+    private static final float[] vMatrix = new float[16];
     private static final int[] mTextureId = new int[1];
     private static final String VERTEX_ATTRIB_POSITION = "aPosVertex";
     private static final String VERTEX_ATTRIB_TEXTURE_POSITION = "aTexVertex";
