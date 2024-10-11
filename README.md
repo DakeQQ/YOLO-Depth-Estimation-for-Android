@@ -62,7 +62,7 @@
 30. 现在不建议使用q4(uint4)量化方法, 因为ONNX Runtime的运算符"MatMulNBits"表现不佳。
 31. 看更多項目: https://dakeqq.github.io/overview/
 
-# GPU Process - 处理性能
+# GPU Image Process - 图像处理性能
 | OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | 
 |:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-GPU<br>Aderno740 | Testing |
