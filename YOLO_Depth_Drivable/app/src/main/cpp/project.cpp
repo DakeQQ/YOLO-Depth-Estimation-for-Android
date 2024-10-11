@@ -670,6 +670,9 @@ Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass
     if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED) {
         env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT));
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    } else {
+        jint error_value = -1;
+        env->SetIntArrayRegion(final_results, 0, 1, &error_value);
     }
     glDeleteSync(fence);
     fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
