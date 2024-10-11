@@ -13,28 +13,30 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group=16, Customize it to fit your device's specifications.
                                   "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "layout(std430, binding = 1) buffer Output {\n"
-                                  "    float result[2764800];\n"  // pixelCount_rgb
+                                  "    int result[921600];\n"  // pixelCount
                                   "} outputData;\n"
+                                  "const int camera_width = 1280;\n"  //  camera_width
                                   // Normalize to [0, 1]
-                                  "const float scaleFactor = 1.0 / 3.6;\n"
-                                  "const vec3 bias = vec3(0.5 * scaleFactor);\n"
+                                  "const float scaleFactor = 255.0 / 3.5;\n"
+                                  "const vec3 bias = vec3(0.4 * scaleFactor * 255.0);\n"
                                   "const mat3 YUVtoRGBMatrix = mat3(scaleFactor, 0.0, 1.402 * scaleFactor, "
                                   "                                 scaleFactor, -0.344 * scaleFactor, -0.714 * scaleFactor, "
                                   "                                 scaleFactor, 1.772 * scaleFactor, 0.0);\n"
                                   "void main() {\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
                                   "    vec3 yuv = texelFetch(yuvTex, texelPos, 0).rgb;\n"
-                                  "    int index = texelPos.y * 1280 + texelPos.x;\n"  //  camera_width = 1280
                                   "    vec3 rgb = YUVtoRGBMatrix * yuv + bias;\n"
-                                  "    outputData.result[index] = rgb.r;\n"
-                                  "    outputData.result[index + 921600] = rgb.g;\n"   // 921600=pixelCount
-                                  "    outputData.result[index + 1843200] = rgb.b;\n"  // 1843200=2*pixelCount
+                                  "    int r = int(rgb.r);\n"
+                                  "    int g = int(rgb.g);\n"
+                                  "    int b = int(rgb.b);\n"
+                                  "    outputData.result[texelPos.y * camera_width + texelPos.x] = (r << 24) | (g << 16) | (b << 8) | 0;\n"
                                   "}";
 
 GLuint pbo_A = 0;
 GLuint pbo_B = 0;
 GLuint computeProgram = 0;
 GLint yuvTexLoc = 0;
+GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 bool usePboA = true;
 const GLsizei camera_width = 1280;
 const GLsizei camera_height = 720;
@@ -44,6 +46,7 @@ const int output_size_B = 294 * 518;  // depth_pixels
 const int pixelCount_rgb = 3 * pixelCount;
 const int gpu_num_group = 16;  // Customize it to fit your device's specifications.
 const GLsizei rgbSize = pixelCount_rgb * sizeof(float);
+const GLsizei rgbSize_i8 = pixelCount * sizeof(int);
 const GLsizei workGroupCountX = camera_width / gpu_num_group;
 const GLsizei workGroupCountY = camera_height / gpu_num_group;
 
