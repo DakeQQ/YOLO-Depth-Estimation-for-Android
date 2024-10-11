@@ -63,7 +63,7 @@
 31. 看更多項目: https://dakeqq.github.io/overview/
 
 # GPU Process - 处理性能
-| OS | Device | Backend | Ｐixels: h720*w1280<br>Time Cost: ms | 
+| OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | 
 |:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-GPU<br>Aderno740 | Testing |
 | Harmony 4 | P40 | Kirin_990_5G-GPU<br>Mali-G76 MP16 | 8 |
