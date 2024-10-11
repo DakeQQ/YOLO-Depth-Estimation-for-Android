@@ -668,9 +668,7 @@ Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass
     jintArray final_results = env->NewIntArray(pixelCount);
     GLenum result = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
     if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED) {
-        env->SetIntArrayRegion(final_results, 0, pixelCount,
-                               reinterpret_cast<const jint *>((uint *) glMapBufferRange(
-                                       GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT)));
+        env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT));
         glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
     }
     glDeleteSync(fence);
