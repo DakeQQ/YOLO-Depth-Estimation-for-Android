@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public static native void Process_Init(int textureId);
-    public static native float[] Process_Texture();
+    public static native int[] Process_Texture();
     private native boolean Load_Models_A(AssetManager assetManager, boolean USE_GPU, boolean FP16, boolean USE_NNAPI, boolean USE_XNNPACK, boolean USE_QNN, boolean USE_DSP_NPU);
     private native boolean Load_Models_B(AssetManager assetManager, boolean USE_GPU, boolean FP16, boolean USE_NNAPI, boolean USE_XNNPACK, boolean USE_QNN, boolean USE_DSP_NPU);
     private native boolean Load_Models_C(AssetManager assetManager, boolean USE_GPU, boolean FP16, boolean USE_NNAPI, boolean USE_XNNPACK, boolean USE_QNN, boolean USE_DSP_NPU);
