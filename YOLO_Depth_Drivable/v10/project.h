@@ -23,8 +23,7 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "void main() {\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
                                   "    vec3 yuv = texelFetch(yuvTex, texelPos, 0).rgb;\n"
-                                  "    vec3 rgb = YUVtoRGBMatrix * (yuv + bias);\n"
-                                  "    rgb = clamp(rgb, 0.0, 255.0);\n"  // Use int8 packing the pixels, it would be 1.6 times faster than using float32 buffer.
+                                  "    vec3 rgb = clamp(YUVtoRGBMatrix * (yuv + bias), 0.0, 255.0);\n"  // Use int8 packing the pixels, it would be 1.6 times faster than using float32 buffer.
                                   "    outputData.result[texelPos.y * camera_width + texelPos.x] = int((uint(rgb.r) << 16) | (uint(rgb.g) << 8) | (uint(rgb.b)));\n"
                                   "}";
 
