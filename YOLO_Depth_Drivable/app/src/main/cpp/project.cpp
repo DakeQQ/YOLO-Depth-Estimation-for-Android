@@ -650,25 +650,29 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
     }
     return JNI_TRUE;
 }
-
-
 extern "C"
-JNIEXPORT jfloatArray JNICALL
+JNIEXPORT jintArray JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz) {
+    glUseProgram(computeProgram);
     if (usePboA) {
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
-        glUseProgram(computeProgram);
         glDispatchCompute(workGroupCountX, workGroupCountY, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
     } else {
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, pbo_B);
-        glUseProgram(computeProgram);
         glDispatchCompute(workGroupCountX, workGroupCountY, 1);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
     }
-    jfloatArray final_results = env->NewFloatArray(pixelCount_rgb);
-    env->SetFloatArrayRegion(final_results, 0, pixelCount_rgb, (float*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize, GL_MAP_READ_BIT));
-    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    jintArray final_results = env->NewIntArray(pixelCount);
+    GLenum result = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+    if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED) {
+        env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT));
+        glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    }
+    glDeleteSync(fence);
+    fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     usePboA = !usePboA;
     return final_results;
 }
