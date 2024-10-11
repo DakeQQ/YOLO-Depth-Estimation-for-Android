@@ -115,6 +115,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                 option_values.push_back(qnn_htp_so);
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode_post_run", "burst");
+                ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
@@ -318,6 +319,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
                 option_values.push_back(qnn_htp_so);
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode_post_run", "burst");
+                ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
@@ -518,6 +520,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
                 option_values.push_back(qnn_htp_so);
                 ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
                 ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.htp_perf_mode_post_run", "burst");
+                ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
