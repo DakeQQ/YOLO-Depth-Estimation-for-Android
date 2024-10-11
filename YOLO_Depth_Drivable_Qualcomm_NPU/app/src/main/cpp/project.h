@@ -12,7 +12,7 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group=16, Customize it to fit your device's specifications.
                                   "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "layout(std430, binding = 1) buffer Output {\n"
-                                  "    uint result[921600];\n"  // pixelCount
+                                  "    int result[921600];\n"  // pixelCount
                                   "} outputData;\n"
                                   "const int camera_width = 1280;\n"  //  camera_width
                                   // Normalize to [0, 1]
@@ -25,7 +25,7 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
                                   "    vec3 yuv = texelFetch(yuvTex, texelPos, 0).rgb;\n"
                                   "    vec3 rgb = YUVtoRGBMatrix * yuv + bias;\n"
-                                  "    outputData.result[texelPos.y * camera_width + texelPos.x] = (uint(rgb.r) << 16) | (uint(rgb.g) << 8) | uint(rgb.b);\n"
+                                  "    outputData.result[texelPos.y * camera_width + texelPos.x] = int((uint(rgb.r) << 16) | (uint(rgb.g) << 8) | (uint(rgb.b)));\n"
                                   "}";
 GLuint pbo_A = 0;
 GLuint pbo_B = 0;
