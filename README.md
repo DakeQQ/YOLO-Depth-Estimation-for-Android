@@ -70,11 +70,11 @@
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 4 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 7 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 9 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-s<br>q8f32 | 19 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-n<br>q8f32 | 38 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 3.5 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 6 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 8 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-s<br>q8f32 | 18 |
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-n<br>q8f32 | 36 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-m<br>q8f32 | 9.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-s<br>q8f32 | 17.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-n<br>q8f32 | 35 |
