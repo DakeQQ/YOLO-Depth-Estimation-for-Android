@@ -12,10 +12,11 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "precision lowp float;\n"
                                   "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group=16, Customize it to fit your device's specifications.
                                   "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
-                                  "layout(std430, binding = 1) buffer Output {\n"
-                                  "    int result[921600];\n"  // pixelCount
-                                  "} outputData;\n"
                                   "const int camera_width = 1280;\n"  //  camera_width
+                                  "const int camera_height = 720;\n"  //  camera_height
+                                  "layout(std430, binding = 1) buffer Output {\n"
+                                  "    int result[camera_height * camera_width];\n"  // pixelCount
+                                  "} outputData;\n"
                                   "const vec3 bias = vec3(0.0, -0.5, -0.5);\n"
                                   "const mat3 YUVtoRGBMatrix = mat3(255.0, 0.0, 1.402 * 255.0, "
                                   "                                 255.0, -0.344136 * 255.0, -0.714136 * 255.0, "
