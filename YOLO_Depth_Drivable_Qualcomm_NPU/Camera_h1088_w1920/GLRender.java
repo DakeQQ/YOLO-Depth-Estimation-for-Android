@@ -47,11 +47,11 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int BYTES_FLOAT_2 = 8;
     public static final int camera_width = 1920;  // Please modify the project.h file simultaneously when editing these values.
     public static final int camera_height = 1088;
-    private static final int yolo_width = 640;
-    private static final int yolo_height = 354;
+    private static final int yolo_width = 512;
+    private static final int yolo_height = 288;
     private static final int depth_width = 518;
     private static final int depth_height = 294;
-    private static final int yolo_num_boxes = 4620;
+    private static final int yolo_num_boxes = 3024;
     private static final int yolo_num_class = 6;  // [x, y, w, h, max_score, max_indices]
     private static final int camera_pixels = camera_height * camera_width;
     private static final int camera_pixels_2 = camera_pixels * 2;
