@@ -68,7 +68,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     public static final float depth_adjust_factor = 1.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float depth_adjust_bias = 0.f;  // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float yolo_detect_threshold = 0.3f;
-    private static final float color_factor = 1.f / (1.f - yolo_detect_threshold);
+    private static final float color_factor = 1.f / (0.8f - yolo_detect_threshold);
     private static final float line_width = 6.f;  // draw boxes
     private static final float depth_w_factor = 0.5f * depth_width / yolo_width;
     private static final float depth_h_factor = 0.5f * depth_height / yolo_height;
