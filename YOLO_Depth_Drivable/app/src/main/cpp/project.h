@@ -28,10 +28,8 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "}";
 
 GLuint pbo_A = 0;
-GLuint pbo_B = 0;
 GLuint computeProgram = 0;
 GLint yuvTexLoc = 0;
-bool usePboA = true;
 const GLsizei camera_width = 1280;
 const GLsizei camera_height = 720;
 const GLsizei pixelCount = camera_width * camera_height;
