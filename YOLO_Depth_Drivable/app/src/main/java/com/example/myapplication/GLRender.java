@@ -168,12 +168,12 @@ public class GLRender implements GLSurfaceView.Renderer {
                 long t = System.currentTimeMillis();
                 draw_queue_yolo.add(Post_Process_Yolo(Run_YOLO(image_rgb)));
                 sum_t += System.currentTimeMillis() - t;
-                count_t += 1000;
                 FPS = (float) count_t / sum_t;
-                if (count_t > 999999) {  // Reset
-                    count_t = 0;
-                    sum_t = 0;
+                if (count_t > 99999) {  // Reset
+                    count_t >>= 1;
+                    sum_t >>= 1;
                 }
+                count_t += 1000;
                 run_yolo = true;
             });
         }
