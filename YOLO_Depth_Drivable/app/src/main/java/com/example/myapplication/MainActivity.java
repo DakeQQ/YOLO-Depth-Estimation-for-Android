@@ -4,8 +4,8 @@ import static com.example.myapplication.GLRender.FPS;
 import static com.example.myapplication.GLRender.camera_height;
 import static com.example.myapplication.GLRender.camera_width;
 import static com.example.myapplication.GLRender.central_depth;
+import static com.example.myapplication.GLRender.executorService;
 import static com.example.myapplication.GLRender.focus_area;
-
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -20,6 +20,8 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.OutputConfiguration;
+import android.hardware.camera2.params.SessionConfiguration;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.BufferedReader;
@@ -40,31 +43,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    @SuppressLint("StaticFieldLeak")
-    public static GLSurfaceView mGLSurfaceView;
-    @SuppressLint("StaticFieldLeak")
-    private static Context mContext;
-    @SuppressLint("StaticFieldLeak")
-    private static GLRender mGLRender;
-    private static CameraManager mCameraManager;
-    private static CameraDevice mCameraDevice;
-    private static CameraCaptureSession mCaptureSession;
-    private static CaptureRequest mPreviewRequest;
-    private static CaptureRequest.Builder mPreviewRequestBuilder;
-    private static String mCameraId;
-    private static Handler mBackgroundHandler;
-    private static HandlerThread mBackgroundThread;
+    private GLSurfaceView mGLSurfaceView;
+    private Context mContext;
+    private GLRender mGLRender;
+    private CameraManager mCameraManager;
+    private CameraDevice mCameraDevice;
+    private CameraCaptureSession mCaptureSession;
+    private CaptureRequest mPreviewRequest;
+    private CaptureRequest.Builder mPreviewRequestBuilder;
+    private String mCameraId;
+    private Handler mBackgroundHandler;
+    private HandlerThread mBackgroundThread;
     public static final int REQUEST_CAMERA_PERMISSION = 1;
     public static final String file_name_class = "class.txt";
     public static final List<String> labels = new ArrayList<>();
-    @SuppressLint("StaticFieldLeak")
-    public static TextView FPS_view;
-    @SuppressLint("StaticFieldLeak")
-    public static TextView class_view;
-    @SuppressLint("StaticFieldLeak")
-    public static TextView depth_view;
+    private TextView FPS_view;
+    private TextView class_view;
+    private TextView depth_view;
     public static StringBuilder class_result = new StringBuilder();
-
     static {
         System.loadLibrary("myapplication");
     }
@@ -80,87 +76,112 @@ public class MainActivity extends AppCompatActivity {
         FPS_view = findViewById(R.id.fps);
         class_view = findViewById(R.id.class_list);
         depth_view = findViewById(R.id.depth);
-        if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
-            FPS_view.setText("YOLO failed.");
-        }
-        // Close the load code if you don't need it.
-        if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
-            depth_view.setText("Depth failed.");
-        }
-        if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
-            FPS_view.setText("TwinLite failed.");
-        }
         setWindowFlag();
         initView();
+        executorService.execute(() -> {
+            if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
+                runOnUiThread(() -> FPS_view.setText("YOLO failed."));
+            }
+        });
+        // Disable the load model if you are not interested.
+        executorService.execute(() -> {
+            if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
+                runOnUiThread(() -> depth_view.setText("Depth failed."));
+            }
+        });
+        // Disable the load model if you are not interested.
+        executorService.execute(() -> {
+            if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
+                runOnUiThread(() -> FPS_view.setText("TwinLite failed."));
+            }
+        });
     }
+
     private void setWindowFlag() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
     private void initView() {
         mGLSurfaceView = findViewById(R.id.glSurfaceView);
         mGLSurfaceView.setEGLContextClientVersion(3);
         mGLRender = new GLRender(mContext);
         mGLSurfaceView.setRenderer(mGLRender);
     }
+
     @Override
     public void onResume() {
         super.onResume();
+        startBackgroundThread();
+        if (mGLSurfaceView != null) {
+            mGLSurfaceView.onResume();
+        }
+        openCamera();
     }
+
     @Override
     public void onPause() {
+        closeCamera();
+        stopBackgroundThread();
+        if (mGLSurfaceView != null) {
+            mGLSurfaceView.onPause();
+        }
         super.onPause();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        closeCamera();
-        stopBackgroundThread();
     }
+
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
+
     private void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (mBackgroundThread != null) {
+            mBackgroundThread.quitSafely();
+            try {
+                mBackgroundThread.join();
+                mBackgroundThread = null;
+                mBackgroundHandler = null;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @SuppressLint("SetTextI18n")
     private void requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             FPS_view.setText("Camera permission failed");
         } else {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
     }
+
     public void openCamera() {
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
             return;
         }
-        startBackgroundThread();
         setUpCameraOutputs();
-
         try {
             mCameraManager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
+
     private void setUpCameraOutputs() {
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         mCameraId = CameraUtils.getInstance().getCameraId();
     }
+
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @SuppressLint({"ResourceType", "DefaultLocale", "SetTextI18n"})
         @Override
@@ -173,26 +194,38 @@ public class MainActivity extends AppCompatActivity {
                 surfaceTexture.setDefaultBufferSize(camera_width, camera_height);
                 surfaceTexture.setOnFrameAvailableListener(surfaceTexture1 -> {
                     mGLSurfaceView.requestRender();
-                    FPS_view.setText("FPS: " + String.format("%.1f", FPS));
-                    depth_view.setText("Central\nDepth: " + String.format("%.2f", central_depth) + " m");
-                    class_view.setText(class_result);
-                    class_result.setLength(0);
+                    runOnUiThread(() -> {
+                        FPS_view.setText("FPS: " + String.format("%.1f", FPS));
+                        depth_view.setText("Central\nDepth: " + String.format("%.2f", central_depth) + " m");
+                        class_view.setText(class_result);
+                        class_result.setLength(0);
+                    });
                 });
                 Surface surface = new Surface(surfaceTexture);
                 mCameraDevice = cameraDevice;
                 mPreviewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                 mPreviewRequestBuilder.addTarget(surface);
                 mPreviewRequest = mPreviewRequestBuilder.build();
-                cameraDevice.createCaptureSession(List.of(surface), sessionsStateCallback, null);
+                List<OutputConfiguration> outputConfigurations = new ArrayList<>();
+                outputConfigurations.add(new OutputConfiguration(surface));
+                SessionConfiguration sessionConfiguration = new SessionConfiguration(
+                        SessionConfiguration.SESSION_REGULAR,
+                        outputConfigurations,
+                        executorService,
+                        sessionsStateCallback
+                );
+                cameraDevice.createCaptureSession(sessionConfiguration);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
             cameraDevice.close();
             mCameraDevice = null;
         }
+
         @Override
         public void onError(@NonNull CameraDevice cameraDevice, int error) {
             cameraDevice.close();
@@ -200,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     };
+
     CameraCaptureSession.StateCallback sessionsStateCallback = new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -218,10 +252,12 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {
         }
     };
+
     private final CameraCaptureSession.CaptureCallback mCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
         @Override
@@ -236,9 +272,15 @@ public class MainActivity extends AppCompatActivity {
                                        @NonNull TotalCaptureResult result) {
         }
     };
+
     private void closeCamera() {
         if (null != mCaptureSession) {
-            mCaptureSession.close();
+            try {
+                mCaptureSession.stopRepeating();
+                mCaptureSession.close();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
             mCaptureSession = null;
         }
         if (null != mCameraDevice) {
@@ -246,19 +288,18 @@ public class MainActivity extends AppCompatActivity {
             mCameraDevice = null;
         }
     }
+
     private void Read_Assets(String file_name, AssetManager mgr) {
-        switch (file_name) {
-            case file_name_class -> {
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(mgr.open(file_name_class)));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        labels.add(line);
-                    }
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (file_name.equals(file_name_class)) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(mgr.open(file_name_class)));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    labels.add(line);
                 }
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
