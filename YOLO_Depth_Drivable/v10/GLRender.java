@@ -60,7 +60,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_8 = depth_central_position_5 - depth_width_offset;
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
     private static long sum_t = 0;
-    private static long count_t = 0;
+    private static long count_t = 1000;
     private static final int[] mTextureId = new int[1];
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
     private static int[] imageRGBA = new int[camera_pixels];
@@ -164,12 +164,12 @@ public class GLRender implements GLSurfaceView.Renderer {
                 long t = System.currentTimeMillis();
                 draw_queue_yolo.add(Post_Process_Yolo(Run_YOLO(image_rgb)));
                 sum_t += System.currentTimeMillis() - t;
-                count_t += 1000;
                 FPS = (float) count_t / sum_t;
-                if (count_t > 999999) {  // Reset
-                    count_t = 0;
-                    sum_t = 0;
+                if (count_t > 99999) {  // Reset
+                    count_t >>= 1;
+                    sum_t >>= 1;
                 }
+                count_t += 1000;
                 run_yolo = true;
             });
         }
