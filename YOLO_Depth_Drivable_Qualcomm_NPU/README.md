@@ -8,9 +8,9 @@ This guide will walk you through the steps to set up the Qualcomm NPU-HTP on you
 ## Step 1: Get Required Libraries from Your Device
 To run the Qualcomm NPU-HTP, connect your mobile device and execute the following commands in the Terminal to retrieve the required libraries.
 
-**Note:** These libraries are verified for Snapdragon 8Gen2 only; other devices may need different libraries.
+**Note:** These libraries are verified for Snapdragon 8Gen1, 8Gen2, 8Gen3; other devices may need different libraries.
 
-### Commands:
+### Execute the Commands in Terminal:
 ```bash
 cd ~/Downloads/YOLO_Depth_Drivable_Qualcomm_NPU
 
@@ -52,6 +52,14 @@ You need additional libraries from the official Qualcomm AI Engine Direct SDK (Q
 **Note:** To obtain the latest SDK version, you must use the 'Qualcomm® Package Manager' (QPM3); otherwise, you will receive another version via the direct download link.<br> 
 **Note:** Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
 
+### 8Gen1 Required Libraries:
+1. `libQnnCpu.so`
+2. `libQnnHtp.so`
+3. `libQnnHtpPrepare.so`
+4. `libQnnHtpV69Skel.so`
+5. `libQnnHtpV69Stub.so`
+6. `libQnnSystem.so`
+
 ### 8Gen2 Required Libraries:
 1. `libQnnCpu.so`
 2. `libQnnHtp.so`
@@ -60,12 +68,20 @@ You need additional libraries from the official Qualcomm AI Engine Direct SDK (Q
 5. `libQnnHtpV73Stub.so`
 6. `libQnnSystem.so`
 
+### 8Gen3 Required Libraries:
+1. `libQnnCpu.so`
+2. `libQnnHtp.so`
+3. `libQnnHtpPrepare.so`
+4. `libQnnHtpV75Skel.so`
+5. `libQnnHtpV75Stub.so`
+6. `libQnnSystem.so`
+
 
 ---
 
 ## Step 3: Organize Libraries
 
-Place all the required libraries in both the `assets` and `libs/arm64-v8a` folders.
+Use 8Gen2 as example. Place all the required libraries in both the `assets` and `libs/arm64-v8a` folders.
 
 ### List of Libraries:
 1. `libQnnCpu.so`
@@ -103,9 +119,9 @@ Following these steps will ensure the necessary setup for running the Qualcomm N
 ## 步骤 1：从您的设备获取所需库
 要运行 Qualcomm NPU-HTP，请连接您的移动设备并在终端中执行以下命令以获取所需的库。
 
-**注意：** 这些库仅针对 Snapdragon 8Gen2 确认；其他设备可能需要不同的库。
+**注意：** 这些库仅针对 Snapdragon 8Gen1, 8Gen2, 8Gen3 确认；其他设备可能需要不同的库。
 
-### 命令：
+### 在终端中执行以下命令：
 ```bash
 cd ~/Downloads/YOLO_Depth_Drivable_Qualcomm_NPU
 
@@ -147,18 +163,34 @@ adb pull /system/lib64/ld-android.so ./app/src/main/assets
 **注意：** 要获取最新的 SDK 版本，您必须使用“Qualcomm® Package Manager”（QPM3）；否则，您将通过直接下载链接收到其他版本。<br> 
 **注意：** 可以在这查到型号: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
 
-### 8Gen2所需库：
+### 8Gen1 Required Libraries:
+1. `libQnnCpu.so`
+2. `libQnnHtp.so`
+3. `libQnnHtpPrepare.so`
+4. `libQnnHtpV69Skel.so`
+5. `libQnnHtpV69Stub.so`
+6. `libQnnSystem.so`
+
+### 8Gen2 Required Libraries:
 1. `libQnnCpu.so`
 2. `libQnnHtp.so`
 3. `libQnnHtpPrepare.so`
 4. `libQnnHtpV73Skel.so`
 5. `libQnnHtpV73Stub.so`
 6. `libQnnSystem.so`
+
+### 8Gen3 Required Libraries:
+1. `libQnnCpu.so`
+2. `libQnnHtp.so`
+3. `libQnnHtpPrepare.so`
+4. `libQnnHtpV75Skel.so`
+5. `libQnnHtpV75Stub.so`
+6. `libQnnSystem.so`
 ---
 
 ## 步骤 3：组织库文件
 
-将所有需要的库文件放置在 `assets` 和 `libs/arm64-v8a` 文件夹中。
+使用8Gen2為例子，将所有需要的库文件放置在 `assets` 和 `libs/arm64-v8a` 文件夹中。
 
 ### 库文件列表：
 1. `libQnnCpu.so`
