@@ -179,8 +179,8 @@ adb pull /system/lib64/ld-android.so ./app/src/main/assets
 16. `libbase.so`
 17. `libdl_android.so`
 18. `ld-android.so`
-19. `libonnxruntime.so` （只要放在libs/arm64-v8a文件夹裡）
-20. `libomp.so` （只要放在libs/arm64-v8a文件夹裡）
+19. `libonnxruntime.so` （只需放在libs/arm64-v8a文件夹裡）
+20. `libomp.so` （只需放在libs/arm64-v8a文件夹裡）
 
 ---
 
