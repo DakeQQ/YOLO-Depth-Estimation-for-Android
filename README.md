@@ -7,8 +7,8 @@
 6. Hence, the input/output of the demo models slightly differs from the original models.
 7. Demo models are set to accept h720*w1280 image input; hence, they work when the phone is held horizontally.
 8. For better compatibility with ONNX Runtime-Android, export does not utilize dynamic-axes. Therefore, the exported ONNX model may not be optimal for x86_64.
-9. This project uses OpenGL ES 3.x to directly capture camera frame textures and pass them to the GPU, minimizing image data copying and transfer. It uses GPU compute shaders to convert YUV to RGB and normalize before feeding to the model, minimizing CPU usage.
-10. Dual-buffering and asynchronous inference are used to boost FPS. (Using previous camera frame data for inference, not waiting for current image processing)
+9. This project uses OpenGL ES 3.x to directly capture camera frame textures and pass them to the GPU, minimizing image data copying and transfer. It uses GPU compute shaders to convert YUV to RGB before feeding to the model, minimizing CPU usage.
+10. Asynchronous inference are used. (Using previous camera frame data for inference, not waiting for current image processing)
 11. Finally, YOLO bounding boxes are efficiently rendered using the OpenGL ES.
 12. If using YOLO-v10 series, replace the original GLRender.java and project.h with the one in the "YOLO_Depth_Drivable/v10" folder.
 13. Enabling both YOLO and depth estimation simultaneously drops FPS by about 30% (compared to YOLO-only tasks).
@@ -39,8 +39,8 @@
 7. 因此，演示模型的输入输出与原始模型略有不同。
 8. 演示模型导出设定为接收h720*w1280的图象输入，因此"横置手机"才能使用。
 9. 为了更好的适配ONNXRuntime-Android，导出时未使用dynamic-axes. 因此导出的ONNX模型对x86_64而言不一定是最优解。
-10. 本项目使用OpenGL ES 3.x，直接获取相机帧纹理后传递给GPU，尽可能减少图象数据的复制与传输. 再利用GPU计算着色器将YUV转成RGB并完成归一化后传递给模型, 尽量降低CPU占用。
-11. 采用双重缓冲+异步推理來提升FPS。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
+10. 本项目使用OpenGL ES 3.x，直接获取相机帧纹理后传递给GPU，尽可能减少图象数据的复制与传输. 再利用GPU计算着色器将YUV转成RGB后传递给模型, 尽量降低CPU占用。
+11. 采用异步推理。 (推理时使用前一刻相机帧数据，不等待当前的图像处理)
 12. 最后使用OpenGL ES来高效的渲染YOLO框线。
 13. 若使用YOLO-v10系列, 请将"YOLO_Depth_Drivable/v10"文件夹里的GLRender.java & project.h替换原文件。
 14. 同时启用YOLO与距离估计，FPS会下降约30%。(与单YOLO任务时相比)
