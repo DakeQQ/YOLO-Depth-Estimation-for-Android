@@ -61,6 +61,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_central_position_5 = (depth_pixels - depth_width) >> 1;
     private static final int depth_central_position_8 = depth_central_position_5 - depth_width_offset;
     private static final int depth_central_position_2 = depth_central_position_5 + depth_width_offset;
+    private static long sum_t = 0;
+    private static long count_t = 0;
+    private static final int[] mTextureId = new int[1];
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
     private static int[] imageRGBA = new int[camera_pixels];
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width >> 1, camera_height >> 1, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
@@ -83,7 +86,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float[] image_rgb = new float[camera_pixels * 3];
     private static float[] depth_results = new float[depth_pixels];
     private static final float[] vMatrix = new float[16];
-    private static final int[] mTextureId = new int[1];
     private static final String VERTEX_ATTRIB_POSITION = "aPosVertex";
     private static final String VERTEX_ATTRIB_TEXTURE_POSITION = "aTexVertex";
     private static final String UNIFORM_TEXTURE = "camera_texture";
@@ -165,7 +167,13 @@ public class GLRender implements GLSurfaceView.Renderer {
             executorService.execute(() -> {
                 long t = System.currentTimeMillis();
                 draw_queue_yolo.add(Post_Process_Yolo(Run_YOLO(image_rgb)));
-                FPS = 1000.f / (System.currentTimeMillis()-t);
+                sum_t += System.currentTimeMillis() - t;
+                count_t += 1000;
+                FPS = (float) count_t / sum_t;
+                if (count_t > 999999) {  // Reset
+                    count_t = 0;
+                    sum_t = 0;
+                }
                 run_yolo = true;
             });
         }
