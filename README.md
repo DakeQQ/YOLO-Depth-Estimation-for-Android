@@ -28,7 +28,8 @@
 27. Due to Qualcomm's regulations, you must obtain the NPU libraries on your own.
 28. The quantization method for the model can be seen in the folder "Do_Quantize".
 29. The q4(uint4) quantization method is not currently recommended because the "MatMulNBits" operator in ONNX Runtime is performing poorly.
-30. See more about the project: https://dakeqq.github.io/overview/
+30. Updated and optimized GPU image preprocessing on 2024/10/12. It is recommended that those who have used the previous code update to the latest version.
+31. See more about the project: https://dakeqq.github.io/overview/
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 1. 在Android设备上运行YOLO系列, 单目深度(距离), 可行驶区域估计。
 2. 演示模型已上传至云端硬盘：https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing
@@ -60,7 +61,8 @@
 28. 根据高通的规定，您需要自行申請获取NPU库。
 29. 模型的量化方法可以在文件夹 "Do_Quantize" 中查看。
 30. 现在不建议使用q4(uint4)量化方法, 因为ONNX Runtime的运算符"MatMulNBits"表现不佳。
-31. 看更多項目: https://dakeqq.github.io/overview/
+31. 2024/10/12 更新优化GPU图像预处理，建议以前的码友们再更最新的代码。
+32. 看更多項目: https://dakeqq.github.io/overview/
 
 # GPU Image Preprocess - 图像预处理性能
 | OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | 
