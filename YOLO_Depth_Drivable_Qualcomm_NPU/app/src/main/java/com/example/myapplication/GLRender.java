@@ -279,19 +279,10 @@ public class GLRender implements GLSurfaceView.Renderer {
         return nmsList;
     }
     private static boolean same_item(RectF a, RectF b) {
-        if (Math.abs(a.right - b.right) <= NMS_threshold_w) {
-            if (Math.abs(a.top - b.top) <= NMS_threshold_h) {
-                if (Math.abs(a.left - b.left) <= NMS_threshold_w) {
-                    return Math.abs(a.bottom - b.bottom) <= NMS_threshold_h;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return Math.abs(a.right - b.right) <= NMS_threshold_w &&
+                Math.abs(a.top - b.top) <= NMS_threshold_h &&
+                Math.abs(a.left - b.left) <= NMS_threshold_w &&
+                Math.abs(a.bottom - b.bottom) <= NMS_threshold_h;
     }
     @SuppressLint("DefaultLocale")
     private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
