@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON);
                 mPreviewRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-//                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, focus_area);
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, focus_area);
                 mPreviewRequest = mPreviewRequestBuilder.build();
                 mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
