@@ -182,7 +182,7 @@ public class GLRender implements GLSurfaceView.Renderer {
                 sum_t += System.currentTimeMillis() - t;
                 count_t += 1000;
                 FPS = (float) count_t / sum_t;
-                if (count_t > 999999) {  // Reset
+                if (count_t > 99999) {  // Reset
                     count_t = 0;
                     sum_t = 0;
                 }
