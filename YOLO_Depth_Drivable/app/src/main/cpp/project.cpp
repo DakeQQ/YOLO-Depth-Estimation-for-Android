@@ -654,21 +654,13 @@ extern "C"
 JNIEXPORT jintArray JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz) {
     glUseProgram(computeProgram);
-    if (usePboA) {
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
-        glDispatchCompute(workGroupCountX, workGroupCountY, 1);
-        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
-        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
-    } else {
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, pbo_B);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
         glDispatchCompute(workGroupCountX, workGroupCountY, 1);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
-    }
     jintArray final_results = env->NewIntArray(pixelCount);
     env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-    usePboA = !usePboA;
     return final_results;
 }
 extern "C"
@@ -688,10 +680,6 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
     glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize, nullptr, GL_DYNAMIC_COPY);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
-    glGenBuffers(1, &pbo_B);
-    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_B);
-    glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize, nullptr, GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, pbo_B);
     glBindImageTexture(0, static_cast<GLuint> (texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 extern "C"
