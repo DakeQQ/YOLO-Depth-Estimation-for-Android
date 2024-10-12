@@ -31,7 +31,6 @@ GLuint pbo_A = 0;
 GLuint pbo_B = 0;
 GLuint computeProgram = 0;
 GLint yuvTexLoc = 0;
-GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 bool usePboA = true;
 const GLsizei camera_width = 1280;
 const GLsizei camera_height = 720;
