@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
         FPS_view = findViewById(R.id.fps);
         class_view = findViewById(R.id.class_list);
         depth_view = findViewById(R.id.depth);
-        setWindowFlag();
-        initView();
         executorService.execute(() -> {
             if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
                 runOnUiThread(() -> FPS_view.setText("YOLO failed."));
@@ -95,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> FPS_view.setText("TwinLite failed."));
             }
         });
+        setWindowFlag();
+        initView();
     }
 
     private void setWindowFlag() {
