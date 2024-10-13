@@ -55,6 +55,7 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int yolo_num_class = 6;  // [x, y, w, h, max_score, max_indices]
     private static final int camera_pixels = camera_height * camera_width;
     private static final int camera_pixels_2 = camera_pixels * 2;
+    private static final int camera_pixels_half = camera_pixels / 2;
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
@@ -149,12 +150,18 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-//      Enable lines 151~161 and disable the lines 162~173 for using the NPU + (Yolo v9-s/t) or (NAS)
+//      Enable lines 153~169 and disable the lines 170~190 for using the NPU + (Yolo v9-s/t) or (NAS)
         // imageRGBA = Process_Texture();
-        // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access. 
-        // Therefore, use a new thread to parallelize the normalization process.
         // executorService.execute(() -> {
-        //     for (int i = 0; i < camera_pixels; i++) {
+        //         for (int i = 0; i < camera_pixels_half; i++) {
+        //             int rgba = imageRGBA[i];
+        //             image_rgb[i] = (float) ((rgba >> 16) & 0xFF) * inv_255;
+        //             image_rgb[i + camera_pixels] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+        //             image_rgb[i + camera_pixels_2] = (float) (rgba & 0xFF) * inv_255;
+        //         }
+        // });
+        // executorService.execute(() -> {
+        //     for (int i = camera_pixels_half; i < camera_pixels; i++) {
         //         int rgba = imageRGBA[i];
         //         image_rgb[i] = (float) ((rgba >> 16) & 0xFF) * inv_255;
         //         image_rgb[i + camera_pixels] = (float) ((rgba >> 8) & 0xFF) * inv_255;
@@ -166,7 +173,15 @@ public class GLRender implements GLSurfaceView.Renderer {
             // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access. 
             // Therefore, use a new thread to parallelize the normalization process.
             executorService.execute(() -> {
-                for (int i = 0; i < camera_pixels; i++) {
+                for (int i = 0; i < camera_pixels_half; i++) {
+                    int rgba = imageRGBA[i];
+                    image_rgb[i] = (float) ((rgba >> 16) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels] = (float) ((rgba >> 8) & 0xFF) * inv_255;
+                    image_rgb[i + camera_pixels_2] = (float) (rgba & 0xFF) * inv_255;
+                }
+            });
+            executorService.execute(() -> {
+                for (int i = camera_pixels_half; i < camera_pixels; i++) {
                     int rgba = imageRGBA[i];
                     image_rgb[i] = (float) ((rgba >> 16) & 0xFF) * inv_255;
                     image_rgb[i + camera_pixels] = (float) ((rgba >> 8) & 0xFF) * inv_255;
