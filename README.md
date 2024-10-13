@@ -67,10 +67,10 @@
 33. 看更多項目: https://dakeqq.github.io/overview/
 
 # GPU Image Preprocess - 图像预处理性能
-| OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | 
-|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-GPU<br>Aderno-740 | 4.5 |
-| Harmony 4 | P40 | Kirin_990_5G-GPU<br>Mali-G76 MP16 | 9 |
+| OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | Pixels: h1088*w1920<br>Time Cost: ms | 
+|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Android 13 | Nubia Z50 | 8_Gen2-GPU<br>Aderno-740 | 3.5 | 6.5 |
+| Harmony 4 | P40 | Kirin_990_5G-GPU<br>Mali-G76 MP16 | 9 | 17 |
 # YOLO - 性能 Performance
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
