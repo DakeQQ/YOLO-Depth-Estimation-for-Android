@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
         });
         // Disable the load model if you are not interested.
         executorService.execute(() -> {
-            if (!Load_Models_B(mgr, true, true, true)) {
+            if (!Load_Models_B(mgr, false, false, false)) {
                 runOnUiThread(() -> depth_view.setText("Depth failed."));
             }
         });
         // Disable the load model if you are not interested.
         executorService.execute(() -> {
-            if (!Load_Models_C(mgr, true, true, true)) {
+            if (!Load_Models_C(mgr, false, false, false)) {
                 runOnUiThread(() -> FPS_view.setText("TwinLite failed."));
             }
         });
