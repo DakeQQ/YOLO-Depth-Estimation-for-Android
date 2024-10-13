@@ -191,8 +191,8 @@ public class GLRender implements GLSurfaceView.Renderer {
             executorService.execute(() -> {
                 depth_results = Run_Depth(image_rgb);
                 float center_area = 0.f;
-                for (int i = 0; i < 9; i++) {
-                    center_area += depth_results[depth_central_area[i]];
+                for (int i : depth_central_area) { // Central 9 points average
+                    center_area += depth_results[i];
                 }
                 central_depth = depth_adjust_factor * (center_area * 0.111111111f + central_depth) * 0.5f + depth_adjust_bias;
                 run_depth = true;
