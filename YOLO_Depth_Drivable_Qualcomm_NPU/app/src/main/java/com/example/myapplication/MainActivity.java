@@ -37,7 +37,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -324,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     private void Copy_from_Asset_to_Cache(String fileName, AssetManager mgr){
         try {
             File cacheDir = getCacheDir();
@@ -357,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    
+
     public static native void Process_Init(int textureId);
     public static native int[] Process_Texture();
     private native boolean Load_Models_A(AssetManager assetManager, boolean USE_FLOAT_MODEL, boolean USE_QNN, boolean USE_DSP_NPU);
