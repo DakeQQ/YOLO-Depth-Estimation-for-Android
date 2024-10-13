@@ -76,23 +76,17 @@ public class MainActivity extends AppCompatActivity {
         FPS_view = findViewById(R.id.fps);
         class_view = findViewById(R.id.class_list);
         depth_view = findViewById(R.id.depth);
-        executorService.execute(() -> {
-            if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
-                runOnUiThread(() -> FPS_view.setText("YOLO failed."));
-            }
-        });
+        if (!Load_Models_A(mgr,false,false,false,false,false,false)) {
+            FPS_view.setText("YOLO failed.");
+        }
         // Disable the load model if you are not interested.
-        executorService.execute(() -> {
-            if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
-                runOnUiThread(() -> depth_view.setText("Depth failed."));
-            }
-        });
+        if (!Load_Models_B(mgr,false,false,false,false,false,false)) {
+            depth_view.setText("Depth failed.");
+        }
         // Disable the load model if you are not interested.
-        executorService.execute(() -> {
-            if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
-                runOnUiThread(() -> FPS_view.setText("TwinLite failed."));
-            }
-        });
+        if (!Load_Models_C(mgr,false,false,false,false,false,false)) {
+           FPS_view.setText("TwinLite failed.");
+        }
         setWindowFlag();
         initView();
     }
