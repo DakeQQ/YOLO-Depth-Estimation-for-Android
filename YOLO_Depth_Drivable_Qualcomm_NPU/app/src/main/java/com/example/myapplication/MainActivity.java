@@ -79,27 +79,25 @@ public class MainActivity extends AppCompatActivity {
         FPS_view = findViewById(R.id.fps);
         class_view = findViewById(R.id.class_list);
         depth_view = findViewById(R.id.depth);
-        executorService.execute(() -> {
-            Copy_from_Asset_to_Cache("libQnnCpu.so", mgr);
-            Copy_from_Asset_to_Cache("libQnnHtp.so", mgr);
-            Copy_from_Asset_to_Cache("libQnnHtpPrepare.so", mgr);
-            Copy_from_Asset_to_Cache("libQnnHtpV73Skel.so", mgr);
-            Copy_from_Asset_to_Cache("libQnnHtpV73Stub.so", mgr);
-            Copy_from_Asset_to_Cache("libQnnSystem.so", mgr);
-            Copy_from_Asset_to_Cache("libcdsprpc.so", mgr);
-            Copy_from_Asset_to_Cache("libhidlbase.so", mgr);
-            Copy_from_Asset_to_Cache("libhardware.so", mgr);
-            Copy_from_Asset_to_Cache("libutils.so", mgr);
-            Copy_from_Asset_to_Cache("vendor.qti.hardware.dsp@1.0.so", mgr);
-            Copy_from_Asset_to_Cache("libcutils.so", mgr);
-            Copy_from_Asset_to_Cache("libdmabufheap.so", mgr);
-            Copy_from_Asset_to_Cache("libvmmem.so", mgr);
-            Copy_from_Asset_to_Cache("libc++.so", mgr);
-            Copy_from_Asset_to_Cache("libbase.so", mgr);
-            Copy_from_Asset_to_Cache("libvndksupport.so", mgr);
-            Copy_from_Asset_to_Cache("libdl_android.so", mgr);
-            Copy_from_Asset_to_Cache("ld-android.so", mgr);
-        });
+        Copy_from_Asset_to_Cache("libQnnCpu.so", mgr);
+        Copy_from_Asset_to_Cache("libQnnHtp.so", mgr);
+        Copy_from_Asset_to_Cache("libQnnHtpPrepare.so", mgr);
+        Copy_from_Asset_to_Cache("libQnnHtpV73Skel.so", mgr);
+        Copy_from_Asset_to_Cache("libQnnHtpV73Stub.so", mgr);
+        Copy_from_Asset_to_Cache("libQnnSystem.so", mgr);
+        Copy_from_Asset_to_Cache("libcdsprpc.so", mgr);
+        Copy_from_Asset_to_Cache("libhidlbase.so", mgr);
+        Copy_from_Asset_to_Cache("libhardware.so", mgr);
+        Copy_from_Asset_to_Cache("libutils.so", mgr);
+        Copy_from_Asset_to_Cache("vendor.qti.hardware.dsp@1.0.so", mgr);
+        Copy_from_Asset_to_Cache("libcutils.so", mgr);
+        Copy_from_Asset_to_Cache("libdmabufheap.so", mgr);
+        Copy_from_Asset_to_Cache("libvmmem.so", mgr);
+        Copy_from_Asset_to_Cache("libc++.so", mgr);
+        Copy_from_Asset_to_Cache("libbase.so", mgr);
+        Copy_from_Asset_to_Cache("libvndksupport.so", mgr);
+        Copy_from_Asset_to_Cache("libdl_android.so", mgr);
+        Copy_from_Asset_to_Cache("ld-android.so", mgr);
         executorService.execute(() -> {
             if (!Load_Models_A(mgr, true, true, true)) {  // The NPU-HTP currently supports only the YOLO v9 & NAS model. Other models are not compatible.
                 runOnUiThread(() -> FPS_view.setText("YOLO failed."));
