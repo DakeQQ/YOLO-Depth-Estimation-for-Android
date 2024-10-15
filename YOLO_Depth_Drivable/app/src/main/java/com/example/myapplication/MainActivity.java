@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
     private GLSurfaceView mGLSurfaceView;
     private Context mContext;
     private GLRender mGLRender;
-    private CameraManager mCameraManager;
-    private CameraDevice mCameraDevice;
-    private CameraCaptureSession mCaptureSession;
-    private CaptureRequest mPreviewRequest;
-    private CaptureRequest.Builder mPreviewRequestBuilder;
-    private String mCameraId;
-    private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
+    private static CameraManager mCameraManager;
+    private static CameraDevice mCameraDevice;
+    private static CameraCaptureSession mCaptureSession;
+    private static CaptureRequest mPreviewRequest;
+    private static CaptureRequest.Builder mPreviewRequestBuilder;
+    private static final String mCameraId = "0";  // {BACK_MAIN_CAMERA=0, FRONT_CAMERA=1, BACK_WIDTH_CAMERA=4}, The ID Value may different on others device. Try yourself.
+    private static Handler mBackgroundHandler;
+    private static HandlerThread mBackgroundThread;
     public static final int REQUEST_CAMERA_PERMISSION = 1;
     public static final String file_name_class = "class.txt";
     public static final List<String> labels = new ArrayList<>();
@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpCameraOutputs() {
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-        mCameraId = CameraUtils.getInstance().getCameraId();
     }
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
