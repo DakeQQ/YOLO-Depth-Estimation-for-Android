@@ -26,10 +26,13 @@ model = models.get(Models.YOLO_NAS_M, pretrained_weights="coco").eval()
 
 # Export the model
 dummy_input = torch.ones(EXPORT_YOLO_INPUT_SIZE, dtype=torch.float32)
-torch.onnx.export(model,
-                  dummy_input,
-                  output_path,
-                  input_names=['images'],
-                  output_names=['output'],
-                  opset_version=17,
-                  do_constant_folding=True)
+print("Export Start")
+with torch.inference_mode():
+  torch.onnx.export(model,
+                    dummy_input,
+                    output_path,
+                    input_names=['images'],
+                    output_names=['output'],
+                    opset_version=17,
+                    do_constant_folding=True)
+print("Export Done!")
