@@ -24,4 +24,5 @@ model = YOLO("yolo11n.pt")   # Load an official model,
 # model = YOLO("/Users/Downloads/yolo11n.pt") # Or specify your own model path.
 
 # Export the model
-model.export(format='onnx')  # The exported model will save at the current folder.
+with torch.inference_mode():
+  model.export(format='onnx')  # The exported model will save at the current folder.
