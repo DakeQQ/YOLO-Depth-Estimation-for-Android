@@ -32,11 +32,15 @@ model = DepthAnythingV2(**{**model_configs[EXPORT_MODEL_ENCODER_TYPE], 'max_dept
 model.load_state_dict(torch.load(model_path, map_location='cpu'))
 model.to('cpu').eval()
 images = torch.ones(EXPORT_DEPTH_INPUT_SIZE, dtype=torch.float32)
-torch.onnx.export(
-    model,
-    images,
-    output_path,
-    input_names=['images'],
-    output_names=['outputs'],
-    do_constant_folding=True,
-    opset_version=17)
+print("Export Start")
+with torch.inference_mode():
+    torch.onnx.export(
+        model,
+        images,
+        output_path,
+        input_names=['images'],
+        output_names=['outputs'],
+        do_constant_folding=True,
+        opset_version=17)
+print("Export Done!")
+
