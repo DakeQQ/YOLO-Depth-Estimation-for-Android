@@ -33,7 +33,7 @@ model.load_state_dict(torch.load(model_path, map_location='cpu'))
 model.to('cpu').eval()
 images = torch.ones(EXPORT_DEPTH_INPUT_SIZE, dtype=torch.float32)
 print("Export Start")
-with torch.inference_mode():
+with torch.no_grad():
     torch.onnx.export(
         model,
         images,
