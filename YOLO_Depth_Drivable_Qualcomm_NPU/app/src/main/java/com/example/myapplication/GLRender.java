@@ -129,6 +129,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             0.0f, 1.0f,
             1.0f, 1.0f
     });
+    private static final FloatBuffer boxBuffer = ByteBuffer.allocateDirect((32)).order(ByteOrder.nativeOrder()).asFloatBuffer();
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glEnable(GLES20.GL_BLEND);
@@ -322,7 +323,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             };
             float[] color = getColorFromConfidence(draw_target.getConfidence());
             GLES20.glUniform4f(box_color, color[0], color[1], color[2], 1.f);
-            GLES20.glVertexAttribPointer(box_position, 2, GLES20.GL_FLOAT, false, BYTES_FLOAT_2, getFloatBuffer(rotatedVertices));
+            GLES20.glVertexAttribPointer(box_position, 2, GLES20.GL_FLOAT, false, BYTES_FLOAT_2, boxBuffer.put(rotatedVertices).position(0));
             GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, 4);
         }
         // Draw center cross mark.
