@@ -655,9 +655,9 @@ JNIEXPORT jintArray JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz) {
     glUseProgram(computeProgram);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
-        glDispatchCompute(workGroupCountX, workGroupCountY, 1);
-        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
-        glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
+    glDispatchCompute(workGroupCountX, workGroupCountY, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
     jintArray final_results = env->NewIntArray(pixelCount);
     env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
