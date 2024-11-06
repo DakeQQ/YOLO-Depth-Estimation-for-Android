@@ -9,7 +9,7 @@
 
 const char* computeShaderSource = "#version 320 es\n"
                                   "#extension GL_OES_EGL_image_external_essl3 : require\n"
-                                  "precision lowp float;\n"
+                                  "precision mediump float;\n"
                                   "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group=16, Customize it to fit your device's specifications.
                                   "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "const int camera_width = 1280;\n"  //  camera_width
