@@ -16,12 +16,13 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "    int result[camera_height * camera_width];\n"  // pixelCount
                                   "} outputData;\n"
                                   "const vec3 bias = vec3(0.0, -0.5, -0.5);\n"
-                                  "const mat3 YUVtoRGBMatrix = mat3(255.0, 0.0, 1.402 * 255.0, "
-                                  "                                 255.0, -0.344136 * 255.0, -0.714136 * 255.0, "
-                                  "                                 255.0, 1.772 * 255.0, 0.0);\n"
+                                  "const float scale = 0.5 * 127.5;\n"
+                                  "const mat3 YUVtoRGBMatrix = mat3(scale, 0.0, 1.402 * scale, "
+                                  "                                 scale, -0.344136 * scale, -0.714136 * scale, "
+                                  "                                 scale, 1.772 * scale, 0.0);\n"
                                   "void main() {\n"
                                   "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
-                                  "    ivec3 rgb = ivec3(clamp(YUVtoRGBMatrix * (texelFetch(yuvTex, texelPos, 0).rgb + bias), 0.0, 255.0));\n"
+                                  "    ivec3 rgb = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, texelPos, 0).rgb + bias)), -128, 127) + 128;\n"
                                   // Use int8 packing the pixels, it would be 1.6 times faster than using float32 buffer.
                                   "    outputData.result[texelPos.y * camera_width + texelPos.x] = (rgb.b << 16) | (rgb.r << 8) | (rgb.g);\n"
                                   "}";
