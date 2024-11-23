@@ -1,4 +1,5 @@
 import shutil
+import torch
 
 config_path = './yolo_config.py'  # The path where the yolo_config.py stored.
 modified_exporter_path = './modeling_modified/exporter.py'  # The path where the modified exporter.py stored.
@@ -24,5 +25,5 @@ model = YOLO("yolo11n.pt")   # Load an official model,
 # model = YOLO("/Users/Downloads/yolo11n.pt") # Or specify your own model path.
 
 # Export the model
-with torch.no_grad():
+with torch.inference_mode():
   model.export(format='onnx')  # The exported model will save at the current folder.
