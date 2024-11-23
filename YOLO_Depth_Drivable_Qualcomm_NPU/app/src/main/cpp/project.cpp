@@ -98,7 +98,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                                              "0");  // If set use_ort_model_bytes_directly=1, use_ort_model_bytes_for_initializers should be 0.
         ort_runtime_A->AddSessionConfigEntry(session_options_A,
                                              "session.set_denormal_as_zero",
-                                             "0");  // // Use 0 instead of NaN or Inf.
+                                             "1");  // // Use 0 instead of NaN or Inf.
         ort_runtime_A->AddSessionConfigEntry(session_options_A,
                                              "session.use_env_allocators",
                                              "1");  // Use it to lower memory usage.
@@ -113,7 +113,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
             if (use_dsp_npu) {
                 option_keys.push_back("backend_path");
                 option_values.push_back(qnn_htp_so);
-                ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
+                ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
@@ -302,7 +302,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
                                              "0");  // If set use_ort_model_bytes_directly=1, use_ort_model_bytes_for_initializers should be 0.
         ort_runtime_B->AddSessionConfigEntry(session_options_B,
                                              "session.set_denormal_as_zero",
-                                             "0");  // // Use 0 instead of NaN or Inf.
+                                             "1");  // // Use 0 instead of NaN or Inf.
         ort_runtime_B->AddSessionConfigEntry(session_options_B,
                                              "session.use_env_allocators",
                                              "1");  // Use it to lower memory usage.
@@ -317,7 +317,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
             if (use_dsp_npu) {
                 option_keys.push_back("backend_path");
                 option_values.push_back(qnn_htp_so);
-                ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
+                ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
@@ -504,7 +504,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
                                              "session.use_ort_model_bytes_for_initializers",
                                              "0");  // If set use_ort_model_bytes_directly=1, use_ort_model_bytes_for_initializers should be 0.
         ort_runtime_C->AddSessionConfigEntry(session_options_C, "session.set_denormal_as_zero",
-                                             "0");  // // Use 0 instead of NaN or Inf.
+                                             "1");  // // Use 0 instead of NaN or Inf.
         ort_runtime_C->AddSessionConfigEntry(session_options_C, "session.use_env_allocators",
                                              "1");  // Use it to lower memory usage.
         ort_runtime_C->AddSessionConfigEntry(session_options_C,
@@ -518,7 +518,7 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
             if (use_dsp_npu) {
                 option_keys.push_back("backend_path");
                 option_values.push_back(qnn_htp_so);
-                ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.18.1)
+                ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_C->AddRunConfigEntry(run_options_C, "qnn.rpc_control_latency", "0");
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
