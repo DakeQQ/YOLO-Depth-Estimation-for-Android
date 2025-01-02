@@ -32,7 +32,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class GLRender implements GLSurfaceView.Renderer {
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    public static final ExecutorService executorService = Executors.newFixedThreadPool(4);
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static int mVertexLocation;
