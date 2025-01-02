@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
 import android.opengl.GLES32;
 import android.opengl.GLSurfaceView;
 
