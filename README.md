@@ -49,7 +49,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 
 ## Project Resources
 
-- [More about the project](https://dakeqq.github.io/overview/)
+- [More about the project](https://github.com/DakeQQ?tab=repositories)
 
 ## 演示结果 Demo Results
 
@@ -113,7 +113,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 
 ## 项目资源
 
-- [查看更多项目](https://dakeqq.github.io/overview/)
+- [查看更多项目](https://github.com/DakeQQ?tab=repositories)
 
 ## GPU Image Preprocess - 图像预处理性能
 
