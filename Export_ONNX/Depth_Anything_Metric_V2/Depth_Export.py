@@ -7,17 +7,15 @@ import os
 # Set the path
 model_path = "C:/Users/dake/Desktop/Depth_Anything_Metric_V2/depth_anything_v2_metric_hypersim_vits.pth"  # Specify the path where the depth model stored. Must match the "EXPORT_MODEL_ENCODER_TYPE".
 output_path = "./Depth_Anything_Metric_V2.onnx"
-depth_metric_path = "C:/Users/Downloads/Depth-Anything-V2-main/metric_depth/depth_anything_v2/"  # Specify the path where the Depth-Anything-V2 github project downloaded.
-config_path = "./depth_config.py"  # The depth_config.py path.
-modeifid_path = "./modeling_modified/"  # The modeling_modified folder path.
+depth_metric_path = "C:/Users/Downloads/Depth-Anything-V2-main/metric_depth/depth_anything_v2"  # Specify the path where the Depth-Anything-V2 github project downloaded.
 
 # Replace the original source code.
-shutil.copy(modeifid_path + "dpt.py", depth_metric_path + "dpt.py")
-shutil.copy(modeifid_path + "dinov2.py", depth_metric_path + "dinov2.py")
-shutil.copy(modeifid_path + "mlp.py", depth_metric_path + "dinov2_layers/mlp.py")
-shutil.copy(modeifid_path + "patch_embed.py", depth_metric_path + "dinov2_layers/patch_embed.py")
-shutil.copy(modeifid_path + "attention.py", depth_metric_path + "dinov2_layers/attention.py")
-shutil.copy(config_path, modeifid_path + "depth_config.py")
+shutil.copy("./modeling_modified/dpt.py", depth_metric_path + "/dpt.py")
+shutil.copy("./modeling_modified/dinov2.py", depth_metric_path + "/dinov2.py")
+shutil.copy("./modeling_modified/mlp.py", depth_metric_path + "/dinov2_layers/mlp.py")
+shutil.copy("./modeling_modified/patch_embed.py", depth_metric_path + "/dinov2_layers/patch_embed.py")
+shutil.copy("./modeling_modified/attention.py", depth_metric_path + "/dinov2_layers/attention.py")
+shutil.copy("./depth_config.py", "./modeling_modified/depth_config.py")
 sys.path.append(os.path.dirname(os.path.abspath(depth_metric_path)))
 
 model_configs = {
