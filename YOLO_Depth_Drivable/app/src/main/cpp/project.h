@@ -1,4 +1,3 @@
-
 #include <jni.h>
 #include <iostream>
 #include <fstream>
@@ -10,9 +9,9 @@ const char* computeShaderSource = "#version 320 es\n"
                                   "#extension GL_OES_EGL_image_external_essl3 : require\n"
                                   "precision mediump float;\n"
                                   "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group=16, Customize it to fit your device's specifications.
-                                  "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "const int camera_width = 1280;\n"  //  camera_width
                                   "const int camera_height = 720;\n"  //  camera_height
+                                  "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "layout(std430, binding = 1) buffer Output {\n"
                                   "    int result[camera_height * camera_width];\n"  // pixelCount
                                   "} outputData;\n"
@@ -26,7 +25,6 @@ const char* computeShaderSource = "#version 320 es\n"
                                   // Use int8 packing the pixels, it would be 1.6 times faster than using float32 buffer.
                                   "    outputData.result[texelPos.y * camera_width + texelPos.x] = (rgb.b << 16) | (rgb.r << 8) | (rgb.g);\n"
                                   "}";
-
 GLuint pbo_A = 0;
 GLuint computeProgram = 0;
 GLint yuvTexLoc = 0;
