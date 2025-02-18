@@ -47,6 +47,11 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 12. **Image Preprocessing**:
     - Updated on 2024/10/12 for optimized performance. Set `EXPORT_YOLO_INPUT_SIZE` appropriately for high-resolution screens.
 
+13. **Custom Parameters**:
+    - Please adjust the key variables to match the model parameters and `yolo_config.py`.
+      - `GLRender.java: Around Line 48-53`
+      - `project.h: Line 11, 12, 13, 31, 32, 34, 35, 37`
+
 ## Project Resources
 
 - [More about the project](https://github.com/DakeQQ?tab=repositories)
@@ -110,6 +115,11 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 
 12. **图像预处理**:
     - 2024/10/12更新以优化性能。为高分辨率屏幕设置适当的`EXPORT_YOLO_INPUT_SIZE`。
+    - 
+13. **自定义参数**:
+    - 请调整关键变量以匹配模型参数和 `yolo_config.py`.
+      - `GLRender.java: Around Line 48-53`
+      - `project.h: Line 11, 12, 13, 31, 32, 34, 35, 37`
 
 ## 项目资源
 
