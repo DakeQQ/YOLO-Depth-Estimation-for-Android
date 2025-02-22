@@ -50,14 +50,6 @@ def find_nodes_of_type(model_path, node_type):
     return nodes_to_exclude
 
 
-model_size_bytes = sys.getsizeof(onnx.load(quanted_model_path).SerializeToString())
-model_size_gb = model_size_bytes * 9.31322575e-10  # 1 / (1024 * 1024 * 1024)
-if model_size_gb > 2.0:
-    is_large_model = True
-else:
-    is_large_model = False
-
-
 nodes_to_exclude = find_nodes_of_type(quanted_model_path, "MatMulNBits")  # "To avoid duplicate quantization."
 quantize_dynamic(
     model_input=quanted_model_path,
@@ -72,7 +64,7 @@ quantize_dynamic(
                    'MatMulConstBOnly': False                 # False for more quant. Sometime, the inference speed may get worse.
                    },
     nodes_to_exclude=nodes_to_exclude,                       # Specify the node names to exclude quant process. Example: nodes_to_exclude={'/Gather'}
-    use_external_data_format=is_large_model                  # Save the model into two parts.
+    use_external_data_format=True                            # Save the model into two parts.
 )
 
 # Convert the fp32 to fp16
