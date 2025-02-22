@@ -18,7 +18,7 @@ model_path = os.path.join(original_folder_path, "Model.onnx")                   
 quanted_model_path = os.path.join(quanted_folder_path, "Model_quanted.onnx")     # The quanted model stored path.
 download_path = 'NONE'                                                           # Set the folder path where the LLM whole project downloaded, otherwise set "NONE".
 use_gpu = True                                                                   # If true, the transformers.optimizer will remain the FP16 processes.
-provider = 'CPUExecutionProvider'                                                # ['CPUExecutionProvider', 'CUDAExecutionProvider', 'CoreMLExecutionProvider']
+provider = 'CPUExecutionProvider'                                                # ['CPUExecutionProvider', 'CUDAExecutionProvider']
 
 
 # Preprocess, it also cost alot of memory during preprocess, you can close this command and keep quanting. Call subprocess may get permission failed on Windows system.
@@ -74,23 +74,16 @@ else:
     is_large_model = False
 
 
-# ONNX Model Optimizer
-if not is_large_model:
-    # onnxsim 1st
-    model, _ = simplify(
-        model=onnx.load(quanted_model_path),
-        include_subgraph=True,
-        dynamic_input_shape=False,      # True for dynamic input.
-        tensor_size_threshold="1.99GB", # Must less than 2GB.
-        perform_optimization=True,      # True for more optimize.
-        skip_fuse_bn=False,             # False for more optimize.
-        skip_constant_folding=False,    # False for more optimize.
-        skip_shape_inference=True,      # False for more optimize but may get errors.
-        mutable_initializer=False       # False for static initializer.
-    )
-    onnx.save(model, quanted_model_path)
-    del model
-    gc.collect()
+# onnxslim
+slim(
+    model=quanted_model_path,
+    output_model=quanted_model_path,
+    no_shape_infer=False,   # True for more optimize but may get errors.
+    skip_fusion_patterns=False,
+    no_constant_folding=False,
+    save_as_external_data=is_large_model,
+    verbose=False
+)
 
 
 if download_path == "NONE":
@@ -118,22 +111,16 @@ del model
 gc.collect()
 
 
-# onnxsim 2nd
-if not is_large_model:
-    model, _ = simplify(
-        model=onnx.load(quanted_model_path),
-        include_subgraph=True,
-        dynamic_input_shape=False,      # True for dynamic input.
-        tensor_size_threshold="1.99GB", # Must less than 2GB.
-        perform_optimization=True,      # True for more optimize.
-        skip_fuse_bn=False,             # False for more optimize.
-        skip_constant_folding=False,    # False for more optimize.
-        skip_shape_inference=True,      # False for more optimize but may get errors.
-        mutable_initializer=False       # False for static initializer.
-    )
-    onnx.save(model, quanted_model_path)
-    del model
-    gc.collect()
+# onnxslim
+slim(
+    model=quanted_model_path,
+    output_model=quanted_model_path,
+    no_shape_infer=False,   # True for more optimize but may get errors.
+    skip_fusion_patterns=False,
+    no_constant_folding=False,
+    save_as_external_data=is_large_model,
+    verbose=False
+)
 
 
 # Upgrade the Opset version. (optional process)
