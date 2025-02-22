@@ -4,7 +4,7 @@ import sys
 import onnx
 import torch
 import onnx.version_converter
-from onnxsim import simplify
+from onnxslim import slim
 from onnxconverter_common import float16
 from onnxruntime.transformers.optimizer import optimize_model
 from transformers import AutoModelForCausalLM
@@ -41,22 +41,15 @@ gc.collect()
 
 
 # ONNX Model Optimizer
-if not is_large_model:
-    # onnxsim 1st
-    model, _ = simplify(
-        model=onnx.load(quanted_model_path),
-        include_subgraph=True,
-        dynamic_input_shape=False,      # True for dynamic input.
-        tensor_size_threshold="1.99GB", # Must less than 2GB.
-        perform_optimization=True,      # True for more optimize.
-        skip_fuse_bn=False,             # False for more optimize.
-        skip_constant_folding=False,    # False for more optimize.
-        skip_shape_inference=True,      # False for more optimize but may get errors.
-        mutable_initializer=False       # False for static initializer.
-    )
-    onnx.save(model, quanted_model_path)
-    del model
-    gc.collect()
+slim(
+    model=quanted_model_path,
+    output_model=quanted_model_path,
+    no_shape_infer=False,   # True for more optimize but may get errors.
+    skip_fusion_patterns=False,
+    no_constant_folding=False,
+    save_as_external_data=is_large_model,
+    verbose=False
+)
 
 
 if download_path == "NONE":
@@ -90,22 +83,16 @@ del model
 gc.collect()
 
 
-# onnxsim 2nd
-if not is_large_model:
-    model, _ = simplify(
-        model=onnx.load(quanted_model_path),
-        include_subgraph=True,
-        dynamic_input_shape=False,      # True for dynamic input.
-        tensor_size_threshold="1.99GB", # Must less than 2GB.
-        perform_optimization=True,      # True for more optimize.
-        skip_fuse_bn=False,             # False for more optimize.
-        skip_constant_folding=False,    # False for more optimize.
-        skip_shape_inference=True,      # False for more optimize but may get errors.
-        mutable_initializer=False       # False for static initializer.
-    )
-    onnx.save(model, quanted_model_path)
-    del model
-    gc.collect()
+# onnxslim 2nd
+slim(
+    model=quanted_model_path,
+    output_model=quanted_model_path,
+    no_shape_infer=False,   # True for more optimize but may get errors.
+    skip_fusion_patterns=False,
+    no_constant_folding=False,
+    save_as_external_data=is_large_model,
+    verbose=False
+)
 
 
 # Upgrade the Opset version. (optional process)
