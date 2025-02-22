@@ -106,9 +106,9 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                 option_keys.push_back("soc_model");
                 option_values.push_back(qualcomm_soc_id);  // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
                 option_keys.push_back("device_id");
-                option_values.push_back("0");  // 0 for single device
+                option_values.push_back("0");              // 0 for single device
                 option_keys.push_back("vtcm_mb");
-                option_values.push_back("8");  // 0 for auto
+                option_values.push_back("8");              // 0 for auto
                 option_keys.push_back("qnn_context_priority");
                 option_values.push_back("high");
                 if (use_float_model) {
@@ -117,12 +117,9 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                 } else {
                     option_keys.push_back("enable_htp_fp16_precision");
                     option_values.push_back("0");
-                    ort_runtime_A->AddSessionConfigEntry(session_options_A,
-                                                         "ep.context_enable", "1");
-                    ort_runtime_A->AddSessionConfigEntry(session_options_A,
-                                                         "ep.context_embed_mode", "1");
-                    ort_runtime_A->AddSessionConfigEntry(session_options_A,
-                                                         "ep.context_file_path", ctx_model_A);
+                    ort_runtime_A->AddSessionConfigEntry(session_options_A, "ep.context_enable", "1");
+                    ort_runtime_A->AddSessionConfigEntry(session_options_A, "ep.context_embed_mode", "1");
+                    ort_runtime_A->AddSessionConfigEntry(session_options_A, "ep.context_file_path", ctx_model_A);
                 }
             } else {
                 option_keys.push_back("backend_path");
@@ -293,11 +290,11 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
-                option_values.push_back("43");  // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
+                option_values.push_back(qualcomm_soc_id);  // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
                 option_keys.push_back("device_id");
-                option_values.push_back("0");  // 0 for single device
+                option_values.push_back("0");              // 0 for single device
                 option_keys.push_back("vtcm_mb");
-                option_values.push_back("8");  // 0 for auto
+                option_values.push_back("8");              // 0 for auto
                 option_keys.push_back("qnn_context_priority");
                 option_values.push_back("high");
                 if (use_float_model) {
@@ -306,12 +303,9 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
                 } else {
                     option_keys.push_back("enable_htp_fp16_precision");
                     option_values.push_back("0");
-                    ort_runtime_B->AddSessionConfigEntry(session_options_B,
-                                                         "ep.context_enable", "1");
-                    ort_runtime_B->AddSessionConfigEntry(session_options_B,
-                                                         "ep.context_embed_mode", "1");
-                    ort_runtime_B->AddSessionConfigEntry(session_options_B,
-                                                         "ep.context_file_path", ctx_model_B);
+                    ort_runtime_B->AddSessionConfigEntry(session_options_B, "ep.context_enable", "1");
+                    ort_runtime_B->AddSessionConfigEntry(session_options_B, "ep.context_embed_mode", "1");
+                    ort_runtime_B->AddSessionConfigEntry(session_options_B, "ep.context_file_path", ctx_model_B);
                 }
             } else {
                 option_keys.push_back("backend_path");
@@ -483,11 +477,11 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
-                option_values.push_back("43");  // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
+                option_values.push_back(qualcomm_soc_id);  // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
                 option_keys.push_back("device_id");
-                option_values.push_back("0");  // 0 for single device
+                option_values.push_back("0");              // 0 for single device
                 option_keys.push_back("vtcm_mb");
-                option_values.push_back("8");  // 0 for auto
+                option_values.push_back("8");              // 0 for auto
                 option_keys.push_back("qnn_context_priority");
                 option_values.push_back("high");
                 if (use_float_model) {
@@ -497,12 +491,9 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1C(JNIEnv *env, jobject
                     option_keys.push_back("enable_htp_fp16_precision");
                     option_values.push_back("0");
                 }
-                ort_runtime_C->AddSessionConfigEntry(session_options_C,
-                                                     "ep.context_enable", "1");
-                ort_runtime_C->AddSessionConfigEntry(session_options_C,
-                                                     "ep.context_embed_mode", "1");
-                ort_runtime_C->AddSessionConfigEntry(session_options_C,
-                                                     "ep.context_file_path", ctx_model_C);
+                ort_runtime_C->AddSessionConfigEntry(session_options_C, "ep.context_enable", "1");
+                ort_runtime_C->AddSessionConfigEntry(session_options_C, "ep.context_embed_mode", "1");
+                ort_runtime_C->AddSessionConfigEntry(session_options_C, "ep.context_file_path", ctx_model_C);
             } else {
                 option_keys.push_back("backend_path");
                 option_values.push_back(qnn_cpu_so);
