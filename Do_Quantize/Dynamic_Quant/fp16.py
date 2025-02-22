@@ -17,7 +17,7 @@ model_path = os.path.join(original_folder_path, "Model.onnx")                   
 quanted_model_path = os.path.join(quanted_folder_path, "Model_quanted.onnx")     # The quanted model stored path.
 download_path = 'NONE'                                                           # Set the folder path where the LLM whole project downloaded, otherwise set "NONE".
 use_gpu = True                                                                   # If true, the transformers.optimizer will remain the FP16 processes.
-provider = 'CPUExecutionProvider'                                                # ['CPUExecutionProvider', 'CUDAExecutionProvider', 'CoreMLExecutionProvider']
+provider = 'CPUExecutionProvider'                                                # ['CPUExecutionProvider', 'CUDAExecutionProvider']
 
 
 # Convert the fp32 to fp16
