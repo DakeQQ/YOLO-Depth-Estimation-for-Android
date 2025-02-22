@@ -81,6 +81,7 @@ const char* ctx_model_A = "/storage/emulated/0/Android/data/com.example.myapplic
 const char* ctx_model_B = "/storage/emulated/0/Android/data/com.example.myapplication/ctx_model_B.onnx";
 const char* ctx_model_C = "/storage/emulated/0/Android/data/com.example.myapplication/ctx_model_C.onnx";
 const char* cache_path = "/data/user/0/com.example.myapplication/cache";
+const char* qualcomm_soc_id = "43";                                                    // 0 for unknown, Find your device from here: https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-50/overview.html#supported-snapdragon-devices
 const char* qnn_htp_so = "/data/user/0/com.example.myapplication/cache/libQnnHtp.so";  //  If use (std::string + "libQnnHtp.so").c_str() instead, it will open failed.
 const char* qnn_cpu_so = "/data/user/0/com.example.myapplication/cache/libQnnCpu.so";  //  If use (std::string + "libQnnCpu.so").c_str() instead, it will open failed.
 // Just specify the path for qnn_*_so, and the code will automatically locate the other required libraries. 
