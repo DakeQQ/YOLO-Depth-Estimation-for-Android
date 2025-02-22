@@ -5,7 +5,7 @@ import onnx
 import torch
 import subprocess
 import onnx.version_converter
-from onnxsim import simplify
+from onnxslim import slim
 from onnxruntime.quantization import QuantType, quantize_dynamic
 from onnxruntime.transformers.optimizer import optimize_model
 from transformers import AutoModelForCausalLM
