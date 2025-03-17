@@ -547,11 +547,11 @@ class Exporter:
                 dynamic["output0"] = {0: "batch", 2: "anchors"}  # shape(1, 84, 8400)
             if self.args.nms:  # only batch size is dynamic with NMS
                 dynamic["output0"].pop(2)
-
+        self.im = torch.ones(EXPORT_YOLO_INPUT_SIZE, dtype=torch.float32)
         with arange_patch(self.args):
             torch.onnx.export(
                 NMSModel(self.model, self.args) if self.args.nms else self.model,
-                (torch.ones(EXPORT_YOLO_INPUT_SIZE, dtype=torch.float32),),
+                (self.im,),
                 f,
                 verbose=False,
                 opset_version=opset_version,
