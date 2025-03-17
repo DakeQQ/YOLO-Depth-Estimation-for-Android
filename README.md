@@ -13,7 +13,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
    - Place model files in the `assets` folder and unzip `.so` files in `libs/arm64-v8a`.
 
 2. **Supported Models**:
-   - **YOLO**: Versions 8, 9, 10, 11, and NAS series.
+   - **YOLO**: Versions 8, 9, 10, 11, 12 and NAS series.
    - **Depth Estimation**: Depth Anything V2-Metric-Small.
    - **Drivable Area**: TwinLiteNet.
 
@@ -82,7 +82,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
    - 将模型文件放入`assets`文件夹，解压`libs/arm64-v8a`中的`.so`文件。
 
 2. **支持的模型**:
-   - **YOLO**: v8, v9, v10, v11, NAS系列。
+   - **YOLO**: v8, v9, v10, v11, 12, NAS系列。
    - **深度估计**: Depth Anything V2-Metric-Small。
    - **可行驶区域**: TwinLiteNet。
 
@@ -136,6 +136,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
+| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v12-n<br>q8f32 | 24 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 3.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 6 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 8 |
@@ -155,6 +156,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-s<br>q8f32 | 19 |
 | Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 75+ |
 | Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 95+ |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>q8f32 | 15 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-x<br>q8f32 | 2.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-l<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-m<br>q8f32 | 5 |
