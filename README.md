@@ -39,7 +39,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
    - Update model export methods and ensure configuration files match model weights. Use `UInt8` for quantization to avoid ONNX Runtime errors.
 
 10. **Qualcomm NPU Support**:
-    - Only YOLO v9 & NAS series support Qualcomm NPU. NPU libraries must be obtained independently.
+    - Only YOLO v9, v12 & NAS series support Qualcomm NPU. NPU libraries must be obtained independently.
 
 11. **Quantization Methods**:
     - Avoid q4(uint4) due to poor ONNX Runtime performance.
@@ -108,7 +108,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
    - 更新模型导出方法并确保配置文件与模型权重匹配。使用`UInt8`进行量化以避免ONNX Runtime错误。
 
 10. **高通NPU支持**:
-    - 只有YOLO v9 & NAS系列支持高通NPU。NPU库需自行获取。
+    - 只有YOLO v9, v12 & NAS系列支持高通NPU。NPU库需自行获取。
 
 11. **量化方法**:
     - 由于ONNX Runtime表现不佳，不建议使用q4(uint4)。
@@ -137,6 +137,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 | OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
 |:-------:|:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v12-n<br>q8f32 | 24 |
+| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v12-n<br>f16 | 120+ |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 3.5 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 6 |
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 8 |
