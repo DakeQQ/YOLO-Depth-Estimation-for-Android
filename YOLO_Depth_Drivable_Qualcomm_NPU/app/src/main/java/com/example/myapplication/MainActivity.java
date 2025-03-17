@@ -6,6 +6,9 @@ import static com.example.myapplication.GLRender.camera_width;
 import static com.example.myapplication.GLRender.central_depth;
 import static com.example.myapplication.GLRender.executorService;
 import static com.example.myapplication.GLRender.focus_area;
+import static com.example.myapplication.GLRender.run_depth;
+import static com.example.myapplication.GLRender.run_twinLite;
+import static com.example.myapplication.GLRender.run_yolo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -98,16 +101,22 @@ public class MainActivity extends AppCompatActivity {
         Copy_from_Asset_to_Cache("libvndksupport.so", mgr);
         Copy_from_Asset_to_Cache("libdl_android.so", mgr);
         Copy_from_Asset_to_Cache("ld-android.so", mgr);
-        if (!Load_Models_A(mgr, true, true, true)) {  // The NPU-HTP currently supports only the YOLO v9 & NAS model. Other models are not compatible.
-            FPS_view.setText("YOLO failed.");
+        if (run_yolo) {
+            if (!Load_Models_A(mgr, true, true, true)) {  // The NPU-HTP currently supports only the YOLO v9 & NAS model. Other models are not compatible.
+                FPS_view.setText("YOLO failed.");
+            }
         }
-        // Disable the load model if you are not interested.
-        if (!Load_Models_B(mgr, false, false, false)) {
-            depth_view.setText("Depth failed.");
+        if (run_depth) {
+            // Disable the load model if you are not interested.
+            if (!Load_Models_B(mgr, false, false, false)) {
+                depth_view.setText("Depth failed.");
+            }
         }
-        // Disable the load model if you are not interested.
-        if (!Load_Models_C(mgr, false, false, false)) {
-           FPS_view.setText("TwinLite failed.");
+        if (run_twinLite) {
+            // Disable the load model if you are not interested.
+            if (!Load_Models_C(mgr, false, false, false)) {
+               FPS_view.setText("TwinLite failed.");
+            }
         }
         setWindowFlag();
         initView();
