@@ -98,9 +98,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final String yolo_vertex_shader_name = "yolo_vertex_shader.glsl";
     private static final String yolo_fragment_shader_name = "yolo_fragment_shader.glsl";
     public static SurfaceTexture mSurfaceTexture;
-    private static boolean run_yolo = true;  // true for turn on the function.
-    private static boolean run_depth = false;  // true for turn on the function. Enabling both YOLO and depth estimation simultaneously with CPU, it decrease performance by 30+%.
-    private static boolean run_twinLite = false;  // true for turn on the function.
+    public static boolean run_yolo = true;  // true for turn on the function.
+    public static boolean run_depth = false;  // true for turn on the function. Enabling both YOLO and depth estimation simultaneously with CPU, it decrease performance by 30+%.
+    public static boolean run_twinLite = false;  // true for turn on the function.
     private static final LinkedList<LinkedList<Classifier.Recognition>> draw_queue_yolo = new LinkedList<>();
     private static final LinkedList<float[]> draw_queue_twinLite = new LinkedList<>();
     public GLRender(Context context) {
