@@ -12,6 +12,8 @@ add_compile_options(
         -ffp-model=fast
         -ffp-contract=fast
         -funsafe-math-optimizations
+        -fno-math-errno
+        -ffinite-math-only
         -fvectorize
         -funroll-loops
         -finline-functions
