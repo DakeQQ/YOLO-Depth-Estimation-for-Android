@@ -158,7 +158,7 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 | Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 75+ |
 | Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 95+ |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>q8f32 | 16 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>f16   | 17.5 |
+| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>f16   | 18 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-x<br>q8f32 | 2.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-l<br>q8f32 | 3.5 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-m<br>q8f32 | 5 |
