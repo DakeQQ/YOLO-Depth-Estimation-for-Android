@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project enables running YOLO series, monocular depth estimation, and drivable area estimation on Android devices. It is optimized for peak performance using models converted from HuggingFace, ModelScope, and GitHub.
+This project enables running YOLO series, monocular depth estimation on Android devices. It is optimized for peak performance using models converted from HuggingFace, ModelScope, and GitHub.
 
 ## Key Features
 
@@ -15,7 +15,6 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 2. **Supported Models**:
    - **YOLO**: Versions 8, 9, 10, 11, 12 and NAS series.
    - **Depth Estimation**: Depth Anything V2-Metric-Small.
-   - **Drivable Area**: TwinLiteNet.
 
 3. **Image Input**:
    - Models accept images with resolution h720*w1280. Hold your phone horizontally.
@@ -64,16 +63,13 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 - **YOLOv8-s & Depth Anything-Small**
   ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth2.gif?raw=true)
 
-- **TwinLiteNet**
-  ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/drivable.gif?raw=true)
-
 ---
 
 # 安卓本地运行YOLO+深度(距离)+可行驶区域估计
 
 ## 概述
 
-该项目支持在Android设备上运行YOLO系列、单目深度估计和可行驶区域估计。通过从HuggingFace、ModelScope和GitHub转换的模型进行优化以实现最佳性能。
+该项目支持在Android设备上运行YOLO系列、单目深度估计。通过从HuggingFace、ModelScope和GitHub转换的模型进行优化以实现最佳性能。
 
 ## 主要功能
 
@@ -84,7 +80,6 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 2. **支持的模型**:
    - **YOLO**: v8, v9, v10, v11, 12, NAS系列。
    - **深度估计**: Depth Anything V2-Metric-Small。
-   - **可行驶区域**: TwinLiteNet。
 
 3. **图像输入**:
    - 模型接收分辨率为h720*w1280的图像，需横置手机。
@@ -186,12 +181,5 @@ This project enables running YOLO series, monocular depth estimation, and drivab
 |:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
 | Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 28 | 16.7 |
 | Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 16 | 7.7 |
-
-## Drivable Area - 性能 Performance
-
-| OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | TwinLiteNet<br>q8f32 | 56 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | TwinLiteNet<br>q8f32 | 28 |
 
 ---
