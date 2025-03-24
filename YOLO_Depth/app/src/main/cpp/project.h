@@ -63,6 +63,6 @@ std::vector<ONNXTensorElementDataType> input_types_B;
 std::vector<ONNXTensorElementDataType> output_types_B;
 std::vector<OrtValue*> input_tensors_B;
 std::vector<OrtValue*> output_tensors_B;
-const std::string file_name_A = "yolo12n.onnx";
+const std::string file_name_A = "Model_YOLO_v12_n_f32.ort";
 const std::string file_name_B = "Depth_Anything_Metric_V2.ort";
 const std::string storage_path = "/storage/emulated/0/Android/data/com.example.myapplication/files/";
