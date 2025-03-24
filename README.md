@@ -9,8 +9,8 @@ This project enables running YOLO series, monocular depth estimation on Android 
 ## Key Features
 
 1. **Demo Models Available**: 
-   - Download demo models from [Google Drive](https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing).
-   - Place model files in the `assets` folder and unzip `.so` files in `libs/arm64-v8a`.
+   - Demo model, yolov12n, now is place in the assets folder.
+   - Remember unzip `*.zip` files in `libs/arm64-v8a` to get the `*.so`.
 
 2. **Supported Models**:
    - **YOLO**: Versions 8, 9, 10, 11, 12 and NAS series.
@@ -74,8 +74,8 @@ This project enables running YOLO series, monocular depth estimation on Android 
 ## 主要功能
 
 1. **演示模型**:
-   - 从[Google Drive](https://drive.google.com/drive/folders/1MPUvCQCNkjBiHtMjx-eTywetKbkTK7VA?usp=sharing)下载演示模型。
-   - 将模型文件放入`assets`文件夹，解压`libs/arm64-v8a`中的`.so`文件。
+   - 演示模型, yolov12n, 已放置在`assets`文件夾中。
+   - 記得解压`libs/arm64-v8a`中的`.zip`文件來得到`*.so`。
 
 2. **支持的模型**:
    - **YOLO**: v8, v9, v10, v11, 12, NAS系列。
