@@ -144,7 +144,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-        if (!run_yolo && !run_depth && !run_twinLite) {
+        if (!run_yolo && !run_depth) {
             imageRGBA = Process_Texture();
             // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access. 
             // Therefore, use a new thread to parallelize the normalization process.
