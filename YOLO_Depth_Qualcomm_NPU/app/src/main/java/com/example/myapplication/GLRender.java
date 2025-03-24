@@ -148,8 +148,8 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-//      Enable lines 155~171 and disable the lines 172~192 for using the NPU + (Yolo v9-s/t, v12-n/s) or (NAS)
-         imageRGBA = Process_Texture();
+//      Enable lines 152~168 and disable the lines 169~189 for using the NPU + (Yolo v9-s/t, v12-n/s) or (NAS)
+        imageRGBA = Process_Texture();
         executorService.execute(() -> {
             for (int i = 0; i < camera_pixels_half; i++) {
                 int rgba = imageRGBA[i];
