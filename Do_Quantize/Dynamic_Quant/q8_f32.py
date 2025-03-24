@@ -36,7 +36,7 @@ quantize_dynamic(
                    'MatMulConstBOnly': False                 # False for more quant. Sometime, the inference speed may get worse.
                    },
     nodes_to_exclude=None,                                   # Specify the node names to exclude quant process. Example: nodes_to_exclude={'/Gather'}
-    use_external_data_format=True                            # Save the model into two parts.
+    use_external_data_format=False                           # Save the model into two parts.
 )
 
 
