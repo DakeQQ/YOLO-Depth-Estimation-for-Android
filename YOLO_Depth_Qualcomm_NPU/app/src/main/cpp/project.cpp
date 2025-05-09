@@ -101,6 +101,14 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.rpc_control_latency", "0");
+                option_keys.push_back("backend_type");
+                option_values.push_back("htp");
+                option_keys.push_back("profiling_level");
+                option_values.push_back("off");
+                option_keys.push_back("offload_graph_io_quantization");       // Offload quantization and dequantization of graph I/O to CPU EP else handle by QNN EP .
+                option_values.push_back("1");                                 // Default. Enabled.
+                option_keys.push_back("enable_htp_shared_memory_allocator");  // QNN HTP shared memory allocator.
+                option_values.push_back("0");                                 // Default. Disabled.
                 option_keys.push_back("htp_graph_finalization_optimization_mode");
                 option_values.push_back("3");
                 option_keys.push_back("soc_model");
@@ -124,6 +132,12 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
             } else {
                 option_keys.push_back("backend_path");
                 option_values.push_back(qnn_cpu_so);
+                option_keys.push_back("backend_type");
+                option_values.push_back("cpu");
+                option_keys.push_back("profiling_level");
+                option_values.push_back("off");
+                option_keys.push_back("offload_graph_io_quantization");       // Offload quantization and dequantization of graph I/O to CPU EP else handle by QNN EP .
+                option_values.push_back("1");                                 // Default. Enabled.
             }
             ort_runtime_A->SessionOptionsAppendExecutionProvider(session_options_A, "QNN", option_keys.data(), option_values.data(), option_keys.size());
         }
