@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static native void Process_Init(int textureId);
-    public static native int[] Process_Texture();
+    public static native void Process_Texture(byte[] pixel_values);
     private native boolean Load_Models_A(AssetManager assetManager, boolean USE_FLOAT_MODEL, boolean USE_QNN, boolean USE_DSP_NPU);
     private native boolean Load_Models_B(AssetManager assetManager, boolean USE_FLOAT_MODEL, boolean USE_QNN, boolean USE_DSP_NPU);
     public static native float[] Run_YOLO(byte[] pixel_values);
