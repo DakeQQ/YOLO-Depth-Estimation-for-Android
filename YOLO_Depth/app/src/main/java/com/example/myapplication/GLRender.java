@@ -26,6 +26,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -98,9 +99,9 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final String yolo_vertex_shader_name = "yolo_vertex_shader.glsl";
     private static final String yolo_fragment_shader_name = "yolo_fragment_shader.glsl";
     public static SurfaceTexture mSurfaceTexture;
-    public static boolean run_yolo = true;                                                  // true for turn on the function.
-    public static boolean run_depth = false;                                                // true for turn on the function. Enabling both YOLO and depth estimation simultaneously decrease performance by 30+%.
-    private static final LinkedList<LinkedList<Classifier.Recognition>> draw_queue_yolo = new LinkedList<>();
+    public static volatile boolean run_yolo = true;                                                  // true for turn on the function.
+    public static volatile boolean run_depth = false;                                                // true for turn on the function. Enabling both YOLO and depth estimation simultaneously decrease performance by 30+%.
+    private static final ConcurrentLinkedQueue<LinkedList<Classifier.Recognition>> draw_queue_yolo = new ConcurrentLinkedQueue<>();
     public GLRender(Context context) {
         mContext = context;
     }
@@ -151,7 +152,7 @@ public class GLRender implements GLSurfaceView.Renderer {
         Draw_Camera_Preview();
         if (!run_yolo && !run_depth) {
             imageRGBA = Process_Texture();
-            // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access. 
+            // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access.
             // Therefore, use a new thread to parallelize the normalization process.
             executorService.execute(() -> {
                 for (int i = 0; i < camera_pixels_half; i++) {
@@ -198,7 +199,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             });
         }
         if (!draw_queue_yolo.isEmpty()) {
-            drawBox(draw_queue_yolo.removeFirst());
+            drawBox(Objects.requireNonNull(draw_queue_yolo.poll()));
         }
     }
     private static LinkedList<Classifier.Recognition> Post_Process_Yolo(float[] outputs) {
