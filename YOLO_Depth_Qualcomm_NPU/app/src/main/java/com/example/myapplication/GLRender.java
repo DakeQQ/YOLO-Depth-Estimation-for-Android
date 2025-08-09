@@ -258,21 +258,33 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
+
+        // Pre-allocate arrays outside the loop to reduce garbage collection
+        float[] rotatedVertices = new float[8];
+        float[] color = new float[3];
+
         for (Classifier.Recognition draw_target : nmsList) {
             RectF box = draw_target.getLocation();
             float depth_avg = Get_Depth_Central_5_Points(box);  // Disable it, if no depth model.
             class_result.append(draw_target.getTitle()).append(" / ").append(String.format("%.1f", 100.f * draw_target.getConfidence())).append("% / ").append(String.format("%.1f", depth_avg)).append(" m\n");
-            box.top = 1.f - box.top * inv_yolo_height;
-            box.bottom = 1.f - box.bottom * inv_yolo_height;
-            box.left = 1.f - box.left * inv_yolo_width;
-            box.right = 1.f - box.right * inv_yolo_width;
-            float[] rotatedVertices = {
-                    box.top, box.left,
-                    box.top, box.right,
-                    box.bottom, box.right,
-                    box.bottom, box.left
-            };
-            float[] color = getColorFromConfidence(draw_target.getConfidence());
+
+            // Calculate screen coordinates without modifying the original RectF object
+            float top = 1.f - box.top * inv_yolo_height;
+            float bottom = 1.f - box.bottom * inv_yolo_height;
+            float left = 1.f - box.left * inv_yolo_width;
+            float right = 1.f - box.right * inv_yolo_width;
+
+            rotatedVertices[0] = top;
+            rotatedVertices[1] = left;
+            rotatedVertices[2] = top;
+            rotatedVertices[3] = right;
+            rotatedVertices[4] = bottom;
+            rotatedVertices[5] = right;
+            rotatedVertices[6] = bottom;
+            rotatedVertices[7] = left;
+
+            getColorFromConfidence(draw_target.getConfidence(), color); // Use the optimized method
+
             GLES32.glUniform4f(box_color, color[0], color[1], color[2], 1.f);
             GLES20.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, boxBuffer.put(rotatedVertices).position(0));
             GLES32.glDrawArrays(GLES32.GL_LINE_LOOP, 0, 4);
@@ -396,12 +408,10 @@ public class GLRender implements GLSurfaceView.Renderer {
         buffer.put(array).position(0);
         return buffer;
     }
-    private static float[] getColorFromConfidence(float confidence) {
-        float[] color = new float[3];
+    private static void getColorFromConfidence(float confidence, float[] outColor) {
         float factor = (confidence - yolo_detect_threshold) * color_factor;
         for (int i = 0; i < 3; ++i) {
-            color[i] = lowColor[i] + deltaColor[i] * factor;
+            outColor[i] = lowColor[i] + deltaColor[i] * factor;
         }
-        return color;
     }
 }
