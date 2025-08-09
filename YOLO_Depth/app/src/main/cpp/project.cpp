@@ -1,4 +1,5 @@
 #include "project.h"
+#include <cstring> // Required for memset
 
 extern "C"
 JNIEXPORT jboolean JNICALL
@@ -319,15 +320,24 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
 }
 
 extern "C"
-JNIEXPORT jintArray JNICALL
-Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL
+Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz, jbyteArray output_buffer) {
     glUseProgram(computeProgram);
+
+    // Clear the buffer to zeros before using atomicOr in the shader
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pbo_A);
+    void* mapped_buffer = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, rgbSize_i8, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+    memset(mapped_buffer, 0, rgbSize_i8);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Ensure clear and unmap completes before dispatch
+
     glDispatchCompute(workGroupCountX, workGroupCountY, 1);
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
-    jintArray final_results = env->NewIntArray(pixelCount);
-    env->SetIntArrayRegion(final_results, 0, pixelCount, (jint*) glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_int, GL_MAP_READ_BIT));
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT); // Ensure shader writes complete before mapping
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
+    mapped_buffer = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, rgbSize_i8, GL_MAP_READ_BIT);
+    env->SetByteArrayRegion(output_buffer, 0, rgbSize_i8, static_cast<jbyte*>(mapped_buffer));
     glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-    return final_results;
 }
 extern "C"
 JNIEXPORT void JNICALL
@@ -344,14 +354,14 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     glUniform1i(yuvTexLoc, 0);
     glGenBuffers(1, &pbo_A);
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo_A);
-    glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize_int, nullptr, GL_STATIC_READ);
+    glBufferData(GL_PIXEL_PACK_BUFFER, rgbSize_i8, nullptr, GL_STATIC_READ); // Use byte buffer size
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbo_A);
     glBindImageTexture(0, static_cast<GLuint> (texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 extern "C"
 JNIEXPORT jfloatArray JNICALL
 Java_com_example_myapplication_MainActivity_Run_1YOLO(JNIEnv *env, jclass clazz,
-                                                       jbyteArray pixel_values) {
+                                                      jbyteArray pixel_values) {
     jbyte* pixels = env->GetByteArrayElements(pixel_values, nullptr);
     OrtMemoryInfo *memory_info;
     ort_runtime_A->CreateCpuMemoryInfo(OrtArenaAllocator, OrtMemTypeDefault, &memory_info);
@@ -366,6 +376,7 @@ Java_com_example_myapplication_MainActivity_Run_1YOLO(JNIEnv *env, jclass clazz,
     ort_runtime_A->GetTensorMutableData(output_tensors_A[0], &output_tensors_buffer_A);
     jfloatArray final_results = env->NewFloatArray(output_size_A);
     env->SetFloatArrayRegion(final_results, 0, output_size_A, reinterpret_cast<float*> (output_tensors_buffer_A));
+    env->ReleaseByteArrayElements(pixel_values, pixels, JNI_ABORT);
     return final_results;
 }
 
@@ -388,5 +399,6 @@ Java_com_example_myapplication_MainActivity_Run_1Depth(JNIEnv *env, jclass clazz
     ort_runtime_B->GetTensorMutableData(output_tensors_B[0], &output_tensors_buffer_B);
     jfloatArray final_results = env->NewFloatArray(output_size_B);
     env->SetFloatArrayRegion(final_results, 0, output_size_B, reinterpret_cast<float*> (output_tensors_buffer_B));
+    env->ReleaseByteArrayElements(pixel_values, pixels, JNI_ABORT);
     return final_results;
 }
