@@ -55,8 +55,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int yolo_num_boxes = 3024;                                         // Not 8400, due to the model input had been resized.
     private static final int yolo_num_class = 6;                                            // [x, y, w, h, max_score, max_indices]
     private static final int camera_pixels = camera_height * camera_width;
-    private static final int camera_pixels_2 = camera_pixels * 2;
-    private static final int camera_pixels_half = camera_pixels / 2;
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
@@ -67,7 +65,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static long count_t = 0;
     private static final int[] mTextureId = new int[1];
     private static final int[] depth_central_area = new int[]{depth_central_position_2 - depth_height_offset, depth_central_position_2, depth_central_position_2 + depth_height_offset, depth_central_position_5 - depth_height_offset, depth_central_position_5, depth_central_position_5 + depth_height_offset, depth_central_position_8 - depth_height_offset, depth_central_position_8, depth_central_position_8 + depth_height_offset};
-    private static int[] imageRGBA = new int[camera_pixels];
     public static final MeteringRectangle[] focus_area = new MeteringRectangle[]{new MeteringRectangle(camera_width >> 1, camera_height >> 1, 100, 100, MeteringRectangle.METERING_WEIGHT_MAX)};
     public static final float depth_adjust_factor = 1.f;                                    // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
     private static final float depth_adjust_bias = 0.f;                                     // Please adjust it by yourself to get more depth accuracy. This factor should be optimized by making it a function of focal distance rather than maintaining it as a constant.
@@ -151,25 +148,9 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
         if (!run_yolo && !run_depth) {
-            imageRGBA = Process_Texture();
-            // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access.
-            // Therefore, use a new thread to parallelize the normalization process.
-            executorService.execute(() -> {
-                for (int i = 0; i < camera_pixels_half; i++) {
-                    int rgba = imageRGBA[i];
-                    pixel_values[i] = (byte) ((rgba >> 16) & 0xFF);
-                    pixel_values[i + camera_pixels] = (byte) ((rgba >> 8) & 0xFF);
-                    pixel_values[i + camera_pixels_2] = (byte) (rgba & 0xFF);
-                }
-            });
-            executorService.execute(() -> {
-                for (int i = camera_pixels_half; i < camera_pixels; i++) {
-                    int rgba = imageRGBA[i];
-                    pixel_values[i] = (byte) ((rgba >> 16) & 0xFF);
-                    pixel_values[i + camera_pixels] = (byte) ((rgba >> 8) & 0xFF);
-                    pixel_values[i + camera_pixels_2] = (byte) (rgba & 0xFF);
-                }
-            });
+            // Directly process the texture on the GPU and fill the pixel_values buffer.
+            // This call is synchronous and happens on the GL thread.
+            Process_Texture(pixel_values);
         }
         if (run_yolo) {
             run_yolo = false;
