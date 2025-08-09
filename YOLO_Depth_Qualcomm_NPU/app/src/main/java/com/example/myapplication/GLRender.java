@@ -151,25 +151,9 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
         if (!run_yolo && !run_depth) {
-            imageRGBA = Process_Texture();
-            // Choose CPU normalization over GPU, as GPU float32 buffer access is much slower than int8 buffer access.
-            // Therefore, use a new thread to parallelize the normalization process.
-            executorService.execute(() -> {
-                for (int i = 0; i < camera_pixels_half; i++) {
-                    int rgba = imageRGBA[i];
-                    pixel_values[i] = (byte) ((rgba >> 16) & 0xFF);
-                    pixel_values[i + camera_pixels] = (byte) ((rgba >> 8) & 0xFF);
-                    pixel_values[i + camera_pixels_2] = (byte) (rgba & 0xFF);
-                }
-            });
-            executorService.execute(() -> {
-                for (int i = camera_pixels_half; i < camera_pixels; i++) {
-                    int rgba = imageRGBA[i];
-                    pixel_values[i] = (byte) ((rgba >> 16) & 0xFF);
-                    pixel_values[i + camera_pixels] = (byte) ((rgba >> 8) & 0xFF);
-                    pixel_values[i + camera_pixels_2] = (byte) (rgba & 0xFF);
-                }
-            });
+            // Directly process the texture on the GPU and fill the pixel_values buffer.
+            // This call is synchronous and happens on the GL thread.
+            Process_Texture(pixel_values);
         }
         if (run_yolo) {
             run_yolo = false;
