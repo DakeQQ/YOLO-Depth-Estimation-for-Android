@@ -35,7 +35,6 @@ const int output_size_A = 6 * 3024;         // [x, y, w, h, max_score, max_indic
 const int output_size_B = 294 * 518;        // depth_pixels
 const int pixelCount_rgb = 3 * pixelCount;
 const int gpu_num_group = 16;               // Customize it to fit your device's specifications.
-const GLsizei rgbSize = pixelCount_rgb * sizeof(float);
 const GLsizei rgbSize_int = pixelCount * sizeof(int);
 const GLsizei rgbSize_i8 = pixelCount_rgb * sizeof(uint8_t);
 const GLsizei workGroupCountX = camera_width / gpu_num_group;
