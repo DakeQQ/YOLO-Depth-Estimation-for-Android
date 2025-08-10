@@ -319,47 +319,51 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
     return JNI_TRUE;
 }
 
-// --- FUNCTION WITH ADDED ERROR CHECKING ---
 GLuint createComputeProgram(const char* shaderSource) {
     GLuint shader = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(shader, 1, &shaderSource, nullptr);
     glCompileShader(shader);
 
-    // --- Robust Error Checking ---
-    GLint compile_status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
-    if (compile_status == GL_FALSE) {
-        GLint info_log_length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
-        glDeleteShader(shader);
-        return 0; // Return 0 to indicate failure
+    // In production, add compile log checks
+    GLint status = GL_FALSE;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if (status != GL_TRUE) {
+        GLint logLen = 0;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);
+        if (logLen > 1) {
+            std::vector<char> log(logLen);
+            glGetShaderInfoLog(shader, logLen, nullptr, log.data());
+            // Log/print the error as appropriate in your environment
+        }
     }
 
     GLuint program = glCreateProgram();
     glAttachShader(program, shader);
     glLinkProgram(program);
+    glDeleteShader(shader);
 
-    // --- Robust Error Checking ---
-    GLint link_status;
-    glGetProgramiv(program, GL_LINK_STATUS, &link_status);
-    if (link_status == GL_FALSE) {
-        GLint info_log_length;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &info_log_length);
-
-        glDeleteProgram(program);
-        program = 0;
+    // In production, add link log checks
+    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    if (status != GL_TRUE) {
+        GLint logLen = 0;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLen);
+        if (logLen > 1) {
+            std::vector<char> log(logLen);
+            glGetProgramInfoLog(program, logLen, nullptr, log.data());
+            // Log/print the error as appropriate in your environment
+        }
     }
 
-    glDeleteShader(shader);
     return program;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass clazz, jbyteArray output_buffer) {
-    int write_index = current_index;
-    int read_index = (current_index + 1) % NUM_BUFFERS;
+    const int write_index = current_index;
+    const int read_index  = (current_index + 1) % NUM_BUFFERS;
 
+    // Read back last completed buffer (triple-buffered)
     if (fences[read_index] != 0) {
         glClientWaitSync(fences[read_index], GL_SYNC_FLUSH_COMMANDS_BIT, GLuint64(1000000000));
         glDeleteSync(fences[read_index]);
@@ -374,40 +378,37 @@ Java_com_example_myapplication_MainActivity_Process_1Texture(JNIEnv *env, jclass
         glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
     }
 
-    // --- Clear the buffer using the compute shader ---
-    glUseProgram(clearProgram);
+    // Bind the SSBO for writing the next frame (no clear needed; shader fully overwrites)
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pbos[write_index]);
-    glUniform1ui(clearBufferSizeLoc, bufferSizeInUints);
-    glDispatchCompute(clearWorkgroups, 1, 1);
 
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-    // --- Run the original processing shader ---
+    // Dispatch the fused processing shader
     glUseProgram(processProgram);
     glDispatchCompute(workGroupCountX, workGroupCountY, 1);
 
+    // Ensure SSBO writes are visible before we fence
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    // Fence this frame's GPU work
     fences[write_index] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
+    // Advance ring buffer index
     current_index = (current_index + 1) % NUM_BUFFERS;
 }
-
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass clazz, jint texture_id) {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+    // Create the processing shader program
     processProgram = createComputeProgram(computeShaderSource);
-    clearProgram = createComputeProgram(clearShaderSource);
 
+    // Setup uniforms for the processing program
     glUseProgram(processProgram);
     yuvTexLoc = glGetUniformLocation(processProgram, "yuvTex");
     glUniform1i(yuvTexLoc, 0);
 
-    glUseProgram(clearProgram);
-    clearBufferSizeLoc = glGetUniformLocation(clearProgram, "u_bufferSize");
-
+    // Create triple buffers for SSBO writes and CPU readback
     glGenBuffers(NUM_BUFFERS, pbos);
     for (int i = 0; i < NUM_BUFFERS; ++i) {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, pbos[i]);
@@ -415,6 +416,8 @@ Java_com_example_myapplication_MainActivity_Process_1Init(JNIEnv *env, jclass cl
     }
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
+    // Bind the external texture to an image unit is not required for samplerExternalOES,
+    // but this line is kept as in original code to preserve behavior.
     glBindImageTexture(0, static_cast<GLuint>(texture_id), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA);
 }
 
