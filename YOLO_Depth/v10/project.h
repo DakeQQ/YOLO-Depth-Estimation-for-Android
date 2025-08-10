@@ -5,42 +5,54 @@
 #include "onnxruntime_cxx_api.h"
 #include <GLES3/gl32.h>
 
-// --- COMPUTE SHADER (Reverted to original, stable version) ---
-// This version is kept as it was in the original problem description to ensure maximum compatibility and prevent driver-related crashes.
 const char* computeShaderSource = "#version 320 es\n"
                                   "#extension GL_OES_EGL_image_external_essl3 : require\n"
                                   "precision mediump float;\n"
-                                  "layout(local_size_x = 16, local_size_y = 16) in;\n"  // gpu_num_group
-                                  "const int camera_width = 1280;\n"                    // camera_width
-                                  "const int camera_height = 720;\n"                    // camera_height
+                                  "layout(local_size_x = 16, local_size_y = 16) in;\n"
+                                  "const int camera_width = 1280;\n"
+                                  "const int camera_height = 720;\n"
                                   "const uint pixel_count = uint(camera_width * camera_height);\n"
                                   "layout(binding = 0) uniform samplerExternalOES yuvTex;\n"
                                   "layout(std430, binding = 1) buffer Output {\n"
                                   "    uint result[];\n"
                                   "} outputData;\n"
                                   "const vec3 bias = vec3(-0.15, -0.5, -0.2);\n"
-                                  "const mat3 YUVtoRGBMatrix = mat3(127.5, 0.0, 1.402 * 127.5, "
-                                  "                                 127.5, -0.344136 * 127.5, -0.714136 * 127.5, "
+                                  "const mat3 YUVtoRGBMatrix = mat3(127.5, 0.0, 1.402 * 127.5,\n"
+                                  "                                 127.5, -0.344136 * 127.5, -0.714136 * 127.5,\n"
                                   "                                 127.5, 1.772 * 127.5, 0.0);\n"
                                   "void main() {\n"
-                                  "    ivec2 texelPos = ivec2(gl_GlobalInvocationID.xy);\n"
-                                  "    ivec3 rgb = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, texelPos, 0).rgb + bias)), -128, 127) + 128;\n"
-                                  "    uint pixel_idx = uint(texelPos.y * camera_width + texelPos.x);\n"
-                                  // Planar BGR layout: B...BR...RG...G, requires atomic operations to write bytes into uint buffer.\n"
-                                  // B channel\n"
-                                  "    uint b_idx = pixel_idx / 4u;\n"
-                                  "    uint b_shift = (pixel_idx % 4u) * 8u;\n"
-                                  "    atomicOr(outputData.result[b_idx], uint(rgb.b) << b_shift);\n"
-                                  // R channel\n"
-                                  "    uint idx = pixel_idx + pixel_count;\n"
-                                  "    uint r_idx = idx / 4u;\n"
-                                  "    uint r_shift = (idx % 4u) * 8u;\n"
-                                  "    atomicOr(outputData.result[r_idx], uint(rgb.r) << r_shift);\n"
-                                  // G channel\n"
-                                  "    idx = idx + pixel_count;\n"
-                                  "    uint g_idx = idx / 4u;\n"
-                                  "    uint g_shift = (idx % 4u) * 8u;\n"
-                                  "    atomicOr(outputData.result[g_idx], uint(rgb.g) << g_shift);\n"
+                                  "    ivec2 gid = ivec2(gl_GlobalInvocationID.xy);\n"
+                                  "    if (gid.x >= camera_width || gid.y >= camera_height) return;\n"
+                                  "\n"
+                                  "    // Process 4 horizontally adjacent pixels per invocation starting at x aligned to 4\n"
+                                  "    int baseX = gid.x & ~3; // floor to multiple of 4\n"
+                                  "    if (gid.x != baseX) return; // only 1/4 of threads do useful work\n"
+                                  "\n"
+                                  "    // Precompute base linear index for the first pixel of the 4-pack\n"
+                                  "    uint base_pix_idx = uint(gid.y) * uint(camera_width) + uint(baseX);\n"
+                                  "    uint out_idx_uint = base_pix_idx >> 2; // one uint holds 4 bytes\n"
+                                  "    const uint plane_stride_uint = pixel_count >> 2; // per-channel stride in uints\n"
+                                  "\n"
+                                  "    // Fetch and convert 4 pixels\n"
+                                  "    ivec2 p0 = ivec2(baseX + 0, gid.y);\n"
+                                  "    ivec2 p1 = ivec2(baseX + 1, gid.y);\n"
+                                  "    ivec2 p2 = ivec2(baseX + 2, gid.y);\n"
+                                  "    ivec2 p3 = ivec2(baseX + 3, gid.y);\n"
+                                  "\n"
+                                  "    ivec3 rgb0 = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, p0, 0).rgb + bias)), -128, 127) + 128;\n"
+                                  "    ivec3 rgb1 = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, p1, 0).rgb + bias)), -128, 127) + 128;\n"
+                                  "    ivec3 rgb2 = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, p2, 0).rgb + bias)), -128, 127) + 128;\n"
+                                  "    ivec3 rgb3 = clamp(ivec3(YUVtoRGBMatrix * (texelFetch(yuvTex, p3, 0).rgb + bias)), -128, 127) + 128;\n"
+                                  "\n"
+                                  "    // Pack B, R, G channels into 3 uints (little-endian byte packing)\n"
+                                  "    uint bVal = (uint(rgb0.b)      ) | (uint(rgb1.b) << 8) | (uint(rgb2.b) << 16) | (uint(rgb3.b) << 24);\n"
+                                  "    uint rVal = (uint(rgb0.r)      ) | (uint(rgb1.r) << 8) | (uint(rgb2.r) << 16) | (uint(rgb3.r) << 24);\n"
+                                  "    uint gVal = (uint(rgb0.g)      ) | (uint(rgb1.g) << 8) | (uint(rgb2.g) << 16) | (uint(rgb3.g) << 24);\n"
+                                  "\n"
+                                  "    // Write directly (no atomics, no pre-clear needed)\n"
+                                  "    outputData.result[out_idx_uint] = bVal;\n"
+                                  "    outputData.result[out_idx_uint + plane_stride_uint] = rVal;\n"
+                                  "    outputData.result[out_idx_uint + (plane_stride_uint << 1)] = gVal;\n"
                                   "}";
 
 // --- Globals for Optimization ---
@@ -51,44 +63,17 @@ int current_index = 0;
 
 // --- GL Program Handles ---
 GLuint processProgram;
-GLuint clearProgram;
-
-// --- Uniform Locations ---
-GLuint clearBufferSizeLoc;
-
-// The source for your new clear shader
-const char* clearShaderSource = R"glsl(
-    #version 320 es
-    layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
-    layout(std430, binding = 1) buffer OutputBuffer {
-        uint data[];
-    } out_buffer;
-    uniform uint u_bufferSize;
-    void main() {
-        uint idx = gl_GlobalInvocationID.x;
-        if (idx < u_bufferSize) {
-            out_buffer.data[idx] = 0u;
-        }
-    }
-)glsl";
-
 GLint yuvTexLoc = 0;
 const GLsizei camera_width = 1280;
 const GLsizei camera_height = 720;
 const GLsizei pixelCount = camera_width * camera_height;
 const int output_size_A = 6 * 300;              // [left, top, right, bottom, max_score, max_indices] * yolo_num_boxes
-const int output_size_B = 294 * 518;            // depth_pixels
+const int output_size_B = 294 * 518;        // depth_pixels
 const int pixelCount_rgb = 3 * pixelCount;
+const int gpu_num_group = 16;               // Customize it to fit your device's specifications.
 const GLsizei rgbSize_i8 = pixelCount_rgb * sizeof(uint8_t);
-const int gpu_num_group = 16;
 const GLsizei workGroupCountX = camera_width / gpu_num_group;
 const GLsizei workGroupCountY = camera_height / gpu_num_group;
-
-// The total size of the buffer in 32-bit uints.
-const uint32_t bufferSizeInUints = (rgbSize_i8 + sizeof(uint32_t) - 1) / sizeof(uint32_t);
-
-// The number of workgroups must be based on the clear shader's local_size_x (Magic Number=256).
-const uint32_t clearWorkgroups = (bufferSizeInUints + 255) / 256;
 
 const OrtApi *ort_runtime_A;
 OrtSession *session_model_A;
