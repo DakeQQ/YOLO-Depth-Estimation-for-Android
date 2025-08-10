@@ -82,6 +82,8 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final float[] lowColor = {1.0f, 1.0f, 0.0f};                             // {R, G, B} Yellow for low confidence.
     private static final float[] highColor = {1.0f, 0.0f, 0.0f};                            // {R, G, B} Red for high confidence.
     private static final float[] deltaColor = {highColor[0] - lowColor[0], highColor[1] - lowColor[1], highColor[2] - lowColor[2]};
+    private static final float[] color = new float[3];
+    private static final float[] rotatedVertices = new float[8];
     private static final byte[] pixel_values = new byte[camera_pixels * 3];
     private static float[] depth_results = new float[depth_pixels];
     private static final float[] vMatrix = new float[16];
@@ -186,22 +188,21 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static LinkedList<Classifier.Recognition> Post_Process_Yolo(float[] outputs) {
         LinkedList<Classifier.Recognition> detections = new LinkedList<>();
         int startIndex = 0;
+        RectF rect = new RectF();
         for (int i = 0; i < yolo_num_boxes; ++i) {
             float maxScore = outputs[startIndex + 4];
             if (maxScore >= yolo_detect_threshold) {
                 float delta_x = outputs[startIndex + 2] * 0.5f;
                 float delta_y = outputs[startIndex + 3] * 0.5f;
-                RectF rect = new RectF(
-                        Math.max(0.f, outputs[startIndex] - delta_x),
-                        Math.max(0.f, outputs[startIndex + 1] - delta_y),
-                        Math.min(yolo_width, outputs[startIndex] + delta_x),
-                        Math.min(yolo_height, outputs[startIndex + 1] + delta_y)
-                );
+                rect.left = Math.max(0.f, outputs[startIndex] - delta_x);
+                rect.top = Math.max(0.f, outputs[startIndex + 1] - delta_y);
+                rect.right = Math.min(yolo_width, outputs[startIndex] + delta_x);
+                rect.bottom = Math.min(yolo_height, outputs[startIndex + 1] + delta_y);
                 detections.add(new Classifier.Recognition("", labels.get((int) outputs[startIndex + 5]), maxScore, rect));
             }
             startIndex += yolo_num_class;
         }
-
+        
         // NMS
         LinkedList<Classifier.Recognition> nmsList = new LinkedList<>();
         if (!detections.isEmpty()) {
@@ -256,10 +257,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
 
-        // Pre-allocate arrays outside the loop to reduce garbage collection
-        float[] rotatedVertices = new float[8];
-        float[] color = new float[3];
-
         for (Classifier.Recognition draw_target : nmsList) {
             RectF box = draw_target.getLocation();
             float depth_avg = Get_Depth_Central_5_Points(box);  // Disable it, if no depth model.
@@ -280,7 +277,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             rotatedVertices[6] = bottom;
             rotatedVertices[7] = left;
 
-            getColorFromConfidence(draw_target.getConfidence(), color); // Use the optimized method
+            getColorFromConfidence(draw_target.getConfidence()); // Use the optimized method
 
             GLES32.glUniform4f(box_color, color[0], color[1], color[2], 1.f);
             GLES20.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, boxBuffer.put(rotatedVertices).position(0));
@@ -405,10 +402,10 @@ public class GLRender implements GLSurfaceView.Renderer {
         buffer.put(array).position(0);
         return buffer;
     }
-    private static void getColorFromConfidence(float confidence, float[] outColor) {
+    private static void getColorFromConfidence(float confidence) {
         float factor = (confidence - yolo_detect_threshold) * color_factor;
         for (int i = 0; i < 3; ++i) {
-            outColor[i] = lowColor[i] + deltaColor[i] * factor;
+            GLRender.color[i] = lowColor[i] + deltaColor[i] * factor;
         }
     }
 }
