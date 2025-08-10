@@ -190,16 +190,16 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static LinkedList<Classifier.Recognition> Post_Process_Yolo(float[] outputs) {
         LinkedList<Classifier.Recognition> detections = new LinkedList<>();
         int startIndex = 0;
-        RectF rect = new RectF();
         for (int i = 0; i < yolo_num_boxes; ++i) {
             float maxScore = outputs[startIndex + 4];
             if (maxScore >= yolo_detect_threshold) {
                 float delta_x = outputs[startIndex + 2] * 0.5f;
                 float delta_y = outputs[startIndex + 3] * 0.5f;
-                rect.left = Math.max(0.f, outputs[startIndex] - delta_x);
-                rect.top = Math.max(0.f, outputs[startIndex + 1] - delta_y);
-                rect.right = Math.min(yolo_width, outputs[startIndex] + delta_x);
-                rect.bottom = Math.min(yolo_height, outputs[startIndex + 1] + delta_y);
+                RectF rect = new RectF(
+                        Math.max(0.f, outputs[startIndex] - delta_x),
+                        Math.max(0.f, outputs[startIndex + 1] - delta_y),
+                        Math.min(yolo_width, outputs[startIndex] + delta_x),
+                        Math.min(yolo_height, outputs[startIndex + 1] + delta_y));
                 detections.add(new Classifier.Recognition("", labels.get((int) outputs[startIndex + 5]), maxScore, rect));
             }
             startIndex += yolo_num_class;
