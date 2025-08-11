@@ -49,8 +49,8 @@ This project enables running YOLO series, monocular depth estimation on Android 
 
 13. **Custom Parameters**:
     - Please adjust the key variables to match the model parameters and `yolo_config.py`.
-      - `GLRender.java: Around Line 48-53`
-      - `project.h: Line 11, 12, 13, 31, 32, 34, 35, 37`
+      - `GLRender.java: Around Line 49-55`
+      - `project.h: Line 11, 12, 13, 67, 68, 70, 71, 73`
 
 ## Project Resources
 
@@ -115,8 +115,8 @@ This project enables running YOLO series, monocular depth estimation on Android 
     - 
 13. **自定义参数**:
     - 请调整关键变量以匹配模型参数和 `yolo_config.py`.
-      - `GLRender.java: Around Line 48-53`
-      - `project.h: Line 11, 12, 13, 31, 32, 34, 35, 37`
+      - `GLRender.java: Around Line 49-55`
+      - `project.h: Line 11, 12, 13, 67, 68, 70, 71, 73`
 
 ## 项目资源
 
