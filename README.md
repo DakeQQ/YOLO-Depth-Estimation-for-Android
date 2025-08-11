@@ -14,7 +14,7 @@ This project enables running YOLO series, monocular depth estimation on Android 
 
 2. **Supported Models**:
    - **YOLO**: Versions 8, 9, 10, 11, 12 and NAS series.
-   - **Depth Estimation**: Depth Anything V2-Metric-Small.
+   - **Depth Estimation**: Depth Anything V2-Metric.
 
 3. **Image Input**:
    - Models accept images with resolution h720*w1280. Hold your phone horizontally.
@@ -39,6 +39,7 @@ This project enables running YOLO series, monocular depth estimation on Android 
 
 10. **Qualcomm NPU Support**:
     - Only YOLO v9, v12 & NAS series support Qualcomm NPU. NPU libraries must be obtained independently.
+    - Depth Anything V2-Metric also supports Qualcomm NPU, but takes longer to initialize.
 
 11. **Quantization Methods**:
     - Avoid q4(uint4) due to poor ONNX Runtime performance.
@@ -79,7 +80,7 @@ This project enables running YOLO series, monocular depth estimation on Android 
 
 2. **支持的模型**:
    - **YOLO**: v8, v9, v10, v11, 12, NAS系列。
-   - **深度估计**: Depth Anything V2-Metric-Small。
+   - **深度估计**: Depth Anything V2-Metric。
 
 3. **图像输入**:
    - 模型接收分辨率为h720*w1280的图像，需横置手机。
@@ -104,6 +105,7 @@ This project enables running YOLO series, monocular depth estimation on Android 
 
 10. **高通NPU支持**:
     - 只有YOLO v9, v12 & NAS系列支持高通NPU。NPU库需自行获取。
+    - Depth Anything V2-Metric 也支持 Qualcomm NPU，但初始化需要更长时间。
 
 11. **量化方法**:
     - 由于ONNX Runtime表现不佳，不建议使用q4(uint4)。
