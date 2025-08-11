@@ -176,7 +176,7 @@ class DepthAnythingV2(nn.Module):
         
         depth = self.depth_head(features, self.patch_h, self.patch_w) * self.max_depth
         
-        return depth.squeeze(1)
+        return depth
     
     @torch.no_grad()
     def infer_image(self, raw_image, input_size=518):
