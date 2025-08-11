@@ -258,11 +258,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     @SuppressLint("DefaultLocale")
     private static void drawBox(LinkedList<Classifier.Recognition> nmsList) {
         GLES32.glUseProgram(ShaderProgram_YOLO);
-
-        // Pre-allocate arrays outside the loop to reduce garbage collection
-        float[] rotatedVertices = new float[8];
-        float[] color = new float[3];
-
         for (Classifier.Recognition draw_target : nmsList) {
             RectF box = draw_target.getLocation();
             float depth_avg = Get_Depth_Central_5_Points(box);  // Disable it, if no depth model.
@@ -283,7 +278,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             rotatedVertices[6] = bottom;
             rotatedVertices[7] = left;
 
-            getColorFromConfidence(draw_target.getConfidence(), color); // Use the optimized method
+            getColorFromConfidence(draw_target.getConfidence()); // Use the optimized method
 
             GLES32.glUniform4f(box_color, color[0], color[1], color[2], 1.f);
             GLES20.glVertexAttribPointer(box_position, 2, GLES32.GL_FLOAT, false, BYTES_FLOAT_2, boxBuffer.put(rotatedVertices).position(0));
