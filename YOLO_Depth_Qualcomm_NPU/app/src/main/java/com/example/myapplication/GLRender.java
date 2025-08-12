@@ -55,8 +55,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int yolo_num_boxes = 3024;                                         // Not 8400, due to the model input had been resized.
     private static final int yolo_num_class = 6;                                            // [x, y, w, h, max_score, max_indices]
     private static final int camera_pixels = camera_height * camera_width;
-    private static final int camera_pixels_2 = camera_pixels * 2;
-    private static final int camera_pixels_half = camera_pixels / 2;
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
