@@ -53,8 +53,6 @@ public class GLRender implements GLSurfaceView.Renderer {
     private static final int depth_height = 294;
     private static final int yolo_output_length = 1800;                                         // 300 * 6
     private static final int camera_pixels = camera_height * camera_width;
-    private static final int camera_pixels_2 = camera_pixels * 2;
-    private static final int camera_pixels_half = camera_pixels / 2;
     private static final int depth_pixels = depth_width * depth_height;
     private static final int depth_height_offset = 25;
     private static final int depth_width_offset = depth_height_offset * depth_width;
