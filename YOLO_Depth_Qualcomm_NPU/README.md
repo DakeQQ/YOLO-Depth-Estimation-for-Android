@@ -12,7 +12,7 @@ To run the Qualcomm NPU-HTP, connect your mobile device and execute the followin
 
 ### Execute the Commands in Terminal:
 ```bash
-cd ~/Downloads/YOLO_Depth_Drivable_Qualcomm_NPU
+cd ~/Downloads/YOLO_Depth_Qualcomm_NPU
 
 adb pull /vendor/lib64/libcdsprpc.so ./app/libs/arm64-v8a
 adb pull /vendor/lib64/vendor.qti.hardware.dsp@1.0.so ./app/libs/arm64-v8a
@@ -123,7 +123,7 @@ Following these steps will ensure the necessary setup for running the Qualcomm N
 
 ### 在终端中执行以下命令：
 ```bash
-cd ~/Downloads/YOLO_Depth_Drivable_Qualcomm_NPU
+cd ~/Downloads/YOLO_Depth_Qualcomm_NPU
 
 adb pull /vendor/lib64/libcdsprpc.so ./app/libs/arm64-v8a
 adb pull /vendor/lib64/vendor.qti.hardware.dsp@1.0.so ./app/libs/arm64-v8a
