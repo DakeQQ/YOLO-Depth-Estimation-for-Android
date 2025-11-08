@@ -62,7 +62,8 @@ with torch.inference_mode():
         input_names=['images'],
         output_names=['depth'],
         do_constant_folding=True,
-        opset_version=17
+        opset_version=17,
+        dynamo=False
     )
 print("✅ ONNX export complete!")
 
@@ -150,3 +151,4 @@ plt.tight_layout()
 plt.show()
 
 print("✅ Visualization complete.")
+
