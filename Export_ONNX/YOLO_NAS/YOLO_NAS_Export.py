@@ -37,5 +37,7 @@ with torch.inference_mode():
                       input_names=['images'],
                       output_names=['output'],
                       opset_version=17,
+                      dynamo=False,
                       do_constant_folding=True)
 print("Export Done!")
+
