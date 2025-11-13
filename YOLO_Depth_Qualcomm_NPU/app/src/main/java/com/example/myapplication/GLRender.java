@@ -149,11 +149,12 @@ public class GLRender implements GLSurfaceView.Renderer {
         mSurfaceTexture.updateTexImage();
         mSurfaceTexture.getTransformMatrix(vMatrix);
         Draw_Camera_Preview();
-        if (!run_yolo && !run_depth) {
-            // Directly process the texture on the GPU and fill the pixel_values buffer.
-            // This call is synchronous and happens on the GL thread.
-            Process_Texture(pixel_values);
-        }
+        // if (!run_yolo && !run_depth) {
+        //     // Directly process the texture on the GPU and fill the pixel_values buffer.
+        //     // This call is synchronous and happens on the GL thread.
+        //     Process_Texture(pixel_values);
+        // }
+        Process_Texture(pixel_values);
         if (run_yolo) {
             run_yolo = false;
             executorService.execute(() -> {
