@@ -55,7 +55,9 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                                              "1");                                                              // 0 for low power
         ort_runtime_A->AddSessionConfigEntry(session_options_A, "session.force_spinning_stop",
                                              "0");                                                              // 1 for low power
-        ort_runtime_A->SetSessionGraphOptimizationLevel(session_options_A, ORT_ENABLE_ALL);                     // CPU backend would failed on some FP16 operators with latest opset. Hence, use ORT_ENABLE_EXTENDED instead of ORT_ENABLE_BLL.
+        ort_runtime_A->SetSessionGraphOptimizationLevel(session_options_A, ORT_ENABLE_EXTENDED);                // CPU backend would failed on some FP16 operators with latest opset. Hence, use ORT_ENABLE_EXTENDED instead of ORT_ENABLE_BLL.
+        ort_runtime_A->AddSessionConfigEntry(session_options_A, "session.graph_optimizations_loop_level",       // [0, 1, 2]
+                                             "2");
         ort_runtime_A->AddSessionConfigEntry(session_options_A, "optimization.minimal_build_optimizations",
                                              "");                                                               // Keep empty for full optimization
         ort_runtime_A->AddSessionConfigEntry(session_options_A, "optimization.disable_specified_optimizers",
@@ -96,13 +98,14 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
             setenv("LD_LIBRARY_PATH", cache_path, 1);
             setenv("ADSP_LIBRARY_PATH", cache_path, 1);
             if (use_dsp_npu) {
-                option_keys.push_back("backend_path");
-                option_values.push_back(qnn_htp_so);
+                option_keys.push_back("backend_type");
+                option_values.push_back("htp");
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_A->AddRunConfigEntry(run_options_A, "qnn.rpc_control_latency", "0");
-                option_keys.push_back("backend_type");
-                option_values.push_back("htp");
+                ort_runtime_A->AddSessionConfigEntry(session_options_A, "ep.dynamic.qnn_htp_performance_mode", "burst");
+                option_keys.push_back("htp_performance_mode");
+                option_values.push_back("burst");
                 option_keys.push_back("profiling_level");
                 option_values.push_back("off");
                 option_keys.push_back("offload_graph_io_quantization");       // Offload quantization and dequantization of graph I/O to CPU EP else handle by QNN EP .
@@ -130,8 +133,6 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1A(JNIEnv *env, jobject
                     ort_runtime_A->AddSessionConfigEntry(session_options_A, "ep.context_file_path", ctx_model_A);
                 }
             } else {
-                option_keys.push_back("backend_path");
-                option_values.push_back(qnn_cpu_so);
                 option_keys.push_back("backend_type");
                 option_values.push_back("cpu");
                 option_keys.push_back("profiling_level");
@@ -256,6 +257,8 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
         ort_runtime_B->AddSessionConfigEntry(session_options_B, "session.force_spinning_stop",
                                              "0");                                                              // 1 for low power
         ort_runtime_B->SetSessionGraphOptimizationLevel(session_options_B, ORT_ENABLE_ALL);                     // CPU backend would failed on some FP16 operators with latest opset. Hence, use ORT_ENABLE_EXTENDED instead of ORT_ENABLE_BLL.
+        ort_runtime_A->AddSessionConfigEntry(session_options_B, "session.graph_optimizations_loop_level",       // [0, 1, 2]
+                                             "2");
         ort_runtime_B->AddSessionConfigEntry(session_options_B, "optimization.minimal_build_optimizations",
                                              "");                                                               // Keep empty for full optimization
         ort_runtime_B->AddSessionConfigEntry(session_options_B, "optimization.disable_specified_optimizers",
@@ -296,13 +299,14 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
             setenv("LD_LIBRARY_PATH", cache_path, 1);
             setenv("ADSP_LIBRARY_PATH", cache_path, 1);
             if (use_dsp_npu) {
-                option_keys.push_back("backend_path");
-                option_values.push_back(qnn_htp_so);
+                option_keys.push_back("backend_type");
+                option_values.push_back("htp");
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode", "burst");  // Do not use "option_keys.push_back("htp_performance_mode")", it not work now. (demo version=1.20.1)
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.htp_perf_mode_post_run", "burst");
                 ort_runtime_B->AddRunConfigEntry(run_options_B, "qnn.rpc_control_latency", "0");
-                option_keys.push_back("backend_type");
-                option_values.push_back("htp");
+                ort_runtime_B->AddSessionConfigEntry(session_options_B, "ep.dynamic.qnn_htp_performance_mode", "burst");
+                option_keys.push_back("htp_performance_mode");
+                option_values.push_back("burst");
                 option_keys.push_back("profiling_level");
                 option_values.push_back("off");
                 option_keys.push_back("offload_graph_io_quantization");       // Offload quantization and dequantization of graph I/O to CPU EP else handle by QNN EP .
@@ -330,8 +334,6 @@ Java_com_example_myapplication_MainActivity_Load_1Models_1B(JNIEnv *env, jobject
                     ort_runtime_B->AddSessionConfigEntry(session_options_B, "ep.context_file_path", ctx_model_B);
                 }
             } else {
-                option_keys.push_back("backend_path");
-                option_values.push_back(qnn_cpu_so);
                 option_keys.push_back("backend_type");
                 option_values.push_back("cpu");
                 option_keys.push_back("profiling_level");
