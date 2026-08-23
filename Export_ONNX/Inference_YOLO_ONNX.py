@@ -23,6 +23,10 @@ MODEL_PATH = Path(__file__).with_name("models") / "detect" / "yolo26n-det_f32.on
 IMAGE_PATH = None                  # None selects a prepared image for the model task.
 OUTPUT_PATH = None                 # None writes demo_images/results/<model-stem>_inference.jpg.
 PROVIDERS = ("CPUExecutionProvider",)
+ORT_LOG = False
+ORT_FP16 = False                 # True preserves native FP16 graph transforms.
+MAX_THREADS = 0                  # 0 lets ONNX Runtime choose the thread count.
+DEVICE_ID = 0
 MODEL_TASK = None                  # None reads model_task from ONNX metadata.
 MODEL_FAMILY = None                # None reads model_family from ONNX metadata.
 RESIZE_SHAPE = None                # None reads resize_shape from ONNX metadata.
@@ -51,6 +55,12 @@ _DEFAULT_DEMO_IMAGE_NAMES = {
 _DETECTION_LIKE_TASKS = frozenset({"detect", "segment", "pose", "obb"})
 _SUPPORTED_TASKS = _DETECTION_LIKE_TASKS | {"classify", "semantic", "depth"}
 _SUPPORTED_FAMILIES = frozenset({"ultralytics", "yolo_nas"})
+_PROVIDER_CHAINS = {
+    "cpu": ("CPUExecutionProvider",),
+    "cuda": ("CUDAExecutionProvider", "CPUExecutionProvider"),
+    "openvino": ("OpenVINOExecutionProvider", "CPUExecutionProvider"),
+    "dml": ("DmlExecutionProvider", "CPUExecutionProvider"),
+}
 _POSE_KEYPOINT_CONFIDENCE_THRESHOLD = 0.25
 _COCO_POSE_SKELETON = (
     (15, 13), (13, 11), (16, 14), (14, 12), (11, 12),
@@ -58,9 +68,20 @@ _COCO_POSE_SKELETON = (
     (1, 2), (0, 1), (0, 2), (1, 3), (2, 4), (3, 5), (4, 6),
 )
 _ORT_TO_NUMPY_DTYPES = {
+    "tensor(bool)": "bool",
+    "tensor(double)": "float64",
+    "tensor(float16)": "float16",
     "tensor(uint8)": "uint8",
+    "tensor(int8)": "int8",
+    "tensor(uint16)": "uint16",
+    "tensor(int16)": "int16",
+    "tensor(uint32)": "uint32",
+    "tensor(int32)": "int32",
+    "tensor(uint64)": "uint64",
+    "tensor(int64)": "int64",
     "tensor(float)": "float32",
 }
+_SUPPORTED_PUBLIC_INPUT_TYPES = frozenset({"tensor(uint8)", "tensor(float)"})
 
 
 class InferenceConfigurationError(ValueError):
@@ -77,6 +98,10 @@ class InferenceConfig:
     image_path: Path | None
     output_path: Path | None
     providers: tuple[str, ...]
+    ort_log: bool
+    ort_fp16: bool
+    max_threads: int
+    device_id: int
     model_task: str | None
     model_family: str | None
     resize_shape: tuple[int, int] | None
@@ -96,6 +121,10 @@ class InferenceConfig:
             image_path=Path(IMAGE_PATH) if IMAGE_PATH is not None else None,
             output_path=Path(OUTPUT_PATH) if OUTPUT_PATH is not None else None,
             providers=tuple(PROVIDERS),
+            ort_log=ORT_LOG,
+            ort_fp16=ORT_FP16,
+            max_threads=MAX_THREADS,
+            device_id=DEVICE_ID,
             model_task=MODEL_TASK,
             model_family=MODEL_FAMILY,
             resize_shape=tuple(RESIZE_SHAPE) if RESIZE_SHAPE is not None else None,
@@ -119,22 +148,35 @@ class ArtifactContract:
     input_shape: tuple[int, int, int, int]
     input_dtype: str
     output_names: tuple[str, ...]
+    output_shapes: tuple[tuple[int, ...], ...]
+    output_dtypes: tuple[str, ...]
     resize_shape: tuple[int, int]
     end_to_end: bool
     keypoint_shape: tuple[int, int] | None
     class_names: tuple[str, ...]
 
 
-def _import_runtime_dependencies() -> tuple[Any, Any, Any]:
+@dataclass(frozen=True)
+class StaticIOBuffers:
+    input_array: Any
+    output_arrays: tuple[Any, ...]
+    resize_array: Any
+    input_ortvalue: Any
+    output_ortvalues: tuple[Any, ...]
+    binding: Any
+
+
+def _import_runtime_dependencies() -> tuple[Any, Any, Any, Any]:
     try:
         import cv2
         import numpy as np
         import onnxruntime as ort
+        from onnxruntime.capi import _pybind_state as C
     except ModuleNotFoundError as error:
         raise InferenceConfigurationError(
             "Inference requires numpy, onnxruntime, and opencv-python in the active environment."
         ) from error
-    return cv2, np, ort
+    return cv2, np, ort, C
 
 
 def _metadata_literal(metadata: dict[str, str], key: str) -> Any | None:
@@ -212,12 +254,11 @@ def _resolve_contract(session: Any, config: InferenceConfig) -> ArtifactContract
         raise InferenceValidationError(
             f"Expected static BCHW input [1, 3, H, W], found {input_shape!r}."
         )
-    try:
-        input_dtype = _ORT_TO_NUMPY_DTYPES[image_input.type]
-    except KeyError as error:
+    if image_input.type not in _SUPPORTED_PUBLIC_INPUT_TYPES:
         raise InferenceValidationError(
             f"Unsupported public input dtype {image_input.type!r}; expected uint8 or float32."
-        ) from error
+        )
+    input_dtype = _ORT_TO_NUMPY_DTYPES[image_input.type]
 
     model_task = config.model_task or metadata.get("model_task")
     model_family = config.model_family or metadata.get("model_family")
@@ -276,6 +317,20 @@ def _resolve_contract(session: Any, config: InferenceConfig) -> ArtifactContract
 
     class_names = config.class_names or _metadata_class_names(metadata)
     output_names = tuple(output.name for output in outputs)
+    output_shapes = tuple(
+        _positive_shape(
+            f"ONNX output {output.name!r} shape",
+            output.shape,
+            len(output.shape),
+        )
+        for output in outputs
+    )
+    try:
+        output_dtypes = tuple(_ORT_TO_NUMPY_DTYPES[output.type] for output in outputs)
+    except KeyError as error:
+        raise InferenceValidationError(
+            f"Unsupported public output dtype {error.args[0]!r}."
+        ) from error
     metadata_output_names = tuple(
         name for name in metadata.get("output_names", "").split(",") if name
     )
@@ -304,6 +359,8 @@ def _resolve_contract(session: Any, config: InferenceConfig) -> ArtifactContract
         input_shape=input_shape,
         input_dtype=input_dtype,
         output_names=output_names,
+        output_shapes=output_shapes,
+        output_dtypes=output_dtypes,
         resize_shape=resize_shape,
         end_to_end=bool(end_to_end),
         keypoint_shape=keypoint_shape,
@@ -355,6 +412,162 @@ def validate_config(config: InferenceConfig, available_providers: list[str]) -> 
         raise InferenceConfigurationError("MAX_DETECTIONS must be a positive integer.")
     if config.max_detections <= 0:
         raise InferenceConfigurationError("MAX_DETECTIONS must be a positive integer.")
+    if isinstance(config.max_threads, bool) or not isinstance(config.max_threads, int):
+        raise InferenceConfigurationError("MAX_THREADS must be a non-negative integer.")
+    if config.max_threads < 0:
+        raise InferenceConfigurationError("MAX_THREADS must be a non-negative integer.")
+    if isinstance(config.device_id, bool) or not isinstance(config.device_id, int):
+        raise InferenceConfigurationError("DEVICE_ID must be a non-negative integer.")
+    if config.device_id < 0:
+        raise InferenceConfigurationError("DEVICE_ID must be a non-negative integer.")
+
+
+def create_session_options(ort: Any, config: InferenceConfig) -> Any:
+    session_options = ort.SessionOptions()
+    session_options.log_severity_level = 0 if config.ort_log else 4
+    session_options.log_verbosity_level = 4
+    session_options.inter_op_num_threads = config.max_threads
+    session_options.intra_op_num_threads = config.max_threads
+    session_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+
+    disabled_optimizers = (
+        "CastFloat16Transformer;FuseFp16InitializerToFp32NodeTransformer"
+        if config.ort_fp16
+        else ""
+    )
+    session_config_entries = {
+        "session.set_denormal_as_zero": "1",
+        "session.intra_op.allow_spinning": "1",
+        "session.inter_op.allow_spinning": "1",
+        "session.enable_quant_qdq_cleanup": "1",
+        "session.qdq_matmulnbits_accuracy_level": "2" if config.ort_fp16 else "4",
+        "session.use_device_allocator_for_initializers": "1",
+        "session.graph_optimizations_loop_level": "2",
+        "optimization.enable_gelu_approximation": "1",
+        "optimization.minimal_build_optimizations": "",
+        "optimization.enable_cast_chain_elimination": "1",
+        "optimization.disable_specified_optimizers": disabled_optimizers,
+    }
+    for key, value in session_config_entries.items():
+        session_options.add_session_config_entry(key, value)
+    return session_options
+
+
+def create_run_options(ort: Any, config: InferenceConfig) -> Any:
+    run_options = ort.RunOptions()
+    run_options.log_severity_level = 0 if config.ort_log else 4
+    run_options.log_verbosity_level = 4
+    run_options.add_run_config_entry("disable_synchronize_execution_providers", "0")
+    return run_options
+
+
+def resolve_execution_provider(
+    C: Any,
+    config: InferenceConfig,
+) -> tuple[str, Any, list[dict[str, Any]] | None]:
+    primary_provider = config.providers[0]
+    options_by_provider: dict[str, dict[str, Any]] = {}
+    if primary_provider == "OpenVINOExecutionProvider":
+        device_type = "cpu"
+        ort_device_type = C.OrtDevice.cpu()
+        options_by_provider[primary_provider] = {
+            "device_type": "CPU",
+            "precision": "ACCURACY",
+            "num_of_threads": config.max_threads if config.max_threads != 0 else 8,
+            "num_streams": 1,
+            "enable_opencl_throttling": False,
+            "enable_qdq_optimizer": False,
+            "disable_dynamic_shapes": False,
+        }
+    elif primary_provider == "CUDAExecutionProvider":
+        device_type = "cuda"
+        ort_device_type = C.OrtDevice.cuda()
+        options_by_provider[primary_provider] = {
+            "device_id": config.device_id,
+            "gpu_mem_limit": 24 * (1024 ** 3),
+            "arena_extend_strategy": "kNextPowerOfTwo",
+            "cudnn_conv_algo_search": "EXHAUSTIVE",
+            "sdpa_kernel": "2",
+            "use_tf32": "1",
+            "fuse_conv_bias": "1",
+            "cudnn_conv_use_max_workspace": "1",
+            "cudnn_conv1d_pad_to_nc1d": "0",
+            "tunable_op_enable": "0",
+            "tunable_op_tuning_enable": "0",
+            "tunable_op_max_tuning_duration_ms": 10,
+            "do_copy_in_default_stream": "0",
+            "enable_cuda_graph": "0",
+            "prefer_nhwc": "0",
+            "enable_skip_layer_norm_strict_mode": "0",
+            "use_ep_level_unified_stream": "0",
+        }
+    elif primary_provider == "DmlExecutionProvider":
+        device_type = "dml"
+        ort_device_type = C.OrtDevice.dml()
+        options_by_provider[primary_provider] = {
+            "device_id": config.device_id,
+            "performance_preference": "high_performance",
+            "device_filter": "gpu",
+            "disable_metacommands": "false",
+            "enable_graph_capture": "false",
+            "enable_graph_serialization": "false",
+        }
+    else:
+        device_type = "cpu"
+        ort_device_type = C.OrtDevice.cpu()
+
+    provider_options = [options_by_provider.get(provider, {}) for provider in config.providers]
+    return (
+        device_type,
+        ort_device_type,
+        provider_options if any(provider_options) else None,
+    )
+
+
+def _ov(ort: Any, array: Any) -> Any:
+    if not array.flags.c_contiguous:
+        raise InferenceValidationError("Static ONNX Runtime buffers must be C-contiguous.")
+    return ort.OrtValue.ortvalue_from_numpy(array)
+
+
+def _create_static_io_buffers(
+    np: Any,
+    ort: Any,
+    session: Any,
+    contract: ArtifactContract,
+) -> StaticIOBuffers:
+    try:
+        input_array = np.empty(contract.input_shape, dtype=np.dtype(contract.input_dtype))
+        output_arrays = tuple(
+            np.empty(shape, dtype=np.dtype(dtype))
+            for shape, dtype in zip(contract.output_shapes, contract.output_dtypes)
+        )
+        _, _, input_height, input_width = contract.input_shape
+        resize_array = np.empty((input_height, input_width, 3), dtype=np.uint8)
+    except (MemoryError, ValueError) as error:
+        raise InferenceConfigurationError(
+            "Could not allocate the static ONNX Runtime input/output buffers."
+        ) from error
+
+    input_ortvalue = _ov(ort, input_array)
+    output_ortvalues = tuple(_ov(ort, array) for array in output_arrays)
+    binding = session.io_binding()
+    binding.bind_ortvalue_input(contract.input_name, input_ortvalue)
+    for name, ortvalue in zip(contract.output_names, output_ortvalues):
+        binding.bind_ortvalue_output(name, ortvalue)
+    return StaticIOBuffers(
+        input_array=input_array,
+        output_arrays=output_arrays,
+        resize_array=resize_array,
+        input_ortvalue=input_ortvalue,
+        output_ortvalues=output_ortvalues,
+        binding=binding,
+    )
+
+
+def run_iobinding(session: Any, binding: Any, run_options: Any) -> None:
+    session.run_with_iobinding(binding, run_options=run_options)
 
 
 def _class_aware_nms(
@@ -378,7 +591,10 @@ def _class_aware_nms(
             remaining = order[1:]
             intersection_top_left = np.maximum(boxes[current, :2], boxes[remaining, :2])
             intersection_bottom_right = np.minimum(boxes[current, 2:], boxes[remaining, 2:])
-            intersection_size = np.maximum(intersection_bottom_right - intersection_top_left, 0.0)
+            intersection_size = np.maximum(
+                intersection_bottom_right - intersection_top_left,
+                np.float32(0.0),
+            )
             intersection_area = intersection_size[:, 0] * intersection_size[:, 1]
             current_area = (boxes[current, 2] - boxes[current, 0]) * (
                 boxes[current, 3] - boxes[current, 1]
@@ -397,7 +613,7 @@ def _class_aware_nms(
             order = remaining[iou <= iou_threshold]
 
     selected.sort(key=lambda index: float(scores[index]), reverse=True)
-    return np.asarray(selected[:max_detections], dtype=np.int64)
+    return np.asarray(selected[:max_detections], dtype=np.int32)
 
 
 def _postprocess_detections(
@@ -416,6 +632,8 @@ def _postprocess_detections(
         )
 
     valid = np.isfinite(detections).all(axis=1)
+    if not valid.all():
+        raise InferenceValidationError("Detection output contains NaN or Inf values.")
     valid &= detections[:, 4] >= np.float32(config.confidence_threshold)
     valid &= detections[:, 5] == np.rint(detections[:, 5])
     detections = detections[valid].astype(np.float32, copy=False)
@@ -423,12 +641,12 @@ def _postprocess_detections(
         return (
             np.empty((0, 4), dtype=np.float32),
             np.empty((0,), dtype=np.float32),
-            np.empty((0,), dtype=np.int64),
+            np.empty((0,), dtype=np.int32),
             np.empty((0, max(0, detections.shape[-1] - 6)), dtype=np.float32),
         )
 
     scores = detections[:, 4]
-    class_indices = detections[:, 5].astype(np.int64)
+    class_indices = detections[:, 5].astype(np.int32)
     extras = detections[:, 6:]
     if contract.end_to_end and contract.model_task != "obb":
         boxes = detections[:, :4].copy()
@@ -438,8 +656,16 @@ def _postprocess_detections(
         boxes = np.concatenate((centers - half_sizes, centers + half_sizes), axis=1)
 
     resize_height, resize_width = contract.resize_shape
-    boxes[:, (0, 2)] = np.clip(boxes[:, (0, 2)], 0.0, float(resize_width))
-    boxes[:, (1, 3)] = np.clip(boxes[:, (1, 3)], 0.0, float(resize_height))
+    boxes[:, (0, 2)] = np.clip(
+        boxes[:, (0, 2)],
+        np.float32(0.0),
+        np.float32(resize_width),
+    )
+    boxes[:, (1, 3)] = np.clip(
+        boxes[:, (1, 3)],
+        np.float32(0.0),
+        np.float32(resize_height),
+    )
     valid_boxes = (boxes[:, 2] > boxes[:, 0]) & (boxes[:, 3] > boxes[:, 1])
     boxes = boxes[valid_boxes]
     scores = scores[valid_boxes]
@@ -447,7 +673,10 @@ def _postprocess_detections(
     extras = extras[valid_boxes]
 
     if contract.end_to_end:
-        selected = np.argsort(scores)[::-1][: config.max_detections]
+        selected = np.argsort(scores)[::-1][: config.max_detections].astype(
+            np.int32,
+            copy=False,
+        )
     else:
         selected = _class_aware_nms(
             boxes,
@@ -495,7 +724,7 @@ def _write_image_atomically(cv2: Any, output_path: Path, image: Any) -> None:
             delete=False,
         ) as temporary_file:
             temporary_path = Path(temporary_file.name)
-            temporary_file.write(payload.tobytes())
+            temporary_file.write(memoryview(payload))
         os.replace(temporary_path, output_path)
         temporary_path = None
     finally:
@@ -556,9 +785,7 @@ def _draw_text(cv2: Any, image: Any, lines: list[str]) -> None:
     line_height = max(height for _, height in measurements) + 10
     panel_width = min(image.shape[1], max(width for width, _ in measurements) + 20)
     panel_height = min(image.shape[0], line_height * len(lines) + 10)
-    overlay = image.copy()
-    cv2.rectangle(overlay, (0, 0), (panel_width, panel_height), (20, 20, 20), cv2.FILLED)
-    cv2.addWeighted(overlay, 0.75, image, 0.25, 0, image)
+    cv2.rectangle(image, (0, 0), (panel_width, panel_height), (20, 20, 20), cv2.FILLED)
     for index, line in enumerate(lines):
         baseline = min(panel_height - 5, 10 + (index + 1) * line_height - 5)
         cv2.putText(
@@ -595,32 +822,47 @@ def _overlay_masks(
             f"Detections contain {coefficients.shape[1]} mask coefficients, but prototypes require "
             f"{mask_channels}."
         )
+    if np.issubdtype(prototypes.dtype, np.floating) and not np.isfinite(prototypes).all():
+        raise InferenceValidationError("Segmentation prototypes contain NaN or Inf values.")
     logits = coefficients[:, :mask_channels] @ prototypes[0].reshape(mask_channels, -1)
-    masks = (1.0 / (1.0 + np.exp(-np.clip(logits, -30.0, 30.0)))).reshape(
+    masks = (
+        np.float32(1.0)
+        / (
+            np.float32(1.0)
+            + np.exp(
+                -np.clip(logits, np.float32(-30.0), np.float32(30.0))
+            )
+        )
+    ).reshape(
         -1, mask_height, mask_width
     )
+    resized_mask = np.empty(image.shape[:2], dtype=np.float32)
     for mask, box, class_index in zip(masks[::-1], boxes[::-1], class_indices[::-1]):
-        resized_mask = cv2.resize(
+        cv2.resize(
             mask,
             (image.shape[1], image.shape[0]),
+            dst=resized_mask,
             interpolation=cv2.INTER_LINEAR,
         )
         left = max(0, int(round(float(box[0]) * x_scale)))
         top = max(0, int(round(float(box[1]) * y_scale)))
         right = min(image.shape[1], int(round(float(box[2]) * x_scale)))
         bottom = min(image.shape[0], int(round(float(box[3]) * y_scale)))
-        inside_box = np.zeros(resized_mask.shape, dtype=bool)
-        inside_box[top:bottom, left:right] = True
-        selected = (resized_mask >= 0.5) & inside_box
+        mask_roi = resized_mask[top:bottom, left:right]
+        image_roi = image[top:bottom, left:right]
+        selected = mask_roi >= np.float32(0.5)
         if selected.any():
             color = np.asarray(_color(int(class_index)), dtype=np.float32)
-            image[selected] = (
-                image[selected].astype(np.float32) * 0.55 + color * 0.45
+            image_roi[selected] = (
+                image_roi[selected].astype(np.float32) * np.float32(0.55)
+                + color * np.float32(0.45)
             ).astype(np.uint8)
 
 
 def _render_dense(cv2: Any, np: Any, image: Any, output: Any, task: str) -> tuple[Any, dict[str, Any]]:
     dense_output = np.asarray(output)
+    if np.issubdtype(dense_output.dtype, np.floating) and not np.isfinite(dense_output).all():
+        raise InferenceValidationError(f"{task.title()} output contains NaN or Inf values.")
     if task == "semantic":
         if dense_output.ndim == 4:
             labels = dense_output.argmax(axis=1)[0]
@@ -642,10 +884,10 @@ def _render_dense(cv2: Any, np: Any, image: Any, output: Any, task: str) -> tupl
         color_map[..., 0] = (64 + labels * 53) % 256
         color_map[..., 1] = (64 + labels * 97) % 256
         color_map[..., 2] = (64 + labels * 151) % 256
-        rendered = cv2.addWeighted(image, 0.4, color_map, 0.6, 0)
-        return rendered, {"classes_present": int(np.unique(labels).size)}
+        cv2.addWeighted(image, 0.4, color_map, 0.6, 0, dst=image)
+        return image, {"classes_present": int(np.unique(labels).size)}
 
-    depth = np.squeeze(dense_output)
+    depth = np.squeeze(dense_output).astype(np.float32, copy=False)
     if depth.ndim != 2 or not np.isfinite(depth).all():
         raise InferenceValidationError(
             f"Depth output must contain one finite 2-D map, received {dense_output.shape}."
@@ -656,47 +898,85 @@ def _render_dense(cv2: Any, np: Any, image: Any, output: Any, task: str) -> tupl
         interpolation=cv2.INTER_LINEAR,
     )
     lower, upper = np.percentile(depth, (2.0, 98.0))
-    scale = max(float(upper - lower), 1e-6)
-    normalized = np.clip((depth - lower) / scale * 255.0, 0.0, 255.0).astype(np.uint8)
+    lower = np.float32(lower)
+    scale = np.float32(max(float(upper - lower), 1e-6))
+    normalized = np.clip(
+        (depth - lower) / scale * np.float32(255.0),
+        np.float32(0.0),
+        np.float32(255.0),
+    ).astype(np.uint8)
     color_map = cv2.applyColorMap(normalized, cv2.COLORMAP_TURBO)
-    rendered = cv2.addWeighted(image, 0.25, color_map, 0.75, 0)
-    return rendered, {
+    cv2.addWeighted(image, 0.25, color_map, 0.75, 0, dst=image)
+    return image, {
         "minimum_depth": float(depth.min()),
         "maximum_depth": float(depth.max()),
     }
 
 
-def _prepare_input(cv2: Any, np: Any, image: Any, contract: ArtifactContract) -> Any:
+def _prepare_input(
+    cv2: Any,
+    np: Any,
+    image: Any,
+    contract: ArtifactContract,
+    buffers: StaticIOBuffers,
+) -> None:
     _, _, input_height, input_width = contract.input_shape
-    resized_bgr = cv2.resize(image, (input_width, input_height), interpolation=cv2.INTER_LINEAR)
-    resized_rgb = cv2.cvtColor(resized_bgr, cv2.COLOR_BGR2RGB)
-    tensor = np.ascontiguousarray(resized_rgb.transpose(2, 0, 1)[None])
-    return tensor if contract.input_dtype == "uint8" else tensor.astype(np.float32)
+    if image.shape[:2] == (input_height, input_width):
+        resized_bgr = image
+    else:
+        cv2.resize(
+            image,
+            (input_width, input_height),
+            dst=buffers.resize_array,
+            interpolation=cv2.INTER_LINEAR,
+        )
+        resized_bgr = buffers.resize_array
+    np.copyto(
+        buffers.input_array[0],
+        resized_bgr[..., ::-1].transpose(2, 0, 1),
+        casting="unsafe",
+    )
 
 
-def _validate_outputs(np: Any, outputs: list[Any], contract: ArtifactContract) -> None:
+def _validate_outputs(np: Any, outputs: tuple[Any, ...], contract: ArtifactContract) -> None:
     if len(outputs) != len(contract.output_names):
         raise InferenceValidationError(
             f"ONNX Runtime returned {len(outputs)} outputs, expected {len(contract.output_names)}."
         )
-    for name, output in zip(contract.output_names, outputs):
+    for name, output, expected_shape, expected_dtype in zip(
+        contract.output_names,
+        outputs,
+        contract.output_shapes,
+        contract.output_dtypes,
+    ):
         array = np.asarray(output)
+        if array.shape != expected_shape or array.dtype != np.dtype(expected_dtype):
+            raise InferenceValidationError(
+                f"Output {name!r} changed contract: received shape={array.shape}, "
+                f"dtype={array.dtype}; expected shape={expected_shape}, dtype={expected_dtype}."
+            )
         if not array.size:
             raise InferenceValidationError(f"Output {name!r} is empty.")
-        if np.issubdtype(array.dtype, np.floating) and not np.isfinite(array).all():
-            raise InferenceValidationError(f"Output {name!r} contains NaN or Inf values.")
 
 
 def run_inference(config: InferenceConfig) -> dict[str, Any]:
-    cv2, np, ort = _import_runtime_dependencies()
+    cv2, np, ort, C = _import_runtime_dependencies()
     validate_config(config, ort.get_available_providers())
-    session_options = ort.SessionOptions()
-    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+    session_options = create_session_options(ort, config)
+    run_options = create_run_options(ort, config)
+    device_type, _, provider_options = resolve_execution_provider(C, config)
+    disabled_optimizers = (
+        ["CastFloat16Transformer", "FuseFp16InitializerToFp32NodeTransformer"]
+        if config.ort_fp16
+        else None
+    )
     try:
         session = ort.InferenceSession(
             str(config.model_path.resolve()),
             sess_options=session_options,
             providers=list(config.providers),
+            provider_options=provider_options,
+            disabled_optimizers=disabled_optimizers,
         )
     except Exception as error:
         raise InferenceValidationError(
@@ -708,13 +988,15 @@ def run_inference(config: InferenceConfig) -> dict[str, Any]:
     source_image = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
     if source_image is None:
         raise InferenceValidationError(f"OpenCV could not read {image_path}.")
-    input_tensor = _prepare_input(cv2, np, source_image, contract)
+    buffers = _create_static_io_buffers(np, ort, session, contract)
+    _prepare_input(cv2, np, source_image, contract, buffers)
     try:
-        outputs = session.run(None, {contract.input_name: input_tensor})
+        run_iobinding(session, buffers.binding, run_options)
     except Exception as error:
         raise InferenceValidationError(
             f"ONNX Runtime inference failed for {config.model_path}: {error}"
         ) from error
+    outputs = buffers.output_arrays
     _validate_outputs(np, outputs, contract)
 
     original_height, original_width = source_image.shape[:2]
@@ -723,7 +1005,7 @@ def run_inference(config: InferenceConfig) -> dict[str, Any]:
         boxes, scores, class_indices, extras = _postprocess_detections(
             outputs[0], contract, config
         )
-        rendered = source_image.copy()
+        rendered = source_image
         resize_height, resize_width = contract.resize_shape
         x_scale = original_width / resize_width
         y_scale = original_height / resize_height
@@ -815,8 +1097,10 @@ def run_inference(config: InferenceConfig) -> dict[str, Any]:
             raise InferenceValidationError(
                 f"Classification output must be [1, classes], received {probabilities.shape}."
             )
+        if not np.isfinite(probabilities).all():
+            raise InferenceValidationError("Classification output contains NaN or Inf values.")
         top_indices = np.argsort(probabilities[0])[::-1][: min(5, probabilities.shape[1])]
-        rendered = source_image.copy()
+        rendered = source_image
         top_classes = [
             {
                 "index": int(index),
@@ -851,6 +1135,13 @@ def run_inference(config: InferenceConfig) -> dict[str, Any]:
         "task": contract.model_task,
         "family": contract.model_family,
         "providers": session.get_providers(),
+        "device": device_type,
+        "io_binding": {
+            "bound_once": True,
+            "input_device": "cpu",
+            "output_device": "cpu",
+            "preallocated": True,
+        },
         "input": {
             "name": contract.input_name,
             "dtype": contract.input_dtype,
@@ -874,12 +1165,16 @@ def run_inference(config: InferenceConfig) -> dict[str, Any]:
 
 
 def run_self_test() -> None:
-    _, np, _ = _import_runtime_dependencies()
+    cv2, np, _, _ = _import_runtime_dependencies()
     config = InferenceConfig(
         model_path=Path("unused.onnx"),
         image_path=None,
         output_path=None,
         providers=("CPUExecutionProvider",),
+        ort_log=False,
+        ort_fp16=False,
+        max_threads=0,
+        device_id=0,
         model_task=None,
         model_family=None,
         resize_shape=None,
@@ -900,6 +1195,8 @@ def run_self_test() -> None:
         input_shape=(1, 3, 32, 32),
         input_dtype="uint8",
         output_names=("output0",),
+        output_shapes=((1, 3, 6),),
+        output_dtypes=("float32",),
         resize_shape=(32, 32),
         end_to_end=False,
         keypoint_shape=None,
@@ -922,6 +1219,7 @@ def run_self_test() -> None:
     assert np.allclose(boxes[0], [6.0, 6.0, 14.0, 14.0])
     assert np.allclose(scores, [0.9, 0.7])
     assert class_indices.tolist() == [1, 2]
+    assert class_indices.dtype == np.int32
     assert extras.shape == (2, 0)
 
     end_to_end_contract = replace(regular_contract, yolo_version=26, end_to_end=True)
@@ -935,7 +1233,32 @@ def run_self_test() -> None:
         config,
     )
     assert np.allclose(end_to_end_boxes, end_to_end_output[0, :, :4])
-    print("Self-test passed: regular detection NMS and end-to-end box handling are operational.")
+
+    input_array = np.empty((1, 3, 2, 2), dtype=np.uint8)
+    buffers = StaticIOBuffers(
+        input_array=input_array,
+        output_arrays=(),
+        resize_array=np.empty((2, 2, 3), dtype=np.uint8),
+        input_ortvalue=None,
+        output_ortvalues=(),
+        binding=None,
+    )
+    source_bgr = np.array(
+        [[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]],
+        dtype=np.uint8,
+    )
+    input_contract = replace(
+        regular_contract,
+        input_shape=(1, 3, 2, 2),
+        resize_shape=(2, 2),
+    )
+    _prepare_input(cv2, np, source_bgr, input_contract, buffers)
+    expected_rgb_chw = source_bgr[..., ::-1].transpose(2, 0, 1)
+    assert np.array_equal(input_array[0], expected_rgb_chw)
+    print(
+        "Self-test passed: detection postprocessing and fused static-buffer preprocessing "
+        "are operational."
+    )
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -945,6 +1268,11 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--task", choices=sorted(_SUPPORTED_TASKS), help="Override MODEL_TASK.")
     parser.add_argument("--image", type=Path, help="Override IMAGE_PATH.")
     parser.add_argument("--output", type=Path, help="Override OUTPUT_PATH.")
+    parser.add_argument(
+        "--provider",
+        choices=tuple(_PROVIDER_CHAINS),
+        help="Override PROVIDERS with a configured execution-provider chain.",
+    )
     parser.add_argument("--no-open", action="store_true", help="Do not open the rendered result.")
     return parser
 
@@ -963,6 +1291,8 @@ def main() -> None:
         config = replace(config, image_path=args.image)
     if args.output is not None:
         config = replace(config, output_path=args.output)
+    if args.provider is not None:
+        config = replace(config, providers=_PROVIDER_CHAINS[args.provider])
     if args.no_open:
         config = replace(config, auto_open_result=False)
     run_inference(config)
