@@ -8,13 +8,13 @@ The main entry point is [Export_ONNX/Export_YOLO.py](Export_ONNX/Export_YOLO.py)
 
 | Series | Detect | Segment | Pose | OBB | Classify | Semantic | Depth |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Ultralytics YOLOv8 | Yes | Yes | Yes | Yes | Yes | - | - |
-| Ultralytics YOLOv9 | Yes | Yes | Yes | Yes | Yes | - | - |
-| Ultralytics YOLOv10 | Yes | Yes | Yes | Yes | Yes | - | - |
-| Ultralytics YOLOv11 | Yes | Yes | Yes | Yes | Yes | - | - |
-| Ultralytics YOLOv12 | Yes | Yes | Yes | Yes | Yes | - | - |
-| Ultralytics YOLO26 | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
-| YOLO-NAS S/M/L | Yes | - | - | - | - | - | - |
+| Ultralytics YOLOv8 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv9 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv10 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv11 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv12 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLO26 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| YOLO-NAS S/M/L | ✓ | - | - | - | - | - | - |
 
 Semantic and depth export are supported only when those heads are part of a YOLO26 checkpoint. They do not represent a separate depth-model export pipeline.
 
@@ -175,13 +175,13 @@ See [LICENSE](LICENSE). Portions of the graph behavior are adapted from Ultralyt
 
 | 系列 | 检测 | 分割 | 姿态 | OBB | 分类 | 语义分割 | 深度 |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Ultralytics YOLOv8 | 是 | 是 | 是 | 是 | 是 | - | - |
-| Ultralytics YOLOv9 | 是 | 是 | 是 | 是 | 是 | - | - |
-| Ultralytics YOLOv10 | 是 | 是 | 是 | 是 | 是 | - | - |
-| Ultralytics YOLOv11 | 是 | 是 | 是 | 是 | 是 | - | - |
-| Ultralytics YOLOv12 | 是 | 是 | 是 | 是 | 是 | - | - |
-| Ultralytics YOLO26 | 是 | 是 | 是 | 是 | 是 | 是 | 是 |
-| YOLO-NAS S/M/L | 是 | - | - | - | - | - | - |
+| Ultralytics YOLOv8 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv9 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv10 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv11 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLOv12 | ✓ | ✓ | ✓ | ✓ | ✓ | - | - |
+| Ultralytics YOLO26 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| YOLO-NAS S/M/L | ✓ | - | - | - | - | - | - |
 
 仅当 YOLO26 检查点包含语义分割头或深度头时，才支持对应的导出。这些功能并不构成独立的深度模型导出流水线。
 
