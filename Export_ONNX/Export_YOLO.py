@@ -40,13 +40,14 @@ sys.dont_write_bytecode = True
 # Supported model/task matrix ("auto" resolves the task from the checkpoint):
 #
 # Series/family        detect  segment  pose  obb  classify  semantic  depth
-# Ultralytics YOLOv8     yes      yes    yes  yes     yes        -        -
-# Ultralytics YOLOv9     yes      yes    yes  yes     yes        -        -
-# Ultralytics YOLOv10    yes      yes    yes  yes     yes        -        -
-# Ultralytics YOLOv11    yes      yes    yes  yes     yes        -        -
-# Ultralytics YOLOv12    yes      yes    yes  yes     yes        -        -
-# Ultralytics YOLO26     yes      yes    yes  yes     yes       yes      yes
-# YOLO-NAS S/M/L         yes       -      -    -       -         -        -
+# Ultralytics YOLOv8      ✓        ✓      ✓    ✓       ✓        -        -
+# Ultralytics YOLOv9      ✓        ✓      ✓    ✓       ✓        -        -
+# Ultralytics YOLOv10     ✓        ✓      ✓    ✓       ✓        -        -
+# Ultralytics YOLOv11     ✓        ✓      ✓    ✓       ✓        -        -
+# Ultralytics YOLOv12     ✓        ✓      ✓    ✓       ✓        -        -
+# Ultralytics YOLO26      ✓        ✓      ✓    ✓       ✓        ✓        ✓
+# YOLO-NAS S/M/L          ✓        -      -    -       -        -        -
+
 MODEL_FAMILY = "ultralytics"
 MODEL_PATH = "yolo26n.pt"
 MODEL_TASK = "detect"
