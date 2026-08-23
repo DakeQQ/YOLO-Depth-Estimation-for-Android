@@ -59,7 +59,7 @@ YOLO_NAS_NUM_CLASSES = 80
 
 # Static Android ONNX contract
 INPUT_SHAPE = (1, 3, 720, 1280)
-RESIZE_SHAPE = (288, 512)
+RESIZE_SHAPE = (360, 640)
 PUBLIC_INPUT_DTYPE = "uint8"
 MODEL_PRECISION = "float32"
 STATIC_SHAPES = True
@@ -206,6 +206,18 @@ def _static_resize_scale(config: ExportConfig) -> tuple[float, float]:
     input_height, input_width = config.input_shape[2:]
     resize_height, resize_width = config.resize_shape
     return resize_height / input_height, resize_width / input_width
+
+
+def _stride_aligned_padding(
+    resize_shape: tuple[int, int],
+    strides: Any,
+) -> tuple[int, int, int, int]:
+    stride_values = tuple(int(round(float(stride))) for stride in strides)
+    maximum_stride = max(stride_values, default=1)
+    resize_height, resize_width = resize_shape
+    padded_height = math.ceil(resize_height / maximum_stride) * maximum_stride
+    padded_width = math.ceil(resize_width / maximum_stride) * maximum_stride
+    return 0, padded_width - resize_width, 0, padded_height - resize_height
 
 
 def _ensure_model_checkpoint(
@@ -585,6 +597,10 @@ def build_ultralytics_wrapper(model: Any, config: ExportConfig) -> Any:
             self.model_task = config.model_task
             self.model_dtype = model_dtype
             self.resize_scale = _static_resize_scale(config)
+            self.input_padding = _stride_aligned_padding(
+                config.resize_shape,
+                getattr(layers[-1], "stride", ()),
+            )
             self.input_normalization_folded = bool(
                 getattr(model, "_standalone_input_normalization_folded", False)
             )
@@ -600,6 +616,12 @@ def build_ultralytics_wrapper(model: Any, config: ExportConfig) -> Any:
                 align_corners=True,
                 recompute_scale_factor=False,
             )
+            if any(self.input_padding):
+                images = torch.nn.functional.pad(
+                    images,
+                    self.input_padding,
+                    value=114.0,
+                )
             if not self.input_normalization_folded:
                 images = images * (1.0 / 255.0)
             return images.to(dtype=self.model_dtype)
