@@ -1,187 +1,164 @@
----
+# YOLO Series ONNX Export
 
-# YOLO-Depth-Drivable Estimation for Android
+This repository is dedicated to exporting supported YOLO checkpoints to ONNX. It no longer contains an Android application, Android deployment code, or a general-purpose monocular depth-estimation pipeline.
 
-## Overview
+The main entry point is [Export_ONNX/Export_YOLO.py](Export_ONNX/Export_YOLO.py). The repository also includes optional tools for optimizing exported models and validating them with task-aware ONNX Runtime inference.
 
-This project enables running YOLO series, monocular depth estimation on Android devices. It is optimized for peak performance using models converted from HuggingFace, ModelScope, and GitHub.
+## Supported Models
 
-## Key Features
+| Series | Detect | Segment | Pose | OBB | Classify | Semantic | Depth |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Ultralytics YOLOv8 | Yes | Yes | Yes | Yes | Yes | - | - |
+| Ultralytics YOLOv9 | Yes | Yes | Yes | Yes | Yes | - | - |
+| Ultralytics YOLOv10 | Yes | Yes | Yes | Yes | Yes | - | - |
+| Ultralytics YOLOv11 | Yes | Yes | Yes | Yes | Yes | - | - |
+| Ultralytics YOLOv12 | Yes | Yes | Yes | Yes | Yes | - | - |
+| Ultralytics YOLO26 | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| YOLO-NAS S/M/L | Yes | - | - | - | - | - | - |
 
-1. **Demo Models Available**: 
-   - Demo model, yolov12n, now is place in the assets folder.
-   - Remember unzip `*.zip` files in `libs/arm64-v8a` to get the `*.so`.
+Semantic and depth export are supported only when those heads are part of a YOLO26 checkpoint. They do not represent a separate depth-model export pipeline.
 
-2. **Supported Models**:
-   - **YOLO**: Versions 8, 9, 10, 11, 12 and NAS series.
-   - **Depth Estimation**: Depth Anything V2-Metric.
+## Repository Layout
 
-3. **Image Input**:
-   - Models accept images with resolution h720*w1280. Hold your phone horizontally.
+```text
+Export_ONNX/
+├── Export_YOLO.py              # Export PyTorch YOLO checkpoints to ONNX
+├── Optimize_ONNX.py            # Optimize or quantize exported ONNX models
+├── Inference_YOLO_ONNX.py      # Validate and render ONNX Runtime results
+├── demo_images/                # Task-specific inference inputs and results
+└── models/                     # Checkpoints and generated ONNX artifacts by task
+```
 
-4. **ONNX Runtime Compatibility**:
-   - Models are exported without dynamic axes for better Android compatibility, which may affect x86_64 performance.
+## Requirements
 
-5. **GPU Utilization**:
-   - Utilizes OpenGL ES 3.x for efficient camera frame processing and GPU compute shaders for YUV to RGB conversion.
+Use a separate environment for each route when their dependency constraints conflict.
 
-6. **Asynchronous Inference**:
-   - Processes previous camera frame data for inference, improving efficiency.
+### Ultralytics export
 
-7. **YOLO Bounding Box Rendering**:
-   - Efficiently rendered using OpenGL ES.
+- Python 3.11 or newer
+- `torch`
+- `onnx`
+- `ultralytics==8.4.123` (verified version)
 
-8. **Performance Notes**:
-   - Running both YOLO and depth estimation reduces FPS by about 30%.
+### YOLO-NAS export
 
-9. **Export and Configuration**:
-   - Update model export methods and ensure configuration files match model weights. Use `UInt8` for quantization to avoid ONNX Runtime errors.
+- Python 3.11
+- `torch`
+- `onnx`
+- `super-gradients==3.7.1` (verified version)
 
-10. **Qualcomm NPU Support**:
-    - Only YOLO v9, v12 & NAS series support Qualcomm NPU. NPU libraries must be obtained independently.
-    - Depth Anything V2-Metric also supports Qualcomm NPU, but takes longer to initialize.
+SuperGradients 3.7.1 pins older `numpy`, `onnx`, and `onnxruntime` releases, so its exact dependency set should not share an environment with the modern optimizer stack.
 
-11. **Quantization Methods**:
-    - Avoid q4(uint4) due to poor ONNX Runtime performance.
+### Optimization
 
-12. **Image Preprocessing**:
-    - Updated on 2024/10/12 for optimized performance. Set `EXPORT_YOLO_INPUT_SIZE` appropriately for high-resolution screens.
+- `numpy`
+- `onnx`
+- `onnxruntime`
+- `onnxslim`
 
-13. **Custom Parameters**:
-    - Please adjust the key variables to match the model parameters and `yolo_config.py`.
-      - `GLRender.java: Around Line 49-55`
-      - `project.h: Line 11, 12, 13, 67, 68, 70, 71, 73`
+### Inference validation
 
-## Project Resources
+- `numpy`
+- `onnxruntime`
+- `opencv-python`
 
-- [More about the project](https://github.com/DakeQQ?tab=repositories)
+The scripts do not install packages or modify files in `site-packages`.
 
-## 演示结果 Demo Results
+## Export a Model
 
-- **YOLOv8-n & Depth Anything-Small**
-  ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth.gif?raw=true)
+Edit the `USER EXPORT CONFIGURATION` block near the top of [Export_ONNX/Export_YOLO.py](Export_ONNX/Export_YOLO.py):
 
-- **YOLOv8-s & Depth Anything-Small**
-  ![Demo Animation](https://github.com/DakeQQ/YOLO-Depth-Estimation-for-Android/blob/main/yolo_depth2.gif?raw=true)
+| Setting | Purpose |
+| --- | --- |
+| `MODEL_FAMILY` | Select `"ultralytics"` or `"yolo_nas"`. |
+| `MODEL_PATH` | Select the source `.pt` checkpoint. |
+| `MODEL_TASK` | Select a supported task, or use `"auto"` to read it from the checkpoint. |
+| `YOLO_VERSION` | Override filename-based version detection for custom names such as `best.pt`. |
+| `INPUT_SHAPE` | Set the public static ONNX input shape. |
+| `RESIZE_SHAPE` | Set the internal model resize shape. |
+| `PUBLIC_INPUT_DTYPE` | Select the public `uint8` or `float32` input contract. |
+| `MODEL_PRECISION` | Select the model export precision. |
+| `OUTPUT_PATH` | Set an explicit destination, or leave `None` to export beside the checkpoint. |
+| `OPSET` | Set the ONNX opset passed to `torch.onnx.export`. |
+| `RUN_INFERENCE_DEMO` | Run task-aware inference after a successful export. |
 
----
+Then run:
 
-# 安卓本地运行YOLO+深度(距离)+可行驶区域估计
+```bash
+python Export_ONNX/Export_YOLO.py
+```
 
-## 概述
+For an official Ultralytics filename such as `yolo26n.pt`, `AUTO_DOWNLOAD_MODEL = True` resolves the selected task suffix and stores a missing checkpoint under `Export_ONNX/models/<task>/`. Explicit custom paths and YOLO-NAS checkpoints must be supplied locally.
 
-该项目支持在Android设备上运行YOLO系列、单目深度估计。通过从HuggingFace、ModelScope和GitHub转换的模型进行优化以实现最佳性能。
+The exporter executes the checkpoint's static layer graph instead of relying on a fixed layer count. Package-supported P2/P6 profiles and custom topologies can therefore be exported when their final head implements one of the supported task contracts.
 
-## 主要功能
+## Default ONNX Contract
 
-1. **演示模型**:
-   - 演示模型, yolov12n, 已放置在`assets`文件夾中。
-   - 記得解压`libs/arm64-v8a`中的`.zip`文件來得到`*.so`。
+The default public input is a static `images` tensor:
 
-2. **支持的模型**:
-   - **YOLO**: v8, v9, v10, v11, 12, NAS系列。
-   - **深度估计**: Depth Anything V2-Metric。
+```text
+dtype: uint8
+shape: [1, 3, 720, 1280]
+```
 
-3. **图像输入**:
-   - 模型接收分辨率为h720*w1280的图像，需横置手机。
+Input conversion, bilinear resize, and normalization are embedded in the graph. Each artifact also stores metadata such as the model family, task, resize geometry, output names, class labels, end-to-end box semantics, and pose keypoint shape.
 
-4. **ONNX Runtime兼容性**:
-   - 为了更好地适配Android，导出时未使用dynamic-axes，这可能影响x86_64的性能。
+| Task | ONNX outputs |
+| --- | --- |
+| Ultralytics detect | `output0`: `[1, anchors, 6]` containing box, confidence, and class index |
+| Ultralytics segment | `output0`: detection rows plus mask coefficients; `output1`: mask prototypes |
+| Ultralytics pose | `output0`: detection rows plus keypoint values |
+| Ultralytics OBB | `output0`: `[1, anchors, 7]`, including rotation |
+| Ultralytics classify | `output0`: `[1, classes]` probabilities |
+| Ultralytics semantic/depth | `output0`: the checkpoint's static dense output map |
+| YOLO-NAS detect | `output`: `[1, anchors, 6]` |
 
-5. **GPU利用**:
-   - 使用OpenGL ES 3.x高效处理相机帧并通过GPU计算着色器进行YUV到RGB的转换。
+Official YOLOv10 and YOLO26 end-to-end heads preserve their native top-k, NMS-free ordering and `xyxy` boxes. Other detection-like heads reduce class channels to confidence and class index while preserving task-specific values.
 
-6. **异步推理**:
-   - 使用前一帧相机数据进行推理，提高效率。
+## Optimize an Export
 
-7. **YOLO框渲染**:
-   - 通过OpenGL ES高效渲染YOLO框。
+[Export_ONNX/Optimize_ONNX.py](Export_ONNX/Optimize_ONNX.py) supports these methods:
 
-8. **性能提示**:
-   - 同时运行YOLO和深度估计会使FPS降低约30%。
+| Method | Result |
+| --- | --- |
+| `Q4` | Blocked logical `UINT4` weights using `DequantizeLinear -> Reshape -> Conv` |
+| `Q8` | Blocked `UINT8` weights using the same Q/DQ Conv representation |
+| `DYNAMIC` | Runtime activation quantization with symmetric per-output-channel weights and `ConvInteger` |
+| `F16` | Convert floating-point graph values and weights to float16 |
+| `F32` | Run graph optimization without quantization |
 
-9. **导出与配置**:
-   - 更新模型导出方法并确保配置文件与模型权重匹配。使用`UInt8`进行量化以避免ONNX Runtime错误。
+Run the synthetic optimizer test, then optimize an exported model:
 
-10. **高通NPU支持**:
-    - 只有YOLO v9, v12 & NAS系列支持高通NPU。NPU库需自行获取。
-    - Depth Anything V2-Metric 也支持 Qualcomm NPU，但初始化需要更长时间。
+```bash
+python Export_ONNX/Optimize_ONNX.py --self-test
+python Export_ONNX/Optimize_ONNX.py --input path/to/model.onnx --method F16
+python Export_ONNX/Optimize_ONNX.py --input path/to/model.onnx --method Q8
+```
 
-11. **量化方法**:
-    - 由于ONNX Runtime表现不佳，不建议使用q4(uint4)。
+The default output is `<source-stem>_<method>.onnx`. Q4 and Q8 require ONNX opset 21 for blocked `DequantizeLinear`. The optimizer validates rewrite coverage, checks the graph with `onnx.checker`, optionally compares outputs with ONNX Runtime, and publishes the result atomically only after all enabled checks pass.
 
-12. **图像预处理**:
-    - 2024/10/12更新以优化性能。为高分辨率屏幕设置适当的`EXPORT_YOLO_INPUT_SIZE`。
-    - 
-13. **自定义参数**:
-    - 请调整关键变量以匹配模型参数和 `yolo_config.py`.
-      - `GLRender.java: Around Line 49-55`
-      - `project.h: Line 11, 12, 13, 67, 68, 70, 71, 73`
+## Validate an Export
 
-## 项目资源
+[Export_ONNX/Inference_YOLO_ONNX.py](Export_ONNX/Inference_YOLO_ONNX.py) loads the ONNX artifact and its embedded metadata without importing PyTorch, Ultralytics, SuperGradients, or the exporter.
 
-- [查看更多项目](https://github.com/DakeQQ?tab=repositories)
+```bash
+python Export_ONNX/Inference_YOLO_ONNX.py --self-test
+python Export_ONNX/Inference_YOLO_ONNX.py \
+  --model path/to/model.onnx \
+  --image path/to/image.jpg \
+  --output path/to/result.jpg \
+  --no-open
+```
 
-## GPU Image Preprocess - 图像预处理性能
+When no image is specified, the script selects a prepared image for the model task. It renders boxes and labels for detection, masks for segmentation, keypoints for pose, rotated boxes for OBB, ranked classes for classification, and dense maps for semantic or YOLO26 depth outputs.
 
-| OS | Device | Backend | Pixels: h720*w1280<br>Time Cost: ms | Pixels: h1088*w1920<br>Time Cost: ms | 
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-GPU<br>Adreno-740 | 3.5 | 6.5 |
-| Harmony 4 | P40 | Kirin_990_5G-GPU<br>Mali-G76 MP16 | 9 | 17 |
+## Notes
 
-## YOLO - 性能 Performance
+- Export, optimization, and inference are separate stages. The exporter does not quantize or rewrite the published ONNX graph after export.
+- Source checkpoints are never overwritten. Generated artifacts are written through process-owned temporary files and then published atomically.
+- `OUTPUT_PATH = None` writes the ONNX model beside the resolved checkpoint.
+- Set `RUN_INFERENCE_DEMO = False` when only the exported artifact is required.
 
-| OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v12-n<br>q8f32 | 25 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v12-n<br>f16 | 120+ |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-x<br>q8f32 | 3.5 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-l<br>q8f32 | 6 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-m<br>q8f32 | 8 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-s<br>q8f32 | 18 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v11-n<br>q8f32 | 36 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-m<br>q8f32 | 9.5 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-s<br>q8f32 | 17.5 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v10-n<br>q8f32 | 35 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v9-C<br>q8f32 | 7 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-C<br>f16 | 50+ |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-M<br>f16 | 60+ |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-S<br>f16 | 90+ |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | v9-T<br>f16 | 110+ |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-s<br>q8f32 | 21 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | v8-n<br>q8f32 | 43 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-m<br>q8f32 | 9 |
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | NAS-s<br>q8f32 | 19 |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-m<br>f16 | 75+ |
-| Android 13 | Nubia Z50 | 8_Gen2-NPU<br>(HTPv73) | NAS-s<br>f16 | 95+ |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>q8f32 | 16.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v12-n<br>f16   | 18 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-x<br>q8f32 | 2.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-l<br>q8f32 | 3.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-m<br>q8f32 | 5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-s<br>q8f32 | 11.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v11-n<br>q8f32 | 23 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-m<br>q8f32 | 5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-s<br>q8f32 | 9.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v10-n<br>q8f32 | 18.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v9-C<br>q8f32 | 3.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-s<br>q8f32 | 10.5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | v8-n<br>q8f32 | 22 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | NAS-m<br>q8f32 | 5 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | NAS-s<br>q8f32 | 9.5 |
+## License
 
-## Depth - 性能 Performance
-
-| OS | Device | Backend | Model | FPS<br>Camera: h720*w1280 |
-|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | Depth Anything-Small<br>q8f32<br>(previous version) | 22 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | Depth Anything-Small<br>q8f32<br>(previous version) | 11 |
-
-## YOLO+Depth - 性能 Performance
-
-| OS | Device | Backend | Model | YOLO FPS<br>Camera: h720*w1280 | Depth FPS<br>Camera: h720*w1280 |
-|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android 13 | Nubia Z50 | 8_Gen2-CPU<br>(X3+A715) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 28 | 16.7 |
-| Harmony 4 | P40 | Kirin_990_5G-CPU<br>(2*A76) | YOLOv8-n & <br>Depth Anything-Small<br>q8f32<br>(previous version) | 16 | 7.7 |
-
----
+See [LICENSE](LICENSE). Portions of the graph behavior are adapted from Ultralytics (AGPL-3.0) and SuperGradients (Apache-2.0); consult those projects' licenses when distributing derived artifacts or software.
